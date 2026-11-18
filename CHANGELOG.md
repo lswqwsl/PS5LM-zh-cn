@@ -148,6 +148,22 @@ v0.1.x are the upstream payload releases by cobanov.
   On the console at `-lv 4`, 5 minutes of ~1,800-token prompts: 16 requests, 7 over 15 s (worst 58 s)
   before; 25 requests, none stalled, after.
 
+## [0.11.2] - 2026-11-19
+
+### Changed
+- **The browser page on port 8081 is the app's own translated one.** The app
+  never served `ps5/webui/index.html`; llama-server fell back to llama.cpp's
+  own web UI, which is English and, being a modern bundle, renders as a blank
+  page in the console's browser (which is why `scripts/ps5-chat.sh` passes
+  `--path www` for the payload). `Models::start` now passes `--path
+  <app0>/assets/www`, `scripts/build-app.sh` packs that folder, and the page
+  uses `/v1/models` and `/v1/chat/completions` only, in plain ES5. A `--path`
+  in `app-args.txt` still wins; `PS5LM_WEBUI=llama` in `env.txt` keeps
+  llama.cpp's UI for a PC browser. The page hides its "模型" link when
+  `app.json` (which only the app ships) says there is no library page, and the
+  release workflow now fails if the package has no `assets/www/index.html` or
+  the page is not the Chinese one.
+
 ## [0.11.1] - 2026-11-19
 
 ### Changed

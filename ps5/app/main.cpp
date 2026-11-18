@@ -650,6 +650,9 @@ void write_report(ReportJob job) {
 
 std::atomic<int> g_server_rc{ -1 };   // llama-server's exit code once it returns; -1 while it runs
 std::vector<std::string> g_server_args;
+// PS5LM_WEBUI=llama: serve llama.cpp's own page at the server's root instead
+// of the app's translated one (assets/www), for a PC browser.
+bool g_builtin_webui = false;
 
 void * run_server(void *) {
     std::vector<char *> argv;
@@ -814,6 +817,18 @@ struct Models {
             chdir(g_files.scratch.c_str());
             args.insert(args.end(), { "--tools", kTools });
         }
+        // What a browser gets at the server's root. llama.cpp's own UI is a
+        // modern bundle the console's browser renders as a blank page, and it
+        // is in English; assets/www is the app's chat page, translated and
+        // plain ES5. --path replaces the built-in UI (it also drops the
+        // service worker a browser may still have from it). PS5LM_WEBUI=llama
+        // keeps llama.cpp's, and a --path in app-args.txt wins over both.
+        const std::string www = sandbox_path(kAssets) + "/www";
+        if (!g_builtin_webui && access(www.c_str(), R_OK) == 0 &&
+            std::find(args.begin(), args.end(), "--path") == args.end()) {
+            args.insert(args.end(), { "--path", www });
+            ps5lm::log_line("the chat page is the app's own (%s)\n", www.c_str());
+        }
         for (const auto & a : args) {
             ps5lm::log_line("arg %s\n", a.c_str());
         }
@@ -924,8 +939,9 @@ int main(int, char **) {
     setenv("LLAMA_CACHE", data_path("cache").c_str(), 0);
     // Driver and backend switches to measure with, one NAME=value a line in
     // env.txt, set before the GPU opens; only the driver's, ggml's and llama's,
-    // and the app's own: PS5LM_FPS caps the frame rate (10..60) and
-    // PS5LM_STILL=0 turns the still-frame skip off, for measuring by ear.
+    // and the app's own: PS5LM_FPS caps the frame rate (10..60),
+    // PS5LM_STILL=0 turns the still-frame skip off, PS5LM_WEBUI=llama serves
+    // llama.cpp's own chat page instead of the app's.
     int  target_fps = 60;
     bool skip_still = true;
     for (const auto & line : read_lines(g_files.env)) {
@@ -942,6 +958,8 @@ int main(int, char **) {
                 target_fps = std::clamp(std::atoi(value.c_str()), 10, 60);
             } else if (name == "PS5LM_STILL") {
                 skip_still = value[0] != '0';
+            } else if (name == "PS5LM_WEBUI") {
+                g_builtin_webui = value == "llama";
             }
         }
         ps5lm::log_line("env %s%s\n", line.c_str(), known ? "" : " (ignored)");

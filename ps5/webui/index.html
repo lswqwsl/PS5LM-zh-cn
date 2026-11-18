@@ -116,8 +116,20 @@
   var messages = [];
   var xhr = null;
 
-  // ps5lm.elf serves its model library on port 8082.
-  document.getElementById('models').href = 'http://' + location.hostname + ':8082/';
+  // ps5lm.elf serves its model library on port 8082. The native app has no
+  // such page (its library is the one on the TV) and says so in app.json,
+  // which only it ships: without the file the link stays.
+  var library = document.getElementById('models');
+  library.href = 'http://' + location.hostname + ':8082/';
+  var app_info = new XMLHttpRequest();
+  app_info.open('GET', '/app.json');
+  app_info.onload = function () {
+    if (app_info.status !== 200) return;
+    var conf = {};
+    try { conf = JSON.parse(app_info.responseText); } catch (e) { return; }
+    if (conf.library === '') library.style.display = 'none';
+  };
+  app_info.send();
 
   var info = new XMLHttpRequest();
   info.open('GET', '/v1/models');
@@ -204,7 +216,7 @@
         var err = document.createElement('span');
         err.className = 'error';
         err.textContent = xhr.status === 0 ? '已停止。' :
-          '没有回答（' + xhr.status + '）。请到模型库里确认有模型在运行。';
+          '没有回答（' + xhr.status + '）。到主机上的 PS5LM 看看模型是否已经加载。';
         out.appendChild(err);
       } else {
         messages.push({ role: 'assistant', content: answer });

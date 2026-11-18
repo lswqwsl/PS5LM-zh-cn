@@ -269,6 +269,11 @@ cp "$root/third_party/ps5-homebrew-ui/assets/fonts/"{dejavu-sans-mono.huifont,De
 # them; give them a set of their own if the kit ever lets an app add one.
 mkdir -p "$app/assets/audio/sfx/glass"
 cp "$root/ps5/app/assets/audio/sfx/"* "$app/assets/audio/sfx/glass/"
+# 浏览器打开 :8081 看到的那一页：app 自带、已汉化的 ps5/webui/index.html，
+# main.cpp 用 --path 指到这里（assets/www），llama.cpp 自带的 UI 是英文且
+# 在主机浏览器上是空白页。
+mkdir -p "$app/assets/www"
+cp "$root/ps5/webui/index.html" "$root/ps5/webui/app.json" "$app/assets/www/"
 # ps5-exporter (Marice, GPL-3.0): a title may not read the temperature, fan or
 # SoC power sensors, a payload may. The app sends it to elfldr when it is not
 # running. Pinned by version and hash, downloaded once into .deps.
