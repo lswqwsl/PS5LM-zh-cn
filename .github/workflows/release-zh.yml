@@ -9,7 +9,7 @@ name: 打包汉化版（PS5 title zip）
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'zh-cn']
+    branches: [main, master, 'zh-cn']
     tags: ['v*']
 permissions:
   contents: read
