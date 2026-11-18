@@ -76,7 +76,21 @@ jobs:
           PY
 
       - name: 交叉编译（RADV + llama.cpp + 界面 + title）
-        run: scripts/test-native-build.sh
+        run: |
+          # 上游 PS5_Vulkan 的 setup-native-dependencies.sh 从镜像下载 pinned 的 zlib 等
+          # tarball 并核对 sha256；镜像偶尔给出截断的文件（日志里是
+          # "sha256sum: WARNING: 1 computed checksum did NOT match"），那一趟就整个失败，
+          # 跟本仓库代码无关。这种失败重跑一次就好：重试前先清掉下载缓存，免得复用坏文件。
+          for attempt in 1 2 3; do
+            if scripts/test-native-build.sh; then
+              exit 0
+            fi
+            echo "第 $attempt 次构建失败，清掉下载缓存后重试" >&2
+            rm -rf "$GITHUB_WORKSPACE/.deps/native-ci-src/PS5_Vulkan/.deps/native" \
+                   "$GITHUB_WORKSPACE/.deps/native-ci-src"
+          done
+          echo "三次都失败，见上面的日志" >&2
+          exit 1
 
       - name: 确认 app 真能读进包里的字体（4 MiB 上限那个坑）
         run: |
