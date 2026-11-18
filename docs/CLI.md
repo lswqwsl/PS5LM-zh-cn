@@ -1,0 +1,138 @@
+# Using the console from coding tools
+
+The app's llama-server speaks three APIs on port 8081, so most coding agents
+can use the model on the PS5 as their backend:
+
+| API | Path | Used by |
+|---|---|---|
+| OpenAI Chat Completions | `/v1/chat/completions` | opencode, aider, Continue, most others |
+| OpenAI Responses | `/v1/responses` | codex |
+| Anthropic Messages | `/v1/messages` | Claude Code |
+
+Replace `192.168.1.19` with your console's address (the dashboard shows it).
+The model name in a request is ignored: the server answers with the model
+loaded in the library, so any name works. Tool calling uses the model's own
+chat template (llama-server's Jinja templates are on by default).
+
+## Which model
+
+Agents send long prompts (system prompt, tool definitions, files), and
+prompt processing on the console runs at 35 to 50 tokens a second for the
+27B. A 20,000-token agent prompt takes several minutes before the first word.
+For agents, a smaller model with a long context is the better trade:
+
+- Qwen 3.8 27B: best answers, slow on long prompts; keep requests small.
+- Gemma 4 E4B or another 4 to 9B model: several times faster on prompts.
+
+Give the tool the context length the dashboard shows (the CONTEXT tile), so it
+does not send more than the server holds.
+
+## opencode
+
+`~/.config/opencode/opencode.json`:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "ps5lm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "PS5LM",
+      "options": { "baseURL": "http://192.168.1.19:8081/v1" },
+      "models": { "ps5": { "name": "Model on the PS5", "limit": { "context": 65536, "output": 8192 } } }
+    }
+  }
+}
+```
+
+Then `opencode`, and pick **PS5LM / Model on the PS5** with `/models`. The
+first run installs the `@ai-sdk/openai-compatible` package, which takes a few
+minutes before anything reaches the console.
+
+## codex
+
+`~/.codex/config.toml`:
+
+```toml
+[model_providers.ps5lm]
+name = "PS5LM"
+base_url = "http://192.168.1.19:8081/v1"
+wire_api = "responses"
+```
+
+`~/.codex/ps5.config.toml`, the profile:
+
+```toml
+model_provider = "ps5lm"
+model = "ps5"
+```
+
+Then `codex -p ps5`. Codex 0.166 reads a profile from its own `<name>.config.toml` and refuses to
+start while `config.toml` still has an old `[profiles.ps5]` table.
+
+Codex sends two developer messages after its instructions. Qwen's chat template refuses a system
+message that is not first ("System message must be at the beginning"), so the app's llama-server
+folds them into the first one (`patches/0004`).
+
+If codex gets `404 Not Found` from the console while macOS has a system HTTP proxy (spoofdpi and
+similar tools set one), codex is sending through that proxy even for addresses on its exception
+list, and the proxy forwards the request in a form llama-server does not route. Start codex with
+`NO_PROXY=192.168.1.19` (the console's address).
+
+### The Responses API
+
+`/v1/responses` is llama-server's own, on the same path as chat: `input` as a string or as messages
+(`input_text`, `input_image`; not `input_file`), `instructions`, `temperature`, `top_p`, `max_output_tokens`, `stream`
+(the `response.*` events, text arriving as `response.output_text.delta`), tools, and
+`reasoning.effort`. Each request stands alone: `previous_response_id` is refused, so send the whole
+conversation every time, as codex does. A reply cut off by `max_output_tokens` still reports
+`"status": "completed"`.
+
+```sh
+curl http://192.168.1.19:8081/v1/responses -H 'Content-Type: application/json' -d '{
+  "instructions": "Answer in one sentence.",
+  "input": "Why does a PS5 have a GPU?",
+  "temperature": 0.7, "max_output_tokens": 200, "stream": true
+}'
+```
+
+## Claude Code
+
+```sh
+ANTHROPIC_BASE_URL=http://192.168.1.19:8081 ANTHROPIC_AUTH_TOKEN=ps5lm \
+ANTHROPIC_MODEL=ps5 ANTHROPIC_SMALL_FAST_MODEL=ps5 \
+CLAUDE_CODE_MAX_CONTEXT_TOKENS=65536 claude
+```
+
+Set `CLAUDE_CODE_MAX_CONTEXT_TOKENS` to the context the dashboard shows:
+Claude Code does not know the model and otherwise assumes 200k. It sends some
+system messages in the middle of a conversation, which Qwen's chat template
+refuses; the app's llama-server folds them into the first one (`patches/0004`),
+on every endpoint.
+
+## aider
+
+```sh
+aider --openai-api-base http://192.168.1.19:8081/v1 --openai-api-key ps5lm --model openai/ps5
+```
+
+## Anything else
+
+Point an OpenAI-compatible client at `http://192.168.1.19:8081/v1` with any
+API key and any model name.
+
+## Checked on the console
+
+The task, in a folder holding a two-line `hello.py`: "In hello.py, add a
+function add(a, b) that returns a + b. Edit the file; do not create other
+files." Qwen3.8-27B UD-IQ2_XXS, 64k context, q8_0 cache, on 2026-10-10.
+
+| Tool | Version | Result |
+|---|---|---|
+| opencode | 1.18.35 | Edited the file; 208 s |
+| codex | 0.161.0 | Edited the file and ran it to check; 12,960 tokens. Warns that it has no metadata for the model |
+| Claude Code | 2.1.296 | Edited the file; 613 s, most of it the first 18k-token prompt |
+
+Each tool's own prompt (instructions and tool definitions) is 10k to 20k
+tokens, processed at about 30 tokens a second on this model: the first answer
+takes minutes, later turns reuse the cache and are faster.
