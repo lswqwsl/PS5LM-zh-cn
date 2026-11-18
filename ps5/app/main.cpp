@@ -952,7 +952,7 @@ int main(int, char **) {
                 pthread_attr_destroy(&attr);
             }
             if (rc != 0) {
-                worker_error = std::string("Cannot start RPC thread: ") + std::strerror(rc);
+                worker_error = std::string("无法启动 RPC 线程：") + std::strerror(rc);
                 stopped = true;
             }
             notify("PS5LM fleet：实验性的无认证 RPC。仅限可信的隔离局域网。");

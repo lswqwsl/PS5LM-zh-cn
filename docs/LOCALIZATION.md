@@ -79,6 +79,17 @@ python3 scripts/apply-translations.py .        # 438 处
 JSON 键名、`auto`/`none`、`.gguf`、量化名、仓库 id、API 路径、守护进程名、系统调用名一律不译；
 标点用中文全角，中英文之间留一个空格。
 
+## 改完怎么自查
+
+```sh
+python3 scripts/check-zh.py          # UTF-8、CRLF、引号成对、词条表干净（0 问题才算过）
+python3 scripts/fitcheck-zh.py       # 每条译文的排版宽度和英文比，列出反而更宽的那些
+python3 scripts/apply-translations.py . --dry-run
+```
+
+`fitcheck-zh.py` 用烘好的字体量字宽：界面是按固定位置排版的，译文比原文宽太多就会挤到邻居身上。
+正常情况下列表很短（中文大多比英文窄）；出现宽度比接近或超过 1 的地方，最好把那条译短一点。
+
 ## 词条表覆盖不到的改动（手工改的代码）
 
 这些是逻辑，不是文案，所以没进 CSV：
@@ -107,6 +118,8 @@ scripts/translations-zh.csv        词条表
 scripts/apply-translations.py      替换脚本
 scripts/gen-charset.py             从源码提取字符集 + GB2312
 scripts/bake-fonts-cn.py           烘焙三个字重（跨平台，Python）
+scripts/check-zh.py                编码/换行/引号/词条表自查
+scripts/fitcheck-zh.py             译文排版宽度对比
 scripts/font-baker/bake_font.cpp   改了上游那个烘焙器：支持 @字符集文件
 scripts/font-baker/font_format.hpp .huifont 的二进制布局
 docs/LOCALIZATION.md               本文件

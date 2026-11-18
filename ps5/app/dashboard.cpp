@@ -2095,8 +2095,8 @@ void Dashboard::draw_storage_dialog(gfx::DrawList & l) const {
               { ui::Button::cross, "用 app 的存储" } };
     } else {
         put(l, f.semibold, "把完整存储开放给 PS5LM", r.x + 56, r.y + 86, 34, kInk);
-        para("OnionHEN：通过 FTP，把 PPSA99575 加到 [app_jailbreak] 段里的 exact_title_ids 中，文件是"
-             "/data/OnionHEN/config.ini.", kInk2);
+        para("OnionHEN：通过 FTP，把 PPSA99575 加到 [app_jailbreak] 段里的 exact_title_ids 中，文件是 "
+             "/data/OnionHEN/config.ini。", kInk2);
         para("etaHEN 在启动前就会把 /data 开放给自制软件；如果没有，重新加载最新版 etaHEN。", kInk2);
         para("其他 HEN：在它们的 app jailbreak 列表里允许 PPSA99575。", kInk2);
         para("然后重新启动 PS5LM：它每次启动都会向 HEN 申请 /data。", kInk3);

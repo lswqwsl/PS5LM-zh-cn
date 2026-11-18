@@ -215,7 +215,8 @@ dashboard.cpp,Not now,暂时不要
 dashboard.cpp,How to open it,怎么打开
 dashboard.cpp,Use the app's storage,用 app 的存储
 dashboard.cpp,Open full storage to PS5LM,把完整存储开放给 PS5LM
-dashboard.cpp,"OnionHEN: over FTP, add PPSA99575 to exact_title_ids in the [app_jailbreak] section of ",OnionHEN：通过 FTP，把 PPSA99575 加到 [app_jailbreak] 段里的 exact_title_ids 中，文件是
+dashboard.cpp,"OnionHEN: over FTP, add PPSA99575 to exact_title_ids in the [app_jailbreak] section of ",OnionHEN：通过 FTP，把 PPSA99575 加到 [app_jailbreak] 段里的 exact_title_ids 中，文件是 
+dashboard.cpp,/data/OnionHEN/config.ini.,/data/OnionHEN/config.ini。
 dashboard.cpp,"etaHEN opens /data to homebrew before it starts; if it did not, load etaHEN again, up to date.",etaHEN 在启动前就会把 /data 开放给自制软件；如果没有，重新加载最新版 etaHEN。
 dashboard.cpp,Other HENs: allow PPSA99575 in their app jailbreak list.,其他 HEN：在它们的 app jailbreak 列表里允许 PPSA99575。
 dashboard.cpp,Then start PS5LM again: it asks the HEN for /data at every start.,然后重新启动 PS5LM：它每次启动都会向 HEN 申请 /data。
@@ -355,6 +356,7 @@ fleet_worker.cpp,No Vulkan GPU device; refusing CPU fallback,没有 Vulkan GPU �
 fleet_worker.cpp,RPC stopped or failed to bind; inspect /data/PS5LM/app.log and restart the title,RPC 已停止或绑定失败；查看 /data/PS5LM/app.log 并重启应用
 fleet_worker.cpp,RPC worker failed: ,RPC worker 失败：
 fleet_worker.cpp,RPC worker failed with an unknown exception,RPC worker 因未知异常失败
+main.cpp,Cannot start RPC thread: ,无法启动 RPC 线程：
 fetch.cpp,too many redirects,重定向次数太多
 fetch.cpp,redirect without a Location,重定向缺少 Location
 preview_main.cpp,Internal storage,内置存储
