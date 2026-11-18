@@ -11,6 +11,10 @@ on:
   push:
     branches: [main, master, 'zh-cn']
     tags: ['v*']
+    # 只改文档不重打（45 分钟一次的构建不该被一段说明触发）
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
 permissions:
   contents: read
 concurrency:

@@ -68,6 +68,19 @@ scripts/bake-fonts.sh                     # = python3 scripts/bake-fonts-cn.py
 
 ![汉化字体样本](media/localization-font.png)
 
+### 必须记住的坑：`read_file` 的 4 MiB 上限
+
+kit 的 `hui::save::read_file`（`third_party/ps5-homebrew-ui/src/core/save_file.hpp`）默认
+`max_bytes = 4u << 20`。上游 Manrope 每个字重约 1.8 MB，永远碰不到这个上限；汉化版的正文字集
+是 **15.94 MB**，于是：
+
+`read_file` 在 4 MiB 处返回 false → `load_font` 失败 → `ui_ok` 为假 →
+`while (ui_ok && !booted)` 一次都不进 → **进 app 一直黑屏**（第一版汉化包就是这么挂的）。
+
+`main.cpp` / `preview_main.cpp` 的 `load_font` 现在显式传 `32u << 20`，别改回默认。
+`release-zh.yml` 里还有一道门禁：构建完用同一段代码（`read_file(…, 32 MiB)` + `Font::load`）
+把包里四个字体实跑一遍，读不进来就让构建失败，这类静默黑屏不会再发布出去。
+
 ## 词条表与替换脚本
 
 * `scripts/translations-zh.csv` —— 382 条，列是 `file,en,zh`。要改某个词的译法，改这里。
