@@ -62,6 +62,11 @@ scripts/bake-fonts.sh                     # = python3 scripts/bake-fonts-cn.py
 
 6763 个汉字在 36px 下约 15.6M 像素，正好塞满 4096²；换成 64px 就放不下了。
 
+下面这张图不是截图，是把 `manrope-500.huifont` 的图集直接按字形矩形和 advance 拼出来的
+（`scripts/render-font-sample.py` 做的事）：能读出来，就说明这些字真的烘进字体里了。
+
+![汉化字体样本](media/localization-font.png)
+
 ## 词条表与替换脚本
 
 * `scripts/translations-zh.csv` —— 382 条，列是 `file,en,zh`。要改某个词的译法，改这里。
@@ -120,6 +125,8 @@ scripts/gen-charset.py             从源码提取字符集 + GB2312
 scripts/bake-fonts-cn.py           烘焙三个字重（跨平台，Python）
 scripts/check-zh.py                编码/换行/引号/词条表自查
 scripts/fitcheck-zh.py             译文排版宽度对比
+scripts/render-font-sample.py      把 .huifont 里的字拼成 PNG（验证字形）
+docs/media/localization-font.png   上面那个脚本对 manrope-500 的输出
 scripts/font-baker/bake_font.cpp   改了上游那个烘焙器：支持 @字符集文件
 scripts/font-baker/font_format.hpp .huifont 的二进制布局
 docs/LOCALIZATION.md               本文件
