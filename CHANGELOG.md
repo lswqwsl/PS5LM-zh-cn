@@ -148,6 +148,24 @@ v0.1.x are the upstream payload releases by cobanov.
   On the console at `-lv 4`, 5 minutes of ~1,800-token prompts: 16 requests, 7 over 15 s (worst 58 s)
   before; 25 requests, none stalled, after.
 
+## [0.11.1] - 2026-11-19
+
+### Changed
+- **A still screen is no longer drawn sixty times a second** (the fan with no
+  model loaded). The loop recorded and presented every frame whether or not
+  anything had changed: a full-screen gradient, a few thousand quads and a
+  swap, 60 times a second, which the console answers with heat and fan. Each
+  frame is now stamped after it is recorded (`frame_stamp` in
+  `ps5/app/main.cpp`: the quads, the runs, the backdrop, the glass flag) and
+  only a different stamp is presented; a screen still for half a second drops
+  to half rate, and one frame in two seconds goes up anyway (heartbeat). Every
+  turn of the loop is also paced at 1/60 s, so a driver whose swap does not
+  block can no longer spin. Backdrops that move with time compare different
+  every frame and keep their frames, as do the busy screen and a loading bar.
+  Knobs in `/data/PS5LM/env.txt`: `PS5LM_FPS=30` caps the rate, `PS5LM_STILL=0`
+  turns the skip off. `docs/QUIET.md` has the mechanism and how to read the
+  new `loop ... presented ... still ...` log line.
+
 ## [0.11.0] - 2026-11-02
 
 ### Added
