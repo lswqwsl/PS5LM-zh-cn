@@ -41,7 +41,9 @@ bool open_context() {
 
 bool load_font(hui::gfx::Renderer & r, const std::string & path, hui::gfx::Font * font, hui::ui::FontRef * ref) {
     std::string data;
-    if (!hui::save::read_file(path, &data) || !font->load(data)) {
+    // 同 main.cpp：汉化版图集超过 kit read_file 的 4 MiB 默认上限，必须显式放宽。
+    constexpr std::size_t kFontBytes = 32u << 20;
+    if (!hui::save::read_file(path, &data, kFontBytes) || !font->load(data)) {
         std::fprintf(stderr, "cannot load font %s\n", path.c_str());
         return false;
     }

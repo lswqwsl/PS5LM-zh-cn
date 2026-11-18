@@ -809,7 +809,11 @@ pthread_t start_thread(std::function<void()> & fn) {
 bool load_font(hui::gfx::Renderer & renderer, const char * name, hui::gfx::Font * font, hui::ui::FontRef * ref) {
     std::string data;
     const std::string path = sandbox_path(kAssets) + "/fonts/" + name;
-    if (!hui::save::read_file(path, &data) || !font->load(data)) {
+    // read_file 默认只读 4 MiB（kit 的 save_file.hpp）。汉化版的正文字形装了 GB2312
+    // 全集，图集约 16 MB，用默认上限会在第一步就失败：字体读不进来，ui_ok 为假，
+    // 屏幕上就什么都没有（黑屏）。这里显式放宽，别改回默认。
+    constexpr std::size_t kFontBytes = 32u << 20;
+    if (!hui::save::read_file(path, &data, kFontBytes) || !font->load(data)) {
         ps5lm::log_line("font %s failed\n", name);
         return false;
     }
