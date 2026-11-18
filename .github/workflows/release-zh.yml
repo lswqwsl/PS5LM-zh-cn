@@ -1,0 +1,118 @@
+name: 打包汉化版（PS5 title zip）
+
+# 交叉编译出 build/release/ps5lm-app-v<版本>.zip：和上游 release 里的包一样的内容
+# （一个 PPSA99575 文件夹），只是界面是中文的、字体里面装了 GB2312。
+#
+# 界面文案编译进 eboot.bin，所以这个 zip 只能编出来，不能靠替换上游包里的资源文件"改"出来。
+# 推到自己仓库的 zh-cn / main 分支，或者手动 Run workflow，等 40~60 分钟就能在
+# Actions 的 Artifacts 里下载。
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'zh-cn']
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: package-zh-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    name: 交叉编译并打包
+    # 和上游的 native-build.yml 同一个 runner、镜像和工具链：Debian trixie 提供
+    # LLVM19 / SPIRV 主机工具，PS5 侧的 clang 由 pinned 的 payload SDK 提供。
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    container:
+      image: debian:trixie-20261020-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad
+      options: --cpus 2
+    defaults:
+      run:
+        shell: bash
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      BUILD_JOBS: '2'
+      LLVM_CONFIG: /usr/bin/llvm-config-19
+    steps:
+      - name: 主机侧交叉编译工具链
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential git ca-certificates wget curl unzip zip rsync cmake ninja-build \
+            clang-19 llvm-19-dev lld-19 libclang-rt-19-dev libclang-19-dev libclang-cpp19-dev \
+            libllvmspirvlib-19-dev libclc-19-dev spirv-tools spirv-headers glslang-tools \
+            meson pkgconf flex bison python3 python3-mako python3-yaml python3-packaging python3-setuptools \
+            zlib1g-dev libzstd-dev libffi-dev libedit-dev libxml2-dev libvulkan-dev glslc ffmpeg xxd
+          echo /usr/lib/llvm-19/bin >> "$GITHUB_PATH"
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - name: 取 pinned 的 llama.cpp / ps5-homebrew-ui / ftpsrv
+        run: |
+          # 容器里的 root 和 runner 的属主不同；只信任这一个检出目录。
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git submodule update --init --depth 1
+
+      - name: 确认字体是汉化版（不是上游的 Manrope）
+        run: |
+          # 界面文案在 eboot.bin 里，但字形在 assets/fonts；少了 GB2312 的图集就是一片 ????。
+          python3 - <<'PY'
+          import pathlib, struct
+          head = struct.Struct('<IIHHfffffII').unpack_from
+          for name in ('manrope-200', 'manrope-500', 'manrope-600'):
+              data = pathlib.Path(f'ps5/app/assets/fonts/{name}.huifont').read_bytes()
+              magic, version, w, h, px, rng, asc, desc, gap, glyphs, kerns = head(data, 0)
+              assert magic == 0x46505a50 and version == 1, name
+              print(f'{name}: {glyphs} 字形，atlas {w}x{h}，{px:g}px')
+              if name == 'manrope-500':
+                  assert glyphs > 7000, '正文字重没有装 GB2312 全集'
+          PY
+
+      - name: 交叉编译（RADV + llama.cpp + 界面 + title）
+        run: scripts/test-native-build.sh
+
+      - name: 打包成 zip
+        id: pack
+        run: |
+          version=$(sed -n 's/^#define PS5LM_VERSION "\(.*\)"$/\1/p' ps5/app/version.hpp)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          scripts/release-app.sh
+          # 包里那套字体必须和仓库里的一致：防止拿英文字体打出来的包混进来。
+          unzip -o -q build/release/ps5lm-app-v$version.zip -d build/release/unzipped
+          for f in manrope-200 manrope-500 manrope-600; do
+            a=$(sha256sum "ps5/app/assets/fonts/$f.huifont" | cut -d' ' -f1)
+            b=$(sha256sum "build/release/unzipped/PPSA99575/assets/fonts/$f.huifont" | cut -d' ' -f1)
+            [ "$a" = "$b" ] || { echo "包里的 $f.huifont 和仓库里的不一致" >&2; exit 1; }
+          done
+          ls -l build/release/
+
+      # 上传步骤的 action 用 v4 tag；想更严可以把 tag 换成按 commit SHA 固定。
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ps5lm-app-zh-v${{ steps.pack.outputs.version }}
+          path: |
+            build/release/ps5lm-app-*.zip
+            build/release/ps5lm-app-*.zip.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: 安装说明
+        if: always()
+        run: |
+          version=$(sed -n 's/^#define PS5LM_VERSION "\(.*\)"$/\1/p' ps5/app/version.hpp)
+          {
+            echo "## PS5LM 汉化版 v$version"
+            echo
+            echo '交叉编译完成。到本次运行的 **Artifacts** 里下载 `ps5lm-app-zh-v'$version'.zip`。'
+            echo
+            echo '安装到主机：'
+            echo '1. 解压，得到 `PPSA99575` 文件夹；'
+            echo '2. 用 FTP 把它拷到主机的 `/data/homebrew`（ShadowMountPlus 会把 PS5LM 放到主屏幕）；'
+            echo '3. 打开 PS5LM，进「模型 > 推荐」拿一个模型，或者把 `.gguf` 放到 `/data/PS5LM/models`；'
+            echo '4. 加载，等主页显示「就绪」，然后用浏览器打开 `http://<主机IP>:8081`。'
+            echo
+            echo '> 这是静态交叉编译与包内容检查，不是真机启动测试；控制台侧的行为需要你自己验。'
+          } >> "$GITHUB_STEP_SUMMARY"

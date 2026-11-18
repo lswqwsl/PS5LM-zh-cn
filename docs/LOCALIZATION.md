@@ -3,7 +3,8 @@
 这是 [cobanov/PS5LM](https://github.com/cobanov/PS5LM) 的简体中文汉化分支。做法参照了
 [Ykls53/PS5LM](https://github.com/Ykls53/PS5LM) 的汉化版（词条表 + 字符集 + 重烘字体），
 但覆盖的是**上游最新版**：多出来的 fleet、调试报告、`/v1/responses`、图像输入、决策模型、
-下载队列这些页面和文案都在里面。
+下载队列这些页面和文案都在里面。基线是上游 `6d60345`（v0.11.0），三个 submodule 的 gitlink
+按上游发布的版本固定。
 
 ## 一眼看懂改了什么
 
@@ -127,6 +128,7 @@ scripts/check-zh.py                编码/换行/引号/词条表自查
 scripts/fitcheck-zh.py             译文排版宽度对比
 scripts/render-font-sample.py      把 .huifont 里的字拼成 PNG（验证字形）
 docs/media/localization-font.png   上面那个脚本对 manrope-500 的输出
+.github/workflows/release-zh.yml   在 GitHub Actions 上交叉编译并打包成 zip
 scripts/font-baker/bake_font.cpp   改了上游那个烘焙器：支持 @字符集文件
 scripts/font-baker/font_format.hpp .huifont 的二进制布局
 docs/LOCALIZATION.md               本文件
@@ -159,19 +161,66 @@ ps5/ps5lm/library.html             模型库页
 * **`ps5/ps5lm/app.cpp`（payload 那一侧）的消息**保持英文：它是 HTTP 响应和 llama-server 的
   包装层，改了会让客户端和 issue 里的报错对不上。
 
-## 构建
+## 怎么拿到能装到 PS5 上的 zip
 
-本仓库是按 tar 包起的 git 仓库，`third_party/*` 里的三个 submodule 没有 gitlink 记录，所以
-`git submodule update --init` 不会自己动。构建前按 `.gitmodules` 里的地址把它们放到对应目录：
+**仓库里没有现成的 zip，这不奇怪：界面文案是编译进 `eboot.bin` 的。** 上游 release 里的
+`PPSA99575` 文件夹中，`eboot.bin` 是编译产物，`assets/fonts/*.huifont` 才是单独的资源。所以
+"拿上游的包、只把字体换掉"是行不通的 —— 那样只会变成"英文界面 + 中文字体"。要中文界面，
+必须交叉编译。
+
+两条路，选一条：
+
+### 路线 A：让 GitHub Actions 编（不用自己有 Linux）
+
+仓库里带了 `.github/workflows/release-zh.yml`，和上游 CI 用的是同一个 Debian trixie 镜像、
+同一套 pinned SDK/RADV/llama.cpp：
+
+1. 把这个仓库推到你自己的 GitHub（私有仓库也行）；
+2. 打开 **Actions → 打包汉化版（PS5 title zip）→ Run workflow**（推到 `main` / `zh-cn` 分支或
+   打 `v*` tag 也会自动跑）；
+3. 等 40~60 分钟，在该次运行的 **Artifacts** 里下载 `ps5lm-app-zh-v0.11.0.zip`（含 `.sha256`）。
+
+工作流会先检查字体是不是汉化版（`manrope-500` 必须装够 7000+ 字形），打包后再比对包里的
+`.huifont` 和仓库里的是否一致，防止"拿英文字体打出来的包"混进来。免费额度和 2 核跑满 1 小时
+的开销，以及 artifact 30 天保留期，自己留意一下。
+
+### 路线 B：在本机 Linux（或 WSL2 Ubuntu）上编
+
+需要 clang/llvm 19、ninja、meson 等，具体清单见 [BUILDING.md](BUILDING.md)；Mesa 的 RADV 要
+按 `patches/mesa/README.md` 手工打补丁 —— 这一串是上游的构建链，汉化没有动它：
 
 ```sh
-git clone https://github.com/Phononenom/ps5-homebrew-ui third_party/ps5-homebrew-ui
-git clone https://github.com/ggml-org/llama.cpp           third_party/llama.cpp
-git clone https://github.com/drakmor/ftpsrv               third_party/ftpsrv
+git submodule update --init --depth 1
+scripts/bake-fonts.sh          # 只在改了文案时必要：重烘三个字重
+scripts/build-app.sh           # 交叉编译，产出 build/app-ps5/title/PPSA99575
+scripts/release-app.sh         # 打包成 build/release/ps5lm-app-v<版本>.zip
 ```
 
-之后按 [BUILDING.md](BUILDING.md) 的步骤来（需要 PS5 的 payload SDK 和 vulkan 头）。字体和页面
-的构建产物已经在仓库里，控制台侧不需要 fontTools，也不需要重新生成页面。
+`release-app.sh` 会校验 `CHANGELOG.md` 里有 `## [<版本>]` 条目、`param.json` 的 `contentVersion`
+与 `version.hpp` 对应（当前 v0.11.0 ↔ `01.011.000`，都已就绪）。
+
+### 装到主机上
+
+1. 解压 zip，得到 `PPSA99575` 文件夹；
+2. 用 FTP 拷到主机的 `/data/homebrew`（ShadowMountPlus 会把 **PS5LM** 放到主屏幕）；
+3. 打开 PS5LM，**模型 > 推荐** 拿一个模型，或把 `.gguf` 放到 `/data/PS5LM/models`；
+4. 加载，等主页显示「就绪」，然后用浏览器打开 `http://<主机IP>:8081`。
+
+升级时把新的 `PPSA99575` 整个覆盖旧的；设置、模型、下载都在 `/data/PS5LM`。
+
+## 构建
+
+三个 submodule 的 gitlink 已经按上游发布的版本固定好，拉下来直接初始化即可：
+
+```sh
+git submodule update --init --depth 1      # llama.cpp / ps5-homebrew-ui / ftpsrv
+```
+
+`third_party/ps5-homebrew-ui` 的版本很重要：`scripts/font-baker/bake_font.cpp` 里的
+`font_format.hpp` 必须和它 `src/gfx/font_format.hpp` 一致（当前两者逐字节相同，脚本烘完会
+读回来核对字形），否则烘出来的字体 app 读不了。之后按 [BUILDING.md](BUILDING.md) 的步骤来
+（需要 PS5 的 payload SDK 和 Vulkan 头）。字体和页面的产物已经在仓库里，控制台侧不需要
+fontTools，也不需要重新生成页面。
 
 ## 和上游同步
 

@@ -20,6 +20,11 @@
 > 电视端五个页面、提示行、对话框、浏览器里的聊天页与模型库页都是中文，字体也换成了带
 > GB2312 汉字的 Noto Sans SC，所以聊天面板里模型生成的中文能正常显示，不再是 ????
 > 号。改了什么、怎么自己重新烘字体，见 [docs/LOCALIZATION.md](docs/LOCALIZATION.md)。
+>
+> **没有现成的安装包，是因为界面文案编译在 `eboot.bin` 里**，换字体换不出中文界面。要装到
+> 主机上，用仓库里带的 GitHub Actions 工作流交叉编译一次即可（推上 GitHub → Actions →
+> 打包汉化版 → Run workflow，约 40~60 分钟），详见
+> [docs/LOCALIZATION.md 的「怎么拿到能装到 PS5 上的 zip」](docs/LOCALIZATION.md#怎么拿到能装到-ps5-上的-zip)。
 
 > **新功能：决策模型，由 [Ollaya](https://ollaya.dev) 提供支持。** PS5LM 现在能在 GPU 上跑
 > Jev 这类决策模型（d1、Clef、OpenJev 等），对外的 `/v1/systemone` 接口与 Ollaya 一致：
