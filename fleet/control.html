@@ -259,7 +259,7 @@ function renderPools(s) {
       `${p.shared_context ? "，共用一个上下文" : ""} · ${p.cache_type} 缓存${p.flash_attn ? "，Flash Attention" : ""}` +
       (p.aliases.length ? ` · 也叫 "${p.aliases.join('", "')}"` : ""));
     const replicas = p.replicas.map((r) => {
-      const where = r.url && r.via === "server" ? r.url : r.devices.join(" + ") + ` (${r.via === "rpc" ? "split" : r.via})`;
+      const where = r.url && r.via === "server" ? r.url : r.devices.join(" + ") + ` (${r.via === "rpc" ? "切分" : r.via})`;
       const load = r.state === "ready" ? `${r.in_flight}/${r.slots} 忙 · 已服务 ${r.served}` : "";
       const retry = r.state === "failed" && r.retry_in ? ` · ${r.retry_in} 秒后重试` : "";
       return el("div", { class: "replica" },

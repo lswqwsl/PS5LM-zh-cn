@@ -14,7 +14,8 @@ app 里的 llama-server 自己会往外提供一个页面，浏览器打开 `htt
 
 ## 现在是怎么接上的
 
-1. `scripts/build-app.sh` 把 `ps5/webui/index.html` 和 `app.json` 拷进包的 `assets/www/`。
+1. `scripts/build-app.sh` 把 `ps5/webui/index.html` 和 `ps5/webui/app.json` 拷进包的
+   `assets/www/`。
 2. `Models::start`（`ps5/app/main.cpp`）在启动 llama-server 前补一个参数：
    `--path <app0>/assets/www`（`app0` 走 `sandbox_path()`，HEN 把 app 挪出沙箱时也对）。
    llama-server 会把 `index.html` 挂在 `/` 上，并且因为 `public_path` 非空，**不再**serve 自带的 UI
@@ -38,8 +39,8 @@ PS5LM_WEBUI=llama
 ## 页面上的「模型」链接
 
 payload 那条路（`ps5lm.elf`）在 8082 端口有一页模型库，所以链接指过去。native app 没有这一页
-（模型库在主机电视上），它在 `assets/www/app.json` 里写了 `{"library": ""}`，页面读到就把链接
-藏起来；payload 的 www 目录里没有 `app.json`，链接照旧。
+（模型库在主机电视上），它在 `ps5/webui/app.json`（包里是 `assets/www/app.json`）里写了
+`{"library": ""}`，页面读到就把链接藏起来；payload 的 www 目录里没有 `app.json`，链接照旧。
 
 ## 怎么验证
 

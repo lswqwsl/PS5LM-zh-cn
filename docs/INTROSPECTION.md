@@ -125,8 +125,8 @@ the token ids and pieces instead). Other architectures name their tensors in
 models, for instance).
 
 A name that is not delivered simply does not appear in the answer; the request
-still succeeds. `docs/INSPECT.md`'s tool has its own capture path and lists its
-own names.
+still succeeds. `scripts/ps5lm-introspect.py` asks for the same names through
+this endpoint, so it reports the same set.
 
 Other architectures name their tensors in `src/models/<arch>.cpp`; a name that
 does not exist is simply not captured, and the answer then has no activations
@@ -227,10 +227,10 @@ With the endpoint off, `/v1/introspect` answers 501 and every other request work
 ## What this does not give you
 
 - **A separate context per request.** This endpoint runs in the app's server, so it shares the
-  app's loaded model, its slot and its KV cache. The standalone
-  [`llama-inspect`](INSPECT.md) tool is the opposite trade: its own process, its own context, one
-  request at a time (so a capture is the whole batch, and `baseline: true` runs a prompt both ways in
-  one call) — CPU only, and a payload's memory limit.
+  app's loaded model, its slot and its KV cache: a capture is a step inside the running model, not
+  a second, clean run of the prompt. `baseline: true` runs the prompt twice in that same context to
+  get the comparison. The trade is deliberate — the model is already on the console's GPU, so no
+  weights are read twice and no memory is spent on a second copy.
 - **Weights.** They are in the GGUF file: read it directly from the host
   (`gguf-py`, `gguf_dump.py`) or over FTP; the console does not need to serve
   them.
