@@ -29,14 +29,14 @@ FleetWorkerConfig read_fleet_worker_config(const char * path) {
             return {};  // Ordinary PS5LM until explicitly opted in.
         }
         if (errno == ELOOP) {
-            return { FleetWorkerConfig::invalid, "", "fleet-worker.txt must be a regular file, not a link or device" };
+            return { FleetWorkerConfig::invalid, "", "fleet-worker.txt 必须是普通文件，不能是链接或设备" };
         }
-        return { FleetWorkerConfig::invalid, "", std::string("Cannot open fleet-worker.txt: ") + std::strerror(errno) };
+        return { FleetWorkerConfig::invalid, "", std::string("打不开 fleet-worker.txt：") + std::strerror(errno) };
     }
     struct stat info = {};
     if (fstat(fd, &info) != 0 || !S_ISREG(info.st_mode)) {
         close(fd);
-        return { FleetWorkerConfig::invalid, "", "fleet-worker.txt changed or is not a regular file" };
+        return { FleetWorkerConfig::invalid, "", "fleet-worker.txt 变了，或不是普通文件" };
     }
     char data[1025];
     size_t size = 0;
@@ -54,7 +54,7 @@ FleetWorkerConfig read_fleet_worker_config(const char * path) {
     }
     close(fd);
     if (failed || size == sizeof(data)) {
-        return { FleetWorkerConfig::invalid, "", "fleet-worker.txt is unreadable or exceeds 1024 bytes" };
+        return { FleetWorkerConfig::invalid, "", "fleet-worker.txt 读不了或超过 1024 字节" };
     }
     return parse_fleet_worker_config(std::string(data, size));
 }
@@ -63,14 +63,14 @@ std::string run_fleet_worker(const FleetWorkerConfig & config) {
     // Revalidate at the listener boundary, even if a caller bypassed the file reader.
     if (config.state != FleetWorkerConfig::enabled ||
         parse_fleet_worker_config(config.endpoint + "\nI_UNDERSTAND_RPC_IS_UNAUTHENTICATED\n").state != FleetWorkerConfig::enabled) {
-        return "Refusing invalid fleet worker configuration";
+        return "fleet worker 配置无效，拒绝启动";
     }
     try {
         // Layer splitting does not need peer collectives. The matching server
         // patch rejects COMM_INIT, which would otherwise open another wildcard
         // listener at a port chosen by the controller. Override env.txt too.
         if (setenv("GGML_RPC_NO_COMM", "1", 1) != 0) {
-            return "Cannot disable extra RPC listeners; refusing to start";
+            return "关不掉多余的 RPC 监听，拒绝启动";
         }
         // The title's stderr does not reach app.log; ggml's log (RPC and Vulkan
         // errors included) goes to stdout, which does.
@@ -78,7 +78,7 @@ std::string run_fleet_worker(const FleetWorkerConfig & config) {
         ggml_backend_load_all();
         ggml_backend_reg_t vulkan = ggml_backend_reg_by_name("Vulkan");
         if (!vulkan) {
-            return "No Vulkan backend; refusing CPU fallback";
+            return "没有 Vulkan 后端，拒绝退回 CPU";
         }
         ggml_backend_dev_t device = nullptr;
         for (size_t i = 0; i < ggml_backend_reg_dev_count(vulkan); ++i) {
@@ -86,13 +86,13 @@ std::string run_fleet_worker(const FleetWorkerConfig & config) {
             const auto type = ggml_backend_dev_type(candidate);
             if (type == GGML_BACKEND_DEVICE_TYPE_GPU || type == GGML_BACKEND_DEVICE_TYPE_IGPU) {
                 if (device) {
-                    return "Expected exactly one PS5 Vulkan device";
+                    return "期望恰好一个 PS5 Vulkan 设备";
                 }
                 device = candidate;
             }
         }
         if (!device) {
-            return "No Vulkan GPU device; refusing CPU fallback";
+            return "没有 Vulkan GPU 设备，拒绝退回 CPU";
         }
         std::fprintf(stdout,
             "ps5lm-fleet: WARNING: unauthenticated, unencrypted RPC v%d.%d.%d on %s\n"
@@ -103,11 +103,11 @@ std::string run_fleet_worker(const FleetWorkerConfig & config) {
         // No cache: avoids unbounded disk growth and HOME dependence. TCP only
         // (GGML_RPC_RDMA=OFF). The host sends the assigned weights over this socket.
         ggml_backend_rpc_start_server(config.endpoint.c_str(), nullptr, 6, 1, &device);
-        return "RPC stopped or failed to bind; inspect /data/PS5LM/app.log and restart the title";
+        return "RPC 已停止或绑定失败；查看 /data/PS5LM/app.log 并重启应用";
     } catch (const std::exception & ex) {
-        return std::string("RPC worker failed: ") + ex.what();
+        return std::string("RPC worker 失败：") + ex.what();
     } catch (...) {
-        return "RPC worker failed with an unknown exception";
+        return "RPC worker 因未知异常失败";
     }
 }
 

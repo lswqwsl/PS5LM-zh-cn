@@ -1,3 +1,6 @@
+# 汉化版说明：manrope-*.huifont 里的字形来自 Noto Sans SC（共同许可见 noto-sans-sc-LICENSE.txt），
+# 不再是 Manrope 的字形；文件名保持不变，是为了 main.cpp 的加载路径。Manrope 的原始许可如下。
+
 Copyright 2018 The Manrope Project Authors (https://github.com/googlefonts/manrope)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.

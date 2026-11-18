@@ -152,14 +152,14 @@ FetchResult https_get(const std::string & url_in, const std::string & range,
         sceHttp2DeleteRequest(req);
         req = -1;
         if (next.empty()) {
-            r.error = "redirect without a Location";
+            r.error = "重定向缺少 Location";
             return r;
         }
         // A relative Location keeps the scheme and host.
         url = next.rfind("http", 0) == 0 ? next : url.substr(0, url.find('/', url.find("//") + 2)) + next;
     }
     if (req < 0) {
-        r.error = "too many redirects";
+        r.error = "重定向次数太多";
         return r;
     }
     int      has_length = 0;

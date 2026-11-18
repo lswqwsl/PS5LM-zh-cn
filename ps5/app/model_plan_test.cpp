@@ -61,7 +61,7 @@ int main(int argc, char ** argv) {
     assert(!ps5lm::find_preset(d));
     const ps5lm::Plan dp = ps5lm::plan_model(d, budget);
     assert(dp.fits && dp.ctx == 4096 && has_args(dp, "-ub", "2048") && has_args(dp, "-b", "2048"));
-    assert(dp.why.find("decision model (clef)") == 0);
+    assert(dp.why.find(std::string(ps5lm::kDecisionPlanTag) + "clef" + ps5lm::kDecisionPlanSep) == 0);
 
     // The same model without the decision key is a chat model with the narrow batch.
     Gguf chat;

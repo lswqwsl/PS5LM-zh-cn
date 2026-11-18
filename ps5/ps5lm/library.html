@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,14 +72,14 @@
 <body>
 <header class="top">
   <span class="brand">ps5lm</span>
-  <a id="chat-link" href="#" style="display:none">Chat</a>
-  <button id="quit" class="ghost" type="button">Quit</button>
+  <a id="chat-link" href="#" style="display:none">聊天</a>
+  <button id="quit" class="ghost" type="button">退出</button>
 </header>
 <main>
-  <h1>Models</h1>
-  <div class="now" id="now"><span class="what">Loading</span></div>
+  <h1>模型</h1>
+  <div class="now" id="now"><span class="what">加载中</span></div>
   <div class="list" id="catalog"></div>
-  <h2 id="other-title" style="display:none">Copied to the console</h2>
+  <h2 id="other-title" style="display:none">已复制到主机</h2>
   <div class="list" id="other"></div>
   <footer id="foot"></footer>
 </main>
@@ -131,18 +131,18 @@
     box.innerHTML = '';
     var what = el('span', 'what');
     if (chat.model && chat.ready) {
-      what.appendChild(document.createTextNode('Running '));
+      what.appendChild(document.createTextNode('正在运行 '));
       what.appendChild(el('b', '', short(chat.model)));
       box.appendChild(what);
-      var open = el('a', 'button primary', 'Open chat');
+      var open = el('a', 'button primary', '打开聊天');
       open.href = chatUrl();
       open.setAttribute('data-k', 'open-chat');
       box.appendChild(open);
-      box.appendChild(button('Stop', 'ghost', '/api/stop'));
+      box.appendChild(button('停止', 'ghost', '/api/stop'));
       link.href = chatUrl();
       link.style.display = '';
     } else if (chat.model) {
-      what.appendChild(document.createTextNode('Starting '));
+      what.appendChild(document.createTextNode('正在启动 '));
       what.appendChild(el('b', '', short(chat.model)));
       box.appendChild(what);
       link.style.display = 'none';
@@ -151,7 +151,7 @@
         what.className = 'what problem';
         what.textContent = chat.error;
       } else {
-        what.textContent = 'Nothing running. Download a model, then run it.';
+        what.textContent = '没有模型在运行。先下载一个模型，再运行它。';
       }
       box.appendChild(what);
       link.style.display = 'none';
@@ -171,12 +171,12 @@
       fill.style.width = (d.total ? Math.floor(100 * d.done / d.total) : 0) + '%';
       bar.appendChild(fill);
       info.appendChild(bar);
-      info.appendChild(el('div', 'status', size(d.done) + ' of ' + size(d.total) +
-        (d.speed ? ', ' + (d.speed / 1048576).toFixed(1) + ' MB/s' : '')));
+      info.appendChild(el('div', 'status', size(d.done) + ' / ' + size(d.total) +
+        (d.speed ? '，' + (d.speed / 1048576).toFixed(1) + ' MB/s' : '')));
     } else if (d && d.error && !m.installed) {
       var paused = d.error === 'paused' || d.error === 'cancelled';
       info.appendChild(el('div', paused ? 'status' : 'status problem',
-        paused ? 'Paused at ' + size(d.done) : d.error));
+        paused ? '已暂停在 ' + size(d.done) : d.error));
     }
     r.appendChild(info);
     r.appendChild(el('span', 'size', size(m.size)));
@@ -184,17 +184,17 @@
     var actions = el('div', 'actions');
     var tooBig = state.max_model && m.size > state.max_model;
     if (downloading) {
-      actions.appendChild(button('Cancel', 'ghost', '/api/cancel?id=' + encodeURIComponent(m.id)));
+      actions.appendChild(button('取消', 'ghost', '/api/cancel?id=' + encodeURIComponent(m.id)));
     } else if (m.installed && state.chat.model === m.file) {
-      actions.appendChild(el('span', 'tag', state.chat.ready ? 'Running' : 'Starting'));
+      actions.appendChild(el('span', 'tag', state.chat.ready ? '运行中' : '启动中'));
     } else if (m.installed && tooBig) {
-      actions.appendChild(el('span', 'status problem', 'Too big to run'));
-      actions.appendChild(button('Delete', 'ghost', '/api/delete?file=' + encodeURIComponent(m.file)));
+      actions.appendChild(el('span', 'status problem', '太大，跑不动'));
+      actions.appendChild(button('删除', 'ghost', '/api/delete?file=' + encodeURIComponent(m.file)));
     } else if (m.installed) {
-      actions.appendChild(button('Run', 'primary', '/api/run?file=' + encodeURIComponent(m.file)));
-      actions.appendChild(button('Delete', 'ghost', '/api/delete?file=' + encodeURIComponent(m.file)));
+      actions.appendChild(button('运行', 'primary', '/api/run?file=' + encodeURIComponent(m.file)));
+      actions.appendChild(button('删除', 'ghost', '/api/delete?file=' + encodeURIComponent(m.file)));
     } else {
-      actions.appendChild(button(d && d.done ? 'Resume' : 'Download', 'primary',
+      actions.appendChild(button(d && d.done ? '继续下载' : '下载', 'primary',
         '/api/download?id=' + encodeURIComponent(m.id)));
     }
     r.appendChild(actions);
@@ -238,8 +238,8 @@
     }
     document.getElementById('other-title').style.display = count ? '' : 'none';
     var foot = 'PS5LM ' + state.version + '.';
-    if (state.free >= 0) foot += ' ' + size(state.free) + ' free.';
-    if (state.ip) foot += ' On a phone or computer: http://' + state.ip + ':' + state.port;
+    if (state.free >= 0) foot += ' 剩余 ' + size(state.free) + '。';
+    if (state.ip) foot += ' 手机或电脑上打开：http://' + state.ip + ':' + state.port;
     document.getElementById('foot').textContent = foot;
   }
 
@@ -249,13 +249,13 @@
     lastText = '';
     var box = document.getElementById('now');
     box.innerHTML = '';
-    box.appendChild(el('span', 'what problem', 'PS5LM is not running. Start it again from Payload Manager.'));
+    box.appendChild(el('span', 'what problem', 'PS5LM 没有在运行。请在 Payload Manager 里重新启动它。'));
     document.getElementById('catalog').innerHTML = '';
     document.getElementById('other').innerHTML = '';
     document.getElementById('other-title').style.display = 'none';
     document.getElementById('chat-link').style.display = 'none';
     document.getElementById('quit').style.display = 'none';
-    document.getElementById('quit').textContent = 'Quit';
+    document.getElementById('quit').textContent = '退出';
     document.getElementById('foot').textContent = '';
   }
 
@@ -295,14 +295,14 @@
     if (armed) {
       clearTimeout(armed);
       armed = null;
-      quit.textContent = 'Quitting';
+      quit.textContent = '正在退出';
       post('/api/quit');
       return;
     }
-    quit.textContent = 'Press again to quit';
+    quit.textContent = '再按一次退出';
     armed = setTimeout(function () {
       armed = null;
-      quit.textContent = 'Quit';
+      quit.textContent = '退出';
     }, 4000);
   };
 

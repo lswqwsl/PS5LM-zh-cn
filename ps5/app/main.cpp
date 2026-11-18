@@ -573,14 +573,14 @@ void write_report(ReportJob job) {
     }
     char status[256];
     if (ok) {
-        std::snprintf(status, sizeof(status), "Saved to %s%s, %zu KB", path.c_str(),
-                      usb.empty() ? "" : (" and " + usb + "/PS5LM-debug-report.txt").c_str(), (text.size() + 1023) / 1024);
+        std::snprintf(status, sizeof(status), "已保存到 %s%s，%zu KB", path.c_str(),
+                      usb.empty() ? "" : (" 以及 " + usb + "/PS5LM-debug-report.txt").c_str(), (text.size() + 1023) / 1024);
     } else {
-        std::snprintf(status, sizeof(status), "Failed: cannot write %s%s", path.c_str(),
-                      usb.empty() ? "" : ("; saved to " + usb + "/PS5LM-debug-report.txt").c_str());
+        std::snprintf(status, sizeof(status), "失败：无法写入 %s%s", path.c_str(),
+                      usb.empty() ? "" : ("；已保存到 " + usb + "/PS5LM-debug-report.txt").c_str());
     }
     ps5lm::log_line("debug report: %s\n", status);
-    notify((std::string("PS5LM: debug report ") + (ok ? "saved to " + path : status)).c_str());
+    notify((std::string("PS5LM：调试报告 ") + (ok ? "已保存到 " + path : status)).c_str());
     std::lock_guard<std::mutex> lock(g_report_mutex);
     g_report_status = status;
     g_report_busy = false;
@@ -768,7 +768,7 @@ struct Models {
         pthread_attr_setstacksize(&attr, 16u << 20);  // the console's default stack is small
         pthread_create(&server, &attr, run_server, nullptr);
         server_started = true;
-        notify("PS5LM: loading the model onto the GPU");
+        notify("PS5LM：正在把模型加载到 GPU");
     }
 
     void stop() {
@@ -850,8 +850,8 @@ int main(int, char **) {
     // The first start without full storage asks on the screen what to do;
     // the notification is for a screen that does not come up.
     if (!full && storage_choice().empty()) {
-        notify("PS5LM: full storage (/data) is closed to the app, so it keeps its files in its own storage. "
-               "On OnionHEN, add PPSA99575 to app_jailbreak.exact_title_ids in /data/OnionHEN/config.ini.");
+        notify("PS5LM：完整存储（/data）没有开放给 app，所以它把文件放在自带的存储里。"
+               "在 OnionHEN 上，把 PPSA99575 加到 /data/OnionHEN/config.ini 的 app_jailbreak.exact_title_ids 里。");
     }
     // One device-local heap over the whole pool (RADV splits an APU's 2/3 to
     // 1/3), and a HOME for llama.cpp, which throws without one.
@@ -914,7 +914,7 @@ int main(int, char **) {
     };
     // The splash at once, so a restart for a model is never a black screen.
     if (ui_ok) {
-        dash.set_busy("Starting", "Opening the GPU and reading the models");
+        dash.set_busy("启动中", "正在打开 GPU 并读取模型");
         render();
         display.swap();
     }
@@ -955,7 +955,7 @@ int main(int, char **) {
                 worker_error = std::string("Cannot start RPC thread: ") + std::strerror(rc);
                 stopped = true;
             }
-            notify("PS5LM fleet: experimental unauthenticated RPC. Trusted isolated LAN only.");
+            notify("PS5LM fleet：实验性的无认证 RPC。仅限可信的隔离局域网。");
         } else {
             std::printf("ps5lm-fleet: %s\n", worker_error.c_str());
             stopped = true;
@@ -965,8 +965,8 @@ int main(int, char **) {
         // as Ready. The host's successful RPC handshake verifies availability.
         for (uint64_t n = 0;; ++n) {
             const bool failed = stopped.load(std::memory_order_acquire);
-            dash.set_busy(failed ? "Fleet worker stopped" : "Experimental fleet RPC worker",
-                failed ? worker_error : fleet.endpoint + " - no authentication; isolated LAN only");
+            dash.set_busy(failed ? "fleet worker 已停止" : "实验性 fleet RPC worker",
+                failed ? worker_error : fleet.endpoint + " — 无认证；仅限隔离局域网");
             quiet.clear();
             dash.update(hui::InputFrame{}, 1.0f / 60.0f, quiet);
             if (ui_ok) {
@@ -1020,7 +1020,7 @@ int main(int, char **) {
             stats.set_model(pending);
             stats.set_state(ServerState::loading);
         }
-        stats.set_phase("Opening the GPU and reading the models");
+        stats.set_phase("正在打开 GPU 并读取模型");
     }
 
     // The slow part on a thread of its own (the GPU opening, every model's
@@ -1095,7 +1095,7 @@ int main(int, char **) {
         } else {
             stats.set_state(ServerState::no_model);
             if (models.rows.empty()) {
-                notify(("PS5LM: no models; copy a .gguf to " + g_files.models + " or PS5LM/models on a USB drive").c_str());
+                notify(("PS5LM：没有模型；把 .gguf 复制到 " + g_files.models + " 或 U 盘上的 PS5LM/models").c_str());
             }
         }
         stats.set_phase("");
@@ -1172,17 +1172,17 @@ int main(int, char **) {
             if (live.state == ServerState::loading && projector && restart_at == 0) {
                 std::ofstream(g_files.choice) << models.running << "\n";
                 std::ofstream(g_files.text_only) << models.running << "\n";
-                notify("PS5LM: the image projector did not load; loading the model text only");
-                dash.set_busy("Loading " + base_name(models.running) + " text only",
-                              "Its image projector did not load, see " + g_files.llama_log);
+                notify("PS5LM：图像投影器没加载，只加载文本部分");
+                dash.set_busy("正在加载 " + base_name(models.running) + "（仅文本）",
+                              "它的图像投影器没加载，详见 " + g_files.llama_log);
                 restart_at = n + 3;
             } else {
-                notify(("PS5LM: the server stopped, see " + g_files.llama_log).c_str());
+                notify(("PS5LM：服务已停止，详见 " + g_files.llama_log).c_str());
             }
         }
         const bool serving = live.state == ServerState::ready || live.state == ServerState::generating;
         if (serving && !was_serving) {
-            notify(live.decision.empty() ? "PS5LM: ready, chat in a browser on this network" : "PS5LM: ready for decisions at /v1/systemone");
+            notify(live.decision.empty() ? "PS5LM：就绪，局域网内用浏览器聊天" : "PS5LM：就绪，决策接口 /v1/systemone");
             log_memory("when ready");  // the weights, the cache and the compute buffers are all allocated by now
         }
         was_serving = serving;
@@ -1242,9 +1242,9 @@ int main(int, char **) {
             const bool over = gib > models.settings.scratch_limit_gib;
             if (over && !scratch_warned) {
                 char text[128];
-                std::snprintf(text, sizeof(text), "PS5LM: the chat's scratch folder holds %.1f GiB; clear it in Settings", gib);
+                std::snprintf(text, sizeof(text), "PS5LM：聊天 scratch 目录已占 %.1f GiB，在「设置」里清空", gib);
                 notify(text);
-                ps5lm::log_line("%s\n", text + 7);
+                ps5lm::log_line("%s\n", text + std::strlen("PS5LM："));  // the log keeps the message, not the name
             }
             scratch_warned = over;
         }
@@ -1259,7 +1259,7 @@ int main(int, char **) {
             if (mv.saved != saved_seen) {
                 saved_seen = mv.saved;
                 models.rescan(stats, false);
-                notify(("PS5LM: " + mv.note).c_str());
+                notify(("PS5LM：" + mv.note).c_str());
             }
             dash.set_market(std::move(mv));
         }
@@ -1270,9 +1270,9 @@ int main(int, char **) {
         // A settings rescan in the background: say so until it lands.
         if (models.poll_rescan(stats) && models.scan_shown) {
             char text[96];
-            std::snprintf(text, sizeof(text), "Planning every model again for %uk tokens and the %s cache",
+            std::snprintf(text, sizeof(text), "按 %uk token 和 %s 缓存重新规划所有模型",
                           models.settings.ctx_cap / 1024, models.settings.kv_type.c_str());
-            dash.set_busy("Applying the new limits", text);
+            dash.set_busy("正在应用新的限制", text);
             rescanning = true;
         } else if (rescanning) {
             rescanning = false;
@@ -1305,8 +1305,8 @@ int main(int, char **) {
                 std::ofstream(g_files.choice) << models.running << "\n";
                 ps5lm::log_line("restarting %s with the introspection API %s\n", models.running.c_str(),
                             models.settings.introspect ? "on" : "off");
-                dash.set_busy(std::string(models.settings.introspect ? "Opening" : "Closing") + " the logits and activations API",
-                              "The app restarts with " + base_name(models.running));
+                dash.set_busy(std::string(models.settings.introspect ? "正在打开" : "正在关闭") + " Logits 与激活值 API",
+                              "app 将带着 " + base_name(models.running));
                 restart_at = n + 3;
             }
         }
@@ -1319,7 +1319,7 @@ int main(int, char **) {
                 MarketJob job;
                 if (market.job(req.repo, req.file, req.path.empty() ? models.settings.download_dir : req.path, &job) &&
                     !market.enqueue(job, free_gib(job.dir))) {
-                    notify(("PS5LM: " + market.snapshot().note).c_str());
+                    notify(("PS5LM：" + market.snapshot().note).c_str());
                 }
                 break;
             }
@@ -1333,7 +1333,7 @@ int main(int, char **) {
                     }
                 }
                 if (!market.enqueue(jobs, free_gib(dir))) {
-                    notify(("PS5LM: " + market.snapshot().note).c_str());
+                    notify(("PS5LM：" + market.snapshot().note).c_str());
                 }
                 dash.show_downloads();
                 break;
@@ -1349,7 +1349,7 @@ int main(int, char **) {
                     market.enqueue(job, free_gib(job.dir))) {
                     std::ofstream(g_files.choice) << "none\n";
                     ps5lm::log_line("restarting to download %s/%s without a model\n", job.repo.c_str(), job.file.c_str());
-                    dash.set_busy("Unloading " + base_name(models.running), "The app restarts without it, then the download starts");
+                    dash.set_busy("正在卸载 " + base_name(models.running), "app 将不带它重启，然后开始下载");
                     restart_at = n + 3;
                 }
                 break;
@@ -1362,7 +1362,7 @@ int main(int, char **) {
                 std::filesystem::remove_all(e.path(), ec);
             }
             stats.set_scratch(folder_bytes(g_files.scratch) / 1073741824.0);
-            notify("PS5LM: scratch folder cleared");
+            notify("PS5LM：scratch 目录已清空");
             ps5lm::log_line("scratch folder cleared\n");
         }
         // Full storage closed: the app's own storage is the answer from now on,
@@ -1375,7 +1375,7 @@ int main(int, char **) {
                 std::ofstream(g_files.choice) << models.running << "\n";
             }
             ps5lm::log_line("restarting to ask for /data again\n");
-            dash.set_busy("Starting again", "PS5LM asks the HEN for full storage once more");
+            dash.set_busy("重新启动", "PS5LM 再向 HEN 申请一次完整存储");
             restart_at = n + 3;
         }
         // A debug report, on a thread of its own: the ports and the kernel log
@@ -1388,7 +1388,7 @@ int main(int, char **) {
             }
             {
                 std::lock_guard<std::mutex> lock(g_report_mutex);
-                g_report_status = "Writing the report";
+                g_report_status = "正在写报告";
             }
             ReportJob job{ stats.snapshot(), market.snapshot().downloads, models.settings,
                            storage_line(data), data_root() };
@@ -1431,11 +1431,11 @@ int main(int, char **) {
             ps5lm::log_line("restarting for %s\n", req.kind == Dashboard::Request::load ? req.path.c_str() : "no model");
             const bool loaded = !models.running.empty();
             if (req.kind == Dashboard::Request::load) {
-                dash.set_busy(loaded ? "Switching models" : "Loading " + base_name(req.path),
-                              loaded ? "Unloading " + base_name(models.running) + ", then the app restarts with " + base_name(req.path)
-                                     : "The app restarts to give the model the whole memory");
+                dash.set_busy(loaded ? "切换模型" : "正在加载 " + base_name(req.path),
+                              loaded ? "正在卸载 " + base_name(models.running) + "，然后 app 带着 " + base_name(req.path)
+                                     : "app 将重启，把整块内存让给模型");
             } else {
-                dash.set_busy("Unloading " + base_name(models.running), "The app restarts without a model, about 30 seconds");
+                dash.set_busy("正在卸载 " + base_name(models.running), "app 将不加载模型重启，约 30 秒");
             }
             restart_at = n + 3;  // three frames with the busy screen on the TV first
         }

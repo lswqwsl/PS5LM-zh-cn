@@ -16,6 +16,12 @@
 
 namespace ps5lm {
 
+// A decision model's plan opens with these two pieces — 决策模型（clef），64k
+// 上下文… — and the Models page drops them, because its row already says 决策.
+// Both files read them from here so the two cannot drift apart.
+inline constexpr const char * kDecisionPlanTag = "决策模型（";
+inline constexpr const char * kDecisionPlanSep = "），";
+
 struct ModelInfo {
     std::string path;
     std::string file_name;

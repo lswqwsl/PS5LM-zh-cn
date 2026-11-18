@@ -63,7 +63,7 @@ std::string text_of(const json & content) {
                 part["text"].is_string()) {
                 out += (out.empty() ? "" : " ") + part["text"].get<std::string>();
             } else if (type == "image_url" || type == "image" || type == "input_image") {
-                out += (out.empty() ? "" : " ") + std::string("[image]");
+                out += (out.empty() ? "" : " ") + std::string("[图像]");
             }
         }
     }
@@ -82,11 +82,11 @@ std::string asked_from(const std::string & path, const json & j) {
         const size_t questions = j.contains("questions") && j["questions"].is_object() ? j["questions"].size() : 0;
         const size_t files = (j.contains("files") && j["files"].is_array() ? j["files"].size() : 0) +
                              (j.contains("images") && j["images"].is_array() ? j["images"].size() : 0);
-        std::string head = std::to_string(questions) + (questions == 1 ? " question" : " questions");
+        std::string head = std::to_string(questions) + " 个问题";
         if (files) {
-            head += ", " + std::to_string(files) + (files == 1 ? " image" : " images");
+            head += "，" + std::to_string(files) + " 张图";
         }
-        return head + (state.empty() || state == "null" ? "" : ": " + state);
+        return head + (state.empty() || state == "null" ? "" : "：" + state);
     }
     for (const char * key : { "messages", "input" }) {
         if (j.contains(key) && j[key].is_array()) {
@@ -130,7 +130,7 @@ std::string answers_of(const json & answers) {
             v = a["choice"].get<std::string>();
         } else if (a.contains("noul") && a["noul"].is_number()) {
             const double p = a["noul"].get<double>();
-            std::snprintf(num, sizeof(num), "%s %.2f", p >= 0.5 ? "yes" : "no", p);
+            std::snprintf(num, sizeof(num), "%s %.2f", p >= 0.5 ? "是" : "否", p);
             v = num;
         } else if (a.contains("score") && a["score"].is_number()) {
             std::snprintf(num, sizeof(num), "%.2f", a["score"].get<double>());
@@ -148,7 +148,7 @@ std::string answer_from(const json & j) {
     }
     if (j.contains("error")) {
         const json & e = j["error"];
-        return "Error: " + (e.is_object() ? e.value("message", e.dump()) : e.is_string() ? e.get<std::string>() : e.dump());
+        return "错误：" + (e.is_object() ? e.value("message", e.dump()) : e.is_string() ? e.get<std::string>() : e.dump());
     }
     if (j.contains("answers") && j["answers"].is_object()) {
         return answers_of(j["answers"]);
@@ -201,10 +201,10 @@ void ask_self(int port, const std::string & text, bool decision) {
         // Two questions any text answers: what its writer wants, and their mood.
         body["state"] = text;
         body["questions"]["intent"] = { { "type", "choice" },
-                                        { "instructions", "What does the writer want?" },
+                                        { "instructions", "写的人想要什么？" },
                                         { "criteria", { { "refund", nullptr }, { "information", nullptr },
                                                         { "cancel", nullptr }, { "praise", nullptr } } } };
-        body["questions"]["angry"] = { { "type", "noul" }, { "instructions", "Is the writer angry?" } };
+        body["questions"]["angry"] = { { "type", "noul" }, { "instructions", "写的人生气吗？" } };
     } else {
         // Short and without thinking: an answer on the TV in seconds.
         body["messages"] = json::array({ { { "role", "user" }, { "content", text } } });

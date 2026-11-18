@@ -155,14 +155,14 @@ ModelInfo parse_model_info(Reader r, const std::string & path, uint64_t file_byt
     m.name      = m.file_name;
 
     if (!f && !r.mem) {
-        m.error = "cannot open";
+        m.error = "打不开";
         return m;
     }
     if (r.get<uint32_t>() != 0x46554747u) {  // "GGUF"
         if (f) {
             std::fclose(f);
         }
-        m.error = "not a GGUF file";
+        m.error = "不是 GGUF 文件";
         return m;
     }
     r.get<uint32_t>();  // version
@@ -208,7 +208,7 @@ ModelInfo parse_model_info(Reader r, const std::string & path, uint64_t file_byt
         std::fclose(f);
     }
     if (r.bad) {
-        m.error = "metadata could not be read";
+        m.error = "读不到元数据";
         return m;
     }
 
@@ -222,8 +222,8 @@ ModelInfo parse_model_info(Reader r, const std::string & path, uint64_t file_byt
     if (ints.count("prism.hadamard.version") && ints.count("general.file_type")) {
         const uint64_t ftype = ints["general.file_type"];
         if (ftype == 141 || ftype == 143) {
-            m.error = ftype == 141 ? "PrismML's PQ2_0: convert it to Q2_0 on a PC with scripts/bonsai-pq2-to-q2.py"
-                                   : "PrismML's PTQ1_0, which llama.cpp cannot load; get its Q2_0 file";
+            m.error = ftype == 141 ? "PrismML 的 PQ2_0：在 PC 上用 scripts/bonsai-pq2-to-q2.py 转成 Q2_0"
+                                   : "PrismML 的 PTQ1_0，llama.cpp 加载不了；请下载它的 Q2_0 文件";
             return m;
         }
     }
@@ -265,7 +265,7 @@ ModelInfo parse_model_info(Reader r, const std::string & path, uint64_t file_byt
     }
     m.ok = m.n_layer > 0;
     if (!m.ok) {
-        m.error = "no layer count for architecture '" + m.arch + "'";
+        m.error = "架构 '" + m.arch + "' 没有给出层数";
     }
     return m;
 }
@@ -312,27 +312,27 @@ double kv_bytes_per_token(const ModelInfo & m, const std::string & type) {
 const std::vector<Preset> & presets() {
     static const std::vector<Preset> table = {
         // PrismML's model card (thinking mode); min_p 0.05 is not in the file.
-        { "bonsai", "Bonsai 2", "Qwen 3.8 27B in ternary weights; Q2_0 is 7.1 GiB and keeps 64k with room to spare",
+        { "bonsai", "Bonsai 2", "Qwen 3.8 27B 的三值权重；Q2_0 为 7.1 GiB，64k 上下文还有余量",
           { "--temp", "1.0", "--top-p", "0.95", "--top-k", "20", "--min-p", "0.05" }, 65536 },
-        { "qwen3.8", "Qwen 3.8", "27B hybrid Gated DeltaNet; UD-Q2_K_XL holds 64k context on the GPU",
+        { "qwen3.8", "Qwen 3.8", "27B 混合 Gated DeltaNet；UD-Q2_K_XL 在 GPU 上能撑 64k 上下文",
           { "--temp", "0.6", "--top-p", "0.95", "--top-k", "20", "--min-p", "0" } },
-        { "qwen3.6", "Qwen 3.6", "MoE 35B-A3B or dense 27B; the MoE decodes fastest",
+        { "qwen3.6", "Qwen 3.6", "MoE 35B-A3B 或稠密 27B；MoE 解码最快",
           { "--temp", "0.6", "--top-p", "0.95", "--top-k", "20", "--min-p", "0" } },
-        { "qwen3.5", "Qwen 3.5", "hybrid like 3.8; 9B at Q4_K_M leaves room for long context",
+        { "qwen3.5", "Qwen 3.5", "混合架构类似 3.8；9B 用 Q4_K_M 能留出长上下文空间",
           { "--temp", "0.6", "--top-p", "0.95", "--top-k", "20", "--min-p", "0" } },
-        { "ornith", "Ornith 1.5", "Qwen 3.5 based 9B",
+        { "ornith", "Ornith 1.5", "基于 Qwen 3.5 的 9B",
           { "--temp", "0.6", "--top-p", "0.95", "--top-k", "20", "--min-p", "0" } },
-        { "gemma", "Gemma 4", "12B at Q3_K_M / IQ4_XS, E4B at Q4_0",
+        { "gemma", "Gemma 4", "12B 用 Q3_K_M / IQ4_XS，E4B 用 Q4_0",
           { "--temp", "1.0", "--top-p", "0.95", "--top-k", "64" } },
-        { "gpt-oss", "gpt-oss", "20B MoE, 3.6B active; MXFP4 is its only size, so context stays short",
+        { "gpt-oss", "gpt-oss", "20B MoE，激活 3.6B；只有 MXFP4 一种规格，上下文比较短",
           { "--temp", "1.0", "--top-p", "1.0" }, 16384 },
-        { "granite", "Granite 4.2", "3B and 8B, fast and plain",
+        { "granite", "Granite 4.2", "3B 与 8B，快而朴素",
           { "--temp", "0.0" } },
-        { "nemotron", "Nemotron 3 Nano", "hybrid Mamba, 1M context trained",
+        { "nemotron", "Nemotron 3 Nano", "混合 Mamba，按 100 万上下文训练",
           { "--temp", "0.6", "--top-p", "0.95" } },
-        { "mistral", "Mistral", "7B v0.3 and the Small line",
+        { "mistral", "Mistral", "7B v0.3 和 Small 系列",
           { "--temp", "0.15" } },
-        { "llama", "Llama 3", "8B fits at any 4-bit quant",
+        { "llama", "Llama 3", "8B 在任何 4bit 量化都放得下",
           { "--temp", "0.6", "--top-p", "0.9" } },
     };
     return table;
@@ -428,13 +428,13 @@ Plan plan_model(const ModelInfo & m, double budget_gib, uint32_t ctx_cap, const 
     char why[160];
     if (!p.fits) {
         p.total_gib = p.weights_gib + p.state_gib + p.reserve_gib;
-        std::snprintf(why, sizeof(why), "needs %.1f GiB with a 4k context; %.1f GiB is free", p.total_gib, budget_gib);
+        std::snprintf(why, sizeof(why), "4k 上下文就要 %.1f GiB；可用 %.1f GiB", p.total_gib, budget_gib);
         p.why = why;
         return p;
     }
-    std::snprintf(why, sizeof(why), "%s%uk context, %s cache%s: %.1f of %.1f GiB",
-                  m.decision.empty() ? "" : ("decision model (" + m.decision + "), ").c_str(), p.ctx / 1024,
-                  p.kv_type.c_str(), m.mmproj.empty() ? "" : ", images", p.total_gib, budget_gib);
+    std::snprintf(why, sizeof(why), "%s%uk 上下文，%s 缓存%s：%.1f / %.1f GiB",
+                  m.decision.empty() ? "" : (std::string(kDecisionPlanTag) + m.decision + kDecisionPlanSep).c_str(),
+                  p.ctx / 1024, p.kv_type.c_str(), m.mmproj.empty() ? "" : "，图像", p.total_gib, budget_gib);
     p.why = why;
 
     p.args = { "-m", m.path, "-ngl", "999", "-fit", "off", "-lm", "none",

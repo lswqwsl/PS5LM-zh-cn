@@ -87,7 +87,7 @@ void Market::search(const std::string & query) {
     {
         std::lock_guard<std::mutex> lock(mutex_);
         view_.query = query;
-        view_.status = "Searching";
+        view_.status = "搜索中";
     }
     run(browsing_, [this, query] {
         std::string error;
@@ -112,7 +112,7 @@ void Market::search(const std::string & query) {
         }
         view_.repos = repos;
         view_.open = -1;
-        view_.status = !error.empty() ? error : repos.empty() ? "Nothing found" : "";
+        view_.status = !error.empty() ? error : repos.empty() ? "没有找到" : "";
     });
 }
 
@@ -125,7 +125,7 @@ void Market::open_repo(int index) {
         }
         id = view_.repos[(size_t) index].id;
         view_.open = index;
-        view_.status = "Listing files";
+        view_.status = "列出文件";
     }
     run(browsing_, [this, index, id] {
         std::string error;
@@ -152,7 +152,7 @@ void Market::open_repo(int index) {
                 // planner's smallest reserve do.
                 f.fits = f.bytes / 1073741824.0 + 1.0 <= budget_gib_ ? -1 : 0;
                 if (f.fits == 0) {
-                    f.plan = "too big: the weights alone need more than is free";
+                    f.plan = "太大：光是权重就超过可用空间";
                 }
                 files.push_back(f);
             }
@@ -161,7 +161,7 @@ void Market::open_repo(int index) {
         if (view_.open == index && index < (int) view_.repos.size()) {
             view_.repos[(size_t) index].files = files;
         }
-        view_.status = !error.empty() ? error : files.empty() ? "No GGUF files in this repository" : "";
+        view_.status = !error.empty() ? error : files.empty() ? "这个仓库里没有 GGUF 文件" : "";
     });
 }
 
@@ -315,7 +315,7 @@ bool Market::enqueue(const std::vector<MarketJob> & jobs, double free) {
     for (const auto & job : jobs) {
         for (const auto & d : view_.downloads) {
             if (d.repo == job.repo && d.file == job.file && d.state != DownloadState::done) {
-                view_.note = job.file + " is in Downloads already";
+                view_.note = job.file + " 已在下载列表里";
                 return false;
             }
         }
@@ -336,9 +336,9 @@ bool Market::enqueue(const std::vector<MarketJob> & jobs, double free) {
     }
     if (free >= 0 && free - queued < need + 1.0) {
         char text[320];
-        std::snprintf(text, sizeof(text), "Not enough space: %s%s needs %.1f GiB and 1 GiB spare, %s has %.1f GiB free%s",
-                      jobs[0].file.c_str(), jobs.size() > 1 ? " and its image projector" : "", need, drive_name(dir).c_str(),
-                      std::max(0.0, free - queued), queued > 0 ? " after the downloads queued there" : "");
+        std::snprintf(text, sizeof(text), "空间不足：%s%s 需要 %.1f GiB 并留 1 GiB 余量，%s 只剩 %.1f GiB%s",
+                      jobs[0].file.c_str(), jobs.size() > 1 ? " 连同图像投影器" : "", need, drive_name(dir).c_str(),
+                      std::max(0.0, free - queued), queued > 0 ? "（该处排队的下载已算在内）" : "");
         view_.note = text;
         ps5lm::log_line("download %s/%s: %s\n", jobs[0].repo.c_str(), jobs[0].file.c_str(), text);
         return false;
@@ -349,7 +349,7 @@ bool Market::enqueue(const std::vector<MarketJob> & jobs, double free) {
         d.resume = d.done = 0;  // ponytail: a stray partial file is fetched again, its progress is not known
         view_.downloads.push_back(d);
     }
-    view_.note = jobs[0].file + " added to Downloads";
+    view_.note = jobs[0].file + " 已加入下载";
     save_queue();
     if (!working_.exchange(true)) {
         std::thread([this] { worker(); }).detach();
@@ -477,7 +477,7 @@ bool Market::fetch(Download & d) {
     };
     if (d.bytes == 0) {
         d.state = DownloadState::failed;
-        d.note = "Failed: the repository does not give this file's size";
+        d.note = "失败：仓库没有给出这个文件的大小";
         publish(true);
         return false;
     }
@@ -490,10 +490,10 @@ bool Market::fetch(Download & d) {
     // writing that path would write somewhere else.
     const bool own_storage = d.dir.rfind("/download0", 0) == 0;
     if (own_storage) {
-        ftp_error = "the app's own storage is not visible to ftpsrv";
+        ftp_error = "app 自带的存储对 ftpsrv 不可见";
     }
     const bool via_ftp = !own_storage && connect_ftp_writer(ftp, ftp_error);
-    const std::string direct_note = via_ftp ? "" : "written without ftpsrv, slower after about 2 GB";
+    const std::string direct_note = via_ftp ? "" : "没走 ftpsrv 直接写入，超过约 2 GB 会变慢";
     if (!via_ftp) {
         ps5lm::log_line("download %s: the app writes the file itself, which gets slow after about 2.2 GB (%s)\n",
                     d.file.c_str(), ftp_error.c_str());
@@ -501,7 +501,7 @@ bool Market::fetch(Download & d) {
     const int fd = open(part.c_str(), O_WRONLY | O_CREAT, 0666);
     if (fd < 0) {
         d.state = DownloadState::failed;
-        d.note = "Failed: cannot write to " + d.dir;
+        d.note = "失败：无法写入 " + d.dir;
         publish(true);
         return false;
     }
@@ -610,7 +610,7 @@ bool Market::fetch(Download & d) {
                             (unsigned long long) off, (unsigned long long) got, text);
             const int werr = write_errno;
             if (werr == ENOSPC || werr == EDQUOT || werr == EFBIG) {
-                last_error = drive_name(d.dir) + " is full";
+                last_error = drive_name(d.dir) + " 已满";
                 fatal = true;
                 return;
             }
@@ -654,7 +654,7 @@ bool Market::fetch(Download & d) {
             d.attempt = failures;
             if (waiting > 0 && waiting >= (int) threads.size()) {
                 d.state = DownloadState::retrying;
-                d.note = "Connection lost (" + last_error + "); trying again, attempt " + std::to_string((int) failures);
+                d.note = "连接断开（" + last_error + "）；正在重试，第 " + std::to_string((int) failures);
             } else {
                 d.state = DownloadState::running;
                 d.note = direct_note;
@@ -682,7 +682,7 @@ bool Market::fetch(Download & d) {
     d.mbps = 0;
     if (stop_ != 0 || fatal) {
         d.state = stop_ == 1 ? DownloadState::paused : DownloadState::failed;
-        d.note = stop_ == 1 ? "Paused" : stop_ == 2 ? "" : "Failed: " + last_error + "  \xC2\xB7  Cross tries again";
+        d.note = stop_ == 1 ? "已暂停" : stop_ == 2 ? "" : "失败：" + last_error + "  ·  × 键重试";
         d.done = d.resume;  // what a restart keeps
         publish(true);
         return false;
@@ -690,7 +690,7 @@ bool Market::fetch(Download & d) {
     // Whole: check it. The queue is saved first, with `resume` at the file's
     // size, so a restart during the check repeats only the check, not the last
     // piece; and the row says how far the check has read (#30).
-    d.note = "Checking the SHA-256";
+    d.note = "校验 SHA-256";
     publish(true);
     sha256_t h;
     sha256_init(&h);
@@ -704,7 +704,7 @@ bool Market::fetch(Download & d) {
             const auto now = std::chrono::steady_clock::now();
             if (now - shown >= std::chrono::seconds(1)) {
                 shown = now;
-                d.note = "Checking the SHA-256, " + std::to_string((int) (100.0 * (double) read / (double) d.bytes)) + "%";
+                d.note = "校验 SHA-256，" + std::to_string((int) (100.0 * (double) read / (double) d.bytes)) + "%";
                 publish(false);
             }
         }
@@ -720,13 +720,13 @@ bool Market::fetch(Download & d) {
         unlink(part.c_str());
         d.resume = d.done = 0;
         d.state = DownloadState::failed;
-        d.note = "Failed: the checksum does not match; Cross downloads it again";
+        d.note = "失败：校验和不匹配；按 × 键重新下载";
     } else if (std::rename(part.c_str(), to.c_str()) != 0) {
         d.state = DownloadState::failed;
-        d.note = "Failed: could not rename the file";
+        d.note = "失败：无法重命名文件";
     } else {
         d.state = DownloadState::done;
-        d.note = "Saved to " + to;
+        d.note = "已保存到 " + to;
     }
     ps5lm::log_line("download %s/%s: %s\n", d.repo.c_str(), d.file.c_str(), d.note.c_str());
     publish(true);

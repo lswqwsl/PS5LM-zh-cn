@@ -67,7 +67,7 @@ void space(const char * path, double * free, double * total) {
 // not exported to titles, so the space comes from ps5-exporter, a payload.
 // /data is /user/data. Without the exporter the space is unknown (total 0).
 std::vector<Drive> drives_from_metrics(const std::string & text) {
-    std::vector<Drive> out = { { "Internal storage", "/data/PS5LM/models" } };
+    std::vector<Drive> out = { { "内置存储", "/data/PS5LM/models" } };
     const std::string key = "ps5_filesystem_size_bytes{mountpoint=\"";
     for (size_t at = text.find(key); at != std::string::npos; at = text.find(key, at + 1)) {
         const size_t from = at + key.size();
@@ -86,7 +86,7 @@ std::vector<Drive> drives_from_metrics(const std::string & text) {
     }
     // Without full storage the app's own storage stands in for internal storage.
     if (app_storage()) {
-        out[0] = { "App storage", std::string(kAppRoot) + "/models", app_storage_free_gib(), app_storage_size() / kGiB };
+        out[0] = { "应用存储", std::string(kAppRoot) + "/models", app_storage_free_gib(), app_storage_size() / kGiB };
     }
     return out;
 }
@@ -235,7 +235,7 @@ void StatsCollector::start(int port) {
         std::lock_guard<std::mutex> lock(mutex_);
         live_.cpus = usable_cpus();
         const std::string ip = local_address();
-        live_.address = (ip.empty() ? std::string("<console IP>") : ip) + ":" + std::to_string(port);
+        live_.address = (ip.empty() ? std::string("<主机 IP>") : ip) + ":" + std::to_string(port);
     }
     std::thread([this] { run(); }).detach();
 }

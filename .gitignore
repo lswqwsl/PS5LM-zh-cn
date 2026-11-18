@@ -1,5 +1,10 @@
 # toolchains and downloads
 .deps/
+# 汉化时用到的中文字体源文件（按 docs/LOCALIZATION.md 自己下，烘焙产物才进 git）
+.deps/fonts/
+
+# 汉化时的原文备份（scripts/apply-translations.py 生成）
+*.en.bak
 
 # build outputs
 build/

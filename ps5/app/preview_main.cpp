@@ -68,7 +68,7 @@ ps5lm::Live sample(float seconds, bool generating) {
     L.kv_type     = "q4_0";
     L.kv_gib      = 1.13;
     L.model_file  = "/data/PS5LM/models/Qwen3.8-27B-UD-Q2_K_XL.gguf";
-    L.plan        = "64k context, q4_0 cache: 11.3 of 11.4 GiB";
+    L.plan        = "64k 上下文，q4_0 缓存：11.3 / 11.4 GiB";
     L.args = { "-m", L.model_file, "-ngl", "999", "-fit", "off", "-lm", "none", "-c", "65536", "-fa", "on",
                "-ctk", "q4_0", "-ctv", "q4_0", "-b", "256", "-ub", "64", "-np", "1", "-ctxcp", "1", "-cram", "0",
                "--host", "0.0.0.0", "--port", "8081", "--temp", "0.6", "--top-p", "0.95", "--top-k", "20",
@@ -81,7 +81,7 @@ ps5lm::Live sample(float seconds, bool generating) {
     L.temps = { { "cpu", 54 }, { "soc0", 61 }, { "soc1", 60 }, { "soc2", 59 }, { "soc3", 62 }, { "soc4", 61 },
                 { "soc5", 60 }, { "soc6", 58 } };
     L.cpu_ghz     = 3.5f;
-    L.drives = { { "Internal storage", "/data/PS5LM/models", 8, 825 }, { "M.2 drive", "/mnt/ext0/PS5LM/models", 1520, 1863 }, { "USB drive", "/mnt/usb0/PS5LM/models", 455, 477 } };
+    L.drives = { { "内置存储", "/data/PS5LM/models", 8, 825 }, { "M.2 硬盘", "/mnt/ext0/PS5LM/models", 1520, 1863 }, { "USB 硬盘", "/mnt/usb0/PS5LM/models", 455, 477 } };
     L.pool_gib    = 11.44;
     L.free_gib    = 0.31;
     L.heap_gib    = 0.76;
@@ -112,18 +112,18 @@ ps5lm::Live sample(float seconds, bool generating) {
         // Requests from the network: two answered, the newest still streaming.
         ps5lm::Exchange a;
         a.id = 12; a.client = "192.168.1.31"; a.path = "/v1/messages"; a.status = 200; a.seconds = 12.8;
-        a.asked = "Rename the loop variable in parse_args to something clearer and explain why";
-        a.answered = "Renamed i to arg_index: it says what the loop walks, and the next reader does not have to look up what i counts.";
+        a.asked = "把 parse_args 里的循环变量改成更清楚的名字，并说明理由";
+        a.answered = "把 i 改名成 arg_index：它说明了循环在遍历什么，下一个读代码的人不用再查 i 数的是什么。";
         L.activity.push_back(a);
         a.id = 13; a.client = "192.168.1.24"; a.path = "/v1/chat/completions"; a.status = 200; a.seconds = 3.4;
-        a.asked = "Write a haiku about a console that runs a language model";
-        a.answered = "Fans hum through the night, a console dreams in tokens, words bloom on the TV.";
+        a.asked = "写一首俳句：一台跑语言模型的游戏机";
+        a.answered = "风扇整夜低唱，游戏机用 token 做梦，字句在电视上开花。";
         L.activity.push_back(a);
         a.id = 14; a.client = "192.168.1.24"; a.path = "/v1/chat/completions"; a.status = generating ? 0 : 200; a.seconds = 9.1;
-        a.asked = "How does the PS5's GPU run llama.cpp?";
-        a.answered = "Through Vulkan. Mihawk-99's RADV port gives the console a full Vulkan 1.4 driver, so llama.cpp's own Vulkan "
-                     "backend runs unchanged: every matrix product becomes a compute shader that ACO compiles on the console, and "
-                     "the weights sit in the 12 GB the GPU and CPU share";
+        a.asked = "PS5 的 GPU 是怎么跑 llama.cpp 的？";
+        a.answered = "靠 Vulkan。Mihawk-99 的 RADV 移植给主机补上了完整的 Vulkan 1.4 驱动，于是 llama.cpp 自带的 Vulkan "
+                     "后端不用改就能跑：每个矩阵乘都变成计算着色器，由 ACO 在主机上编译，"
+                     "权重就待在 GPU 和 CPU 共用的那 12 GB 里";
         L.activity.push_back(a);
     }
     L.gen_tps  = generating ? 20.7f : 0.0f;
@@ -131,14 +131,14 @@ ps5lm::Live sample(float seconds, bool generating) {
     L.cpu_use  = generating ? 0.12f : 0.02f;
     const char * files[] = { "Qwen3.8-27B-UD-IQ1_S", "Qwen3.8-27B-UD-IQ2_S", "Qwen3.8-27B-UD-IQ2_XXS",
                              "Qwen3.8-27B-UD-Q2_K_XL", "gpt-oss-20b-MXFP4" };
-    const char * plans[] = { "64k context, q8_0 cache: 8.9 of 11.0 GiB", "64k context, q8_0 cache: 11.0 of 11.0 GiB",
-                             "64k context, q8_0 cache: 9.9 of 11.0 GiB", "64k context, q4_0 cache: 11.3 of 11.4 GiB",
-                             "needs 11.6 GiB with a 4k context; 11.0 GiB is free" };
+    const char * plans[] = { "64k 上下文，q8_0 缓存：8.9 / 11.0 GiB", "64k 上下文，q8_0 缓存：11.0 / 11.0 GiB",
+                             "64k 上下文，q8_0 缓存：9.9 / 11.0 GiB", "64k 上下文，q4_0 缓存：11.3 / 11.4 GiB",
+                             "4k 上下文就要 11.6 GiB；可用 11.0 GiB" };
     const double sizes[] = { 5.77, 7.80, 6.77, 9.15, 11.3 };
     for (int i = 0; i < 5; ++i) {
         ps5lm::ModelRow m;
         m.file = std::string("/data/PS5LM/models/") + files[i] + ".gguf";
-        m.drive = "Internal storage";
+        m.drive = "内置存储";
         m.label = files[i];
         m.plan = plans[i];
         m.size_gib = sizes[i];
@@ -150,15 +150,15 @@ ps5lm::Live sample(float seconds, bool generating) {
     ps5lm::ModelRow usb;
     usb.file = "/mnt/usb0/PS5LM/models/Ornith-1.5-9B-Q4_K_M.gguf";
     usb.label = "Ornith-1.5-9B-Q4_K_M";
-    usb.plan = "64k context, q8_0 cache: 8.6 of 11.0 GiB";
+    usb.plan = "64k 上下文，q8_0 缓存：8.6 / 11.0 GiB";
     usb.preset = "Ornith 1.5";
     usb.size_gib = 5.38;
     usb.fits = true;
-    usb.drive = "USB drive";
+    usb.drive = "USB 硬盘";
     L.models.push_back(usb);
     usb.file = "/mnt/usb0/PS5LM/models/gemma-4-12b-it-Q3_K_M.gguf";
     usb.label = "gemma-4-12b-it-Q3_K_M";
-    usb.plan = "64k context, q8_0 cache: 9.1 of 11.0 GiB";
+    usb.plan = "64k 上下文，q8_0 缓存：9.1 / 11.0 GiB";
     usb.preset = "Gemma 4";
     usb.size_gib = 5.30;
     L.models.push_back(usb);
@@ -167,11 +167,11 @@ ps5lm::Live sample(float seconds, bool generating) {
         ps5lm::ModelRow d;
         d.file = "/data/PS5LM/models/d1-omni-600M-BF16.gguf";
         d.label = "d1-omni-600M-BF16";
-        d.plan = "decision model (lfm2-d1-omni), 4k context, f16 cache, images: 2.9 of 11.0 GiB";
+        d.plan = "决策模型（lfm2-d1-omni），4k 上下文，f16 缓存，图像：2.9 / 11.0 GiB";
         d.decision = "lfm2-d1-omni";
         d.size_gib = 0.71;
         d.fits = true;
-        d.drive = "Internal storage";
+        d.drive = "内置存储";
         L.models.push_back(d);
     }
     if (g_decision) {
@@ -282,8 +282,8 @@ int main(int argc, char ** argv) {
     const char * fnames[] = { "Qwen3.8-27B-UD-IQ2_XXS.gguf", "Qwen3.8-27B-UD-Q2_K_XL.gguf", "Qwen3.8-27B-Q3_K_M.gguf", "Qwen3.8-27B-Q4_K_M.gguf" };
     const double fsz[] = { 6.8, 9.2, 12.6, 15.4 };
     const int ffits[] = { 1, 1, 0, 0 };
-    const char * fplans[] = { "64k context, q8_0 cache: 9.9 of 11.0 GiB", "32k context, q4_0 cache: 10.8 of 11.0 GiB",
-                              "too big: the weights alone need more than is free", "too big: the weights alone need more than is free" };
+    const char * fplans[] = { "64k 上下文，q8_0 缓存：9.9 / 11.0 GiB", "32k 上下文，q4_0 缓存：10.8 / 11.0 GiB",
+                              "太大：光是权重就超过可用空间", "太大：光是权重就超过可用空间" };
     for (int i = 0; i < 4; ++i) {
         ps5lm::MarketFile f;
         f.name = fnames[i];
@@ -315,14 +315,14 @@ int main(int argc, char ** argv) {
         d.bytes = 2019377696;
         d.done = 812000000;
         d.state = ps5lm::DownloadState::retrying;
-        d.note = "Connection lost (sceHttp2ReadData 0x804101a3); trying again in 12 s, attempt 2";
+        d.note = "连接断开（sceHttp2ReadData 0x804101a3）；12 秒后重试，第 2 次";
         mv.downloads.push_back(d);
         d.file = "SmolLM2-135M-Instruct-F16.gguf";
         d.repo = "unsloth/SmolLM2-135M-Instruct-GGUF";
         d.dir = "/data/PS5LM/models";
         d.bytes = d.done = 270885952;
         d.state = ps5lm::DownloadState::done;
-        d.note = "Saved to /data/PS5LM/models/SmolLM2-135M-Instruct-F16.gguf";
+        d.note = "已保存到 /data/PS5LM/models/SmolLM2-135M-Instruct-F16.gguf";
         mv.downloads.push_back(d);
     }
     dash.set_market(mv);
@@ -381,7 +381,7 @@ int main(int argc, char ** argv) {
     using D = hui::Direction;
     using A = hui::Action;
     g_loading = 0;
-    g_phase = "Opening the GPU and reading the models";
+    g_phase = "正在打开 GPU 并读取模型";
     step(50, {}, false);
     shot("00-home-starting");
     g_phase.clear();

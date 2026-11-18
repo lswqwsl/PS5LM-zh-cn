@@ -96,8 +96,8 @@ double app_storage_free_gib() {
 }
 
 std::string drive_name(const std::string & path) {
-    return path.rfind("/mnt/ext", 0) == 0 ? "M.2 drive" : path.rfind("/mnt/usb", 0) == 0 ? "USB drive"
-         : path.rfind("/download0", 0) == 0 || path.rfind("/mnt/sandbox/", 0) == 0 ? "App storage" : "Internal storage";
+    return path.rfind("/mnt/ext", 0) == 0 ? "M.2 硬盘" : path.rfind("/mnt/usb", 0) == 0 ? "USB 硬盘"
+         : path.rfind("/download0", 0) == 0 || path.rfind("/mnt/sandbox/", 0) == 0 ? "应用存储" : "内置存储";
 }
 
 std::string storage_choice() {

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,18 +72,18 @@
 <header class="top">
   <span class="brand">ps5lm</span>
   <span class="model" id="model"></span>
-  <a id="models" href="#">Models</a>
+  <a id="models" href="#">模型</a>
 </header>
 
 <div class="scroll" id="scroll">
   <div class="column" id="log">
     <div class="empty" id="empty">
-      <h1>Ask something</h1>
-      <p>A language model running on this PS5's own processor.</p>
+      <h1>问点什么</h1>
+      <p>一个跑在这台 PS5 自己的处理器上的语言模型。</p>
       <div class="ideas">
-        <button class="idea" type="button">Who are you?</button>
-        <button class="idea" type="button">Write a haiku about the PS5</button>
-        <button class="idea" type="button">Explain how a CPU works in two sentences</button>
+        <button class="idea" type="button">你是谁？</button>
+        <button class="idea" type="button">写一首关于 PS5 的俳句</button>
+        <button class="idea" type="button">用两句话说明 CPU 是怎么工作的</button>
       </div>
     </div>
   </div>
@@ -91,23 +91,22 @@
 
 <div class="composer">
   <form id="form">
-    <input id="input" type="text" autocomplete="off" placeholder="Message">
-    <button id="send" type="submit">Send</button>
+    <input id="input" type="text" autocomplete="off" placeholder="说点什么">
+    <button id="send" type="submit">发送</button>
   </form>
 </div>
 
 <script>
 (function () {
   // What the model knows about itself. The name fills in from /v1/models.
-  var modelName = 'a language model';
+  var modelName = '一个语言模型';
   // Small models copy an example answer far better than they follow a rule.
   function systemPrompt() {
-    return 'You are ' + modelName + ', an open-weight language model running locally on this ' +
-      'PlayStation 5 with PS5LM, a port of llama.cpp. You run on the console\'s own CPU, offline, and ' +
-      'the conversation stays on this console. If someone asks who you are or where you run, answer in ' +
-      'their language along the lines of: "I\'m ' + modelName + ', running right here on this PS5\'s own ' +
-      'processor with PS5LM." Keep answers to one to three short sentences unless asked for more, and ' +
-      'always reply in the language the user writes in.';
+    return '你是 ' + modelName + '，一个开源权重的语言模型，用 PS5LM（llama.cpp 的移植）在这台 ' +
+      'PlayStation 5 上本地运行。你跑在主机自己的 CPU 上，全程离线，对话不会离开这台主机。' +
+      '如果有人问你是谁、在哪里运行，就用对方的语言回答，大意是：“我是 ' + modelName +
+      '，就跑在这台 PS5 自己的处理器上，用的是 PS5LM。”' +
+      '除非对方要求更多，否则回答控制在 1~3 句短句之内，并且始终用对方的语言回答。';
   }
   var log = document.getElementById('log');
   var scroller = document.getElementById('scroll');
@@ -143,7 +142,7 @@
   }
   function bottom() { scroller.scrollTop = scroller.scrollHeight; }
   function busy(on) {
-    send.textContent = on ? 'Stop' : 'Send';
+    send.textContent = on ? '停止' : '发送';
     send.className = on ? 'stop' : '';
   }
 
@@ -190,8 +189,8 @@
         if (chunk.timings) {
           var meta = document.createElement('span');
           meta.className = 'meta';
-          meta.textContent = chunk.timings.predicted_n + ' tokens, ' +
-            chunk.timings.predicted_per_second.toFixed(1) + ' tokens a second';
+          meta.textContent = chunk.timings.predicted_n + ' token，' +
+            chunk.timings.predicted_per_second.toFixed(1) + ' token/秒';
           out.appendChild(meta);
         }
         bottom();
@@ -204,8 +203,8 @@
       if (!answer) {
         var err = document.createElement('span');
         err.className = 'error';
-        err.textContent = xhr.status === 0 ? 'Stopped.' :
-          'No answer (' + xhr.status + '). Check that a model is running in the library.';
+        err.textContent = xhr.status === 0 ? '已停止。' :
+          '没有回答（' + xhr.status + '）。请到模型库里确认有模型在运行。';
         out.appendChild(err);
       } else {
         messages.push({ role: 'assistant', content: answer });

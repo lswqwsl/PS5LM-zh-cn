@@ -1,0 +1,383 @@
+file,en,zh
+dashboard.cpp,Home,主页
+dashboard.cpp,Models,模型
+dashboard.cpp,Console,控制台
+dashboard.cpp,Settings,设置
+dashboard.cpp,On this PS5,本机模型
+dashboard.cpp,Suggested,推荐
+dashboard.cpp,Search,搜索
+dashboard.cpp,Downloads,下载
+dashboard.cpp,Popular,热门
+dashboard.cpp,Startup,启动
+dashboard.cpp,Load a model at launch,启动时加载模型
+dashboard.cpp,Off: the app opens and waits for a choice,关：app 启动后等待选择
+dashboard.cpp,Model to load,要加载的模型
+dashboard.cpp,One of the models on this PS5,本机上的某个模型
+dashboard.cpp,Model,模型
+dashboard.cpp,Longest context,最长上下文
+dashboard.cpp,"The longest that fits, up to this; applies at the next load",能放下的最长值，上限在此；下次加载生效
+dashboard.cpp,Context cache,上下文缓存
+dashboard.cpp,Auto picks the best that fits; a fixed type trades length for quality,自动挑能放下的最佳；固定类型用长度换质量
+dashboard.cpp,Chat,聊天
+dashboard.cpp,File tools,文件工具
+dashboard.cpp,The browser chat may read and write files in /data/PS5LM/scratch,浏览器聊天可在 /data/PS5LM/scratch 读写文件
+dashboard.cpp,Warn above,超过提醒
+dashboard.cpp,A notification when that folder grows past this,该目录超过这个大小就发通知
+dashboard.cpp,Clear the scratch folder,清空 scratch 目录
+dashboard.cpp,Deletes everything the chat's tools wrote,删除聊天工具写入的全部内容
+dashboard.cpp,Sound and storage,音效与存储
+dashboard.cpp,Sounds,音效
+dashboard.cpp,Interface sounds on the TV,电视上的界面音效
+dashboard.cpp,Save downloads to,下载保存到
+dashboard.cpp,"Internal storage, or PS5LM/models on an M.2 or USB drive",内置存储，或 M.2／USB 硬盘上的 PS5LM/models
+dashboard.cpp,Where PS5LM keeps its files,PS5LM 的文件放在哪
+dashboard.cpp,"Full storage, or its own while the HEN keeps /data closed",完整存储，或 HEN 关闭 /data 时用自带的存储
+dashboard.cpp,Developer,开发者
+dashboard.cpp,Logits and activations API,Logits 与激活值 API
+dashboard.cpp,Off: /v1/introspect is closed. On: the raw numbers. A change restarts the model,关：/v1/introspect 关闭。开：输出原始数值。改动会重启模型
+dashboard.cpp,Debug report,调试报告
+dashboard.cpp,Create a debug report,生成调试报告
+dashboard.cpp,"One file to attach to a GitHub issue, with no keys or tokens in it",一个可附到 GitHub issue 的文件，不含密钥和 token
+dashboard.cpp,Include the kernel log,包含内核日志
+dashboard.cpp,"Its last 1 MiB, read from klogsrv; off unless you switch it on",通过 klogsrv 读到的最后 1 MiB；默认关闭
+dashboard.cpp,Diagnostics,诊断
+dashboard.cpp,None,无
+dashboard.cpp,Missing,缺失
+dashboard.cpp,%.0fk tokens,%.0fk token
+dashboard.cpp,Auto,自动
+dashboard.cpp,", not found",，未找到
+dashboard.cpp,App storage,应用存储
+dashboard.cpp,"App storage, %.1f",应用存储，已用 %.1f
+dashboard.cpp, of %.0f GB used, / %.0f GB
+dashboard.cpp,"App storage, %.0f GB",应用存储，%.0f GB
+dashboard.cpp,Wait for a choice,等待选择
+dashboard.cpp,The best that fits,能放下的最佳值
+dashboard.cpp,"Full quality, the most memory",完整精度，占内存最多
+dashboard.cpp,"Near full quality, half the memory",接近完整精度，内存减半
+dashboard.cpp,A quarter of the memory,四分之一内存
+dashboard.cpp, free, 可用
+dashboard.cpp,"In two sentences, how can a PS5 run a language model?",两句话说明 PS5 怎么跑语言模型？
+dashboard.cpp,Write a haiku about a game console that dreams in tokens.,写一首俳句：一台用 token 做梦的游戏机。
+dashboard.cpp,Give me three names for a home AI server that lives under the TV.,给住在电视下面的家用 AI 服务器起三个名字。
+dashboard.cpp,What is 17 times 23? Show the steps in one line.,17 乘 23 是多少？一行里给出步骤。
+dashboard.cpp,I was charged twice this month. Refund me or I cancel.,这个月被扣了两次费。退钱，不然我退订。
+dashboard.cpp,"Love the new update, everything is so much faster now!",新版太棒了，一切都快多了！
+dashboard.cpp,Where can I find the invoice for last month?,上个月的发票在哪看？
+dashboard.cpp,Third time asking. Cancel my subscription today.,第三次问了。今天就退订。
+dashboard.cpp,Text to decide on,待判断的文本
+dashboard.cpp,Message,消息
+dashboard.cpp,"A customer message, a review, a ticket",客户留言、评价或工单
+dashboard.cpp,Ask anything,问点什么
+dashboard.cpp,Up %.0f min,已运行 %.0f 分钟
+dashboard.cpp,Up %.1f h,已运行 %.1f 小时
+dashboard.cpp,Cancel,取消
+dashboard.cpp,Choose,选择
+dashboard.cpp,Pages,页面
+dashboard.cpp,Demo,示例
+dashboard.cpp,Choose a model,选择模型
+dashboard.cpp,Change model,更换模型
+dashboard.cpp,Range,范围
+dashboard.cpp,Open,打开
+dashboard.cpp,Back,返回
+dashboard.cpp,Unload,卸载
+dashboard.cpp,Load,加载
+dashboard.cpp,Download,下载
+dashboard.cpp,Check fit,检查适配
+dashboard.cpp,Clear,清除
+dashboard.cpp,"Yes, delete it",是，删除
+dashboard.cpp,Pause,暂停
+dashboard.cpp,Try again,重试
+dashboard.cpp,Resume,继续
+dashboard.cpp,Scroll,滚动
+dashboard.cpp,App log,app 日志
+dashboard.cpp,Server log,服务器日志
+dashboard.cpp,All lines,全部
+dashboard.cpp,Errors only,仅错误
+dashboard.cpp,Writing it,写入中
+dashboard.cpp,Create,生成
+dashboard.cpp,Options,选项
+dashboard.cpp,Switch,切换
+dashboard.cpp,Change,更改
+dashboard.cpp,Nothing is loaded,没有加载模型
+dashboard.cpp,It runs on the PS5's GPU and answers every device on your network.,它跑在 PS5 的 GPU 上，回答局域网里每台设备的请求。
+dashboard.cpp,%.0f models on this PS5,本机 %.0f 个模型
+dashboard.cpp,On your network,局域网
+dashboard.cpp,Starting,启动中
+dashboard.cpp,Decision model,决策模型
+dashboard.cpp,Language model,语言模型
+dashboard.cpp,%.0fk context,%.0fk 上下文
+dashboard.cpp,Loading,加载中
+dashboard.cpp,Deciding,判断中
+dashboard.cpp,Generating,生成中
+dashboard.cpp,Stopped,已停止
+dashboard.cpp,Ready,就绪
+dashboard.cpp,% on the GPU,% 在 GPU 上
+dashboard.cpp,ms per decision,毫秒/次决策
+dashboard.cpp,starting,启动中
+dashboard.cpp,tokens per second,token/秒
+dashboard.cpp,"tokens per second, last reply",token/秒，上次回复
+dashboard.cpp,", waiting its turn",，排队等候
+dashboard.cpp,"%.1f of %.1f GB, %.1f MB/s, %.0f h %02.0f min left",%.1f / %.1f GB，%.1f MB/s，还有 %.0f 小时 %02.0f 分
+dashboard.cpp,"%.1f of %.1f GB, %.1f MB/s, %.0f min left",%.1f / %.1f GB，%.1f MB/s，还有 %.0f 分钟
+dashboard.cpp,%.1f of %.1f GB,%.1f / %.1f GB
+dashboard.cpp,Copying the weights into GPU memory,正在把权重拷进 GPU 内存
+dashboard.cpp,Preparing the context,准备上下文
+dashboard.cpp, of , / 
+dashboard.cpp,Memory,内存
+dashboard.cpp,Context,上下文
+dashboard.cpp,Requests,请求
+dashboard.cpp, answered    , 次回答    
+dashboard.cpp, tokens in, token 输入
+dashboard.cpp, out, token 输出
+dashboard.cpp,"Requests from other devices appear here, as a chat.",其他设备的请求会以对话形式显示在这里。
+dashboard.cpp,"Square sends a demo, Triangle a message of your own.",□ 键发示例，△ 键发自己的话。
+dashboard.cpp,This PS5,本机
+dashboard.cpp,Answering,回答中
+dashboard.cpp,Error %.0f,错误 %.0f
+dashboard.cpp,", %.0f ms per decision",，%.0f 毫秒/次决策
+dashboard.cpp,No models yet,还没有模型
+dashboard.cpp,"Get one from Suggested, or copy a .gguf to /data/PS5LM/models.",从「推荐」下一个，或把 .gguf 复制到 /data/PS5LM/models。
+dashboard.cpp,Language,语言
+dashboard.cpp,Decision,决策
+dashboard.cpp,Running,运行中
+dashboard.cpp,Too big,太大
+dashboard.cpp,"Language, images",语言、图像
+dashboard.cpp,    %.0f tokens a second here,    此机 %.0f token/秒
+dashboard.cpp,Waiting,等待中
+dashboard.cpp,Get,获取
+dashboard.cpp,Searching,搜索中
+dashboard.cpp, downloads, 次下载
+dashboard.cpp,Nothing found,没有找到
+dashboard.cpp,Reading its header,读取文件头
+dashboard.cpp,Square checks whether it fits,□ 键检查能否放下
+dashboard.cpp,Fits,可放入
+dashboard.cpp,No downloads,没有下载
+dashboard.cpp,Models you get from Suggested or Search wait here until they are saved.,从「推荐」或「搜索」得到的模型会先在这里等，直到保存。
+dashboard.cpp,Paused,已暂停
+dashboard.cpp,Failed,失败
+dashboard.cpp,Saved,已保存
+dashboard.cpp,Retrying,重试中
+dashboard.cpp,Base address,基址
+dashboard.cpp,http://<PS5 address>:8081,http://<主机 IP>:8081
+dashboard.cpp,"Any device on this network can call it, with any model name: the loaded one answers.",局域网内任何设备都能调用，模型名随意：由已加载的模型回答。
+dashboard.cpp,"OpenAI chat, streaming and tools",OpenAI 聊天、流式与工具
+dashboard.cpp,"OpenAI Responses, for Codex and the Agents SDK",OpenAI Responses，供 Codex 与 Agents SDK 使用
+dashboard.cpp,"Anthropic Messages, for Claude Code and its SDKs",Anthropic Messages，供 Claude Code 及其 SDK 使用
+dashboard.cpp,Plain text completion,纯文本补全
+dashboard.cpp,"TypeSafe decisions: choice, score and yes-or-no questions",TypeSafe 决策：选择、打分与是非题
+dashboard.cpp,The loaded model,已加载的模型
+dashboard.cpp,Ready or loading,就绪或加载中
+dashboard.cpp,Try it,试一试
+dashboard.cpp,Ollaya and TypeSafe clients:,Ollaya 与 TypeSafe 客户端：
+dashboard.cpp,OpenAI SDKs:,OpenAI SDK：
+dashboard.cpp,Claude Code:,Claude Code：
+dashboard.cpp,Last 2 minutes,最近 2 分钟
+dashboard.cpp,Last hour,最近 1 小时
+dashboard.cpp,Temperature,温度
+dashboard.cpp,Power,功耗
+dashboard.cpp,The first point comes after 30 seconds,30 秒后出现第一个点
+dashboard.cpp,Not read,未读取
+dashboard.cpp,"With elfldr running, the app loads ps5-exporter to read it",elfldr 在跑时，app 会加载 ps5-exporter 来读取
+dashboard.cpp,Low ,最低 
+dashboard.cpp,    Average ,    平均 
+dashboard.cpp,    High ,    最高 
+dashboard.cpp,Now,现在
+dashboard.cpp,SoC sensors,SoC 传感器
+dashboard.cpp, to , 至 
+dashboard.cpp,Fan,风扇
+dashboard.cpp,Energy since start,启动以来耗电
+dashboard.cpp,CPU clock,CPU 频率
+dashboard.cpp,GPU busy,GPU 占用
+dashboard.cpp,CPU use,CPU 占用
+dashboard.cpp,%.0f GB free,%.0f GB 可用
+dashboard.cpp,"Full storage, /data/PS5LM",完整存储，/data/PS5LM
+dashboard.cpp,%.1f GB in it,已占 %.1f GB
+dashboard.cpp,App,app
+dashboard.cpp,Server,服务器
+dashboard.cpp,Errors and warnings only,仅错误和警告
+dashboard.cpp,Every line,全部
+dashboard.cpp,Nothing here yet,这里还空着
+dashboard.cpp,Unload the model first?,先卸载模型？
+dashboard.cpp,The download is faster with the memory free. The model can load again after.,释放内存后下载更快，之后可以再加载模型。
+dashboard.cpp,Keep it loaded,保留在内存
+dashboard.cpp,Unload and download,卸载并下载
+dashboard.cpp,Not enough space there,那里空间不够
+dashboard.cpp,No drive has room for it. Free some space and try again.,没有硬盘放得下。清点空间再试。
+dashboard.cpp,It fits on ,可放入 
+dashboard.cpp,Save it there,保存到那里
+dashboard.cpp,Full storage is closed to PS5LM,完整存储未向 PS5LM 开放
+dashboard.cpp,"The HEN did not open the console's storage (/data) to the app, so PS5LM cannot keep its models, ",HEN 没有把主机的存储（/data）开放给 app，所以 PS5LM 无法把模型、
+dashboard.cpp,settings and logs there.,设置和日志放在那里。
+dashboard.cpp,It can use its own storage instead: up to ,它可以改用自带的存储：最多 
+dashboard.cpp,", enough for one large model or a few small ones. Downloads that do not fit are refused before they start.",，够放一个大模型或几个小模型。放不下的下载会在开始前被拒绝。
+dashboard.cpp,Or open full storage to it and start again; models saved in the app's storage stay in the library.,或者把完整存储开放给它再启动一次；已存在 app 存储里的模型会留在库里。
+dashboard.cpp,Not now,暂时不要
+dashboard.cpp,How to open it,怎么打开
+dashboard.cpp,Use the app's storage,用 app 的存储
+dashboard.cpp,Open full storage to PS5LM,把完整存储开放给 PS5LM
+dashboard.cpp,"OnionHEN: over FTP, add PPSA99575 to exact_title_ids in the [app_jailbreak] section of ",OnionHEN：通过 FTP，把 PPSA99575 加到 [app_jailbreak] 段里的 exact_title_ids 中，文件是
+dashboard.cpp,"etaHEN opens /data to homebrew before it starts; if it did not, load etaHEN again, up to date.",etaHEN 在启动前就会把 /data 开放给自制软件；如果没有，重新加载最新版 etaHEN。
+dashboard.cpp,Other HENs: allow PPSA99575 in their app jailbreak list.,其他 HEN：在它们的 app jailbreak 列表里允许 PPSA99575。
+dashboard.cpp,Then start PS5LM again: it asks the HEN for /data at every start.,然后重新启动 PS5LM：它每次启动都会向 HEN 申请 /data。
+dashboard.cpp,Start again,重新启动
+dashboard.cpp,What a debug report holds,调试报告里有什么
+dashboard.cpp,The app's version and the console's system software,app 的版本和主机的系统软件
+dashboard.cpp,"Where PS5LM keeps its files, the drives and their free space",PS5LM 的文件位置、各硬盘及剩余空间
+dashboard.cpp,"The models on this PS5, their plans, and the downloads",本机的模型、它们的规划以及下载
+dashboard.cpp,Your settings and the server's arguments,你的设置和服务器参数
+dashboard.cpp,The last 256 KiB of app.log and of llama.log,app.log 和 llama.log 的最后 256 KiB
+dashboard.cpp,"Which payload ports answer on this console (ELF loader, FTP, kernel log, ...)",本机哪些 payload 端口有响应（ELF 加载器、FTP、内核日志……）
+dashboard.cpp,"And the last 1 MiB of the kernel log, as you switched on.",以及内核日志的最后 1 MiB（因为你打开了它）。
+dashboard.cpp,"Not the kernel log, unless you switch it on below.",不含内核日志，除非你在下面打开。
+dashboard.cpp,API keys and tokens are taken out. The logs can still name your models and the ,API 密钥和 token 会被去掉。日志仍可能提到你的模型，以及用过服务器的设备的
+dashboard.cpp,addresses of the devices that used the server; read the file before you post it.,地址；发出去之前先读一遍。
+dashboard.cpp,Create the report,生成报告
+dashboard.cpp,Internal storage,内置存储
+main.cpp,PS5LM: loading the model onto the GPU,PS5LM：正在把模型加载到 GPU
+main.cpp,"PS5LM: full storage (/data) is closed to the app, so it keeps its files in its own storage. ",PS5LM：完整存储（/data）没有开放给 app，所以它把文件放在自带的存储里。
+main.cpp,"On OnionHEN, add PPSA99575 to app_jailbreak.exact_title_ids in /data/OnionHEN/config.ini.",在 OnionHEN 上，把 PPSA99575 加到 /data/OnionHEN/config.ini 的 app_jailbreak.exact_title_ids 里。
+main.cpp,Starting,启动中
+main.cpp,Opening the GPU and reading the models,正在打开 GPU 并读取模型
+main.cpp,PS5LM fleet: experimental unauthenticated RPC. Trusted isolated LAN only.,PS5LM fleet：实验性的无认证 RPC。仅限可信的隔离局域网。
+main.cpp,Fleet worker stopped,fleet worker 已停止
+main.cpp,Experimental fleet RPC worker,实验性 fleet RPC worker
+main.cpp, - no authentication; isolated LAN only, — 无认证；仅限隔离局域网
+main.cpp,PS5LM: no models; copy a .gguf to ,PS5LM：没有模型；把 .gguf 复制到 
+main.cpp, or PS5LM/models on a USB drive, 或 U 盘上的 PS5LM/models
+main.cpp,PS5LM: the image projector did not load; loading the model text only,PS5LM：图像投影器没加载，只加载文本部分
+main.cpp,Loading ,正在加载 
+main.cpp, text only,（仅文本）
+main.cpp,"Its image projector did not load, see ",它的图像投影器没加载，详见 
+main.cpp,"PS5LM: the server stopped, see ",PS5LM：服务已停止，详见 
+main.cpp,"PS5LM: ready, chat in a browser on this network",PS5LM：就绪，局域网内用浏览器聊天
+main.cpp,PS5LM: ready for decisions at /v1/systemone,PS5LM：就绪，决策接口 /v1/systemone
+main.cpp,PS5LM: the chat's scratch folder holds %.1f GiB; clear it in Settings,PS5LM：聊天 scratch 目录已占 %.1f GiB，在「设置」里清空
+main.cpp,Planning every model again for %uk tokens and the %s cache,按 %uk token 和 %s 缓存重新规划所有模型
+main.cpp,Applying the new limits,正在应用新的限制
+main.cpp,Opening,正在打开
+main.cpp,Closing,正在关闭
+main.cpp, the logits and activations API, Logits 与激活值 API
+main.cpp,The app restarts with ,app 将带着 
+main.cpp,Unloading ,正在卸载 
+main.cpp,"The app restarts without it, then the download starts",app 将不带它重启，然后开始下载
+main.cpp,PS5LM: scratch folder cleared,PS5LM：scratch 目录已清空
+main.cpp,Starting again,重新启动
+main.cpp,PS5LM asks the HEN for full storage once more,PS5LM 再向 HEN 申请一次完整存储
+main.cpp,Writing the report,正在写报告
+main.cpp,Switching models,切换模型
+main.cpp,", then the app restarts with ",，然后 app 带着 
+main.cpp,The app restarts to give the model the whole memory,app 将重启，把整块内存让给模型
+main.cpp,"The app restarts without a model, about 30 seconds",app 将不加载模型重启，约 30 秒
+main.cpp,"Saved to %s%s, %zu KB",已保存到 %s%s，%zu KB
+main.cpp,Failed: cannot write %s%s,失败：无法写入 %s%s
+main.cpp, and , 以及 
+main.cpp,; saved to ,；已保存到 
+main.cpp,PS5LM: debug report ,PS5LM：调试报告 
+main.cpp,saved to ,已保存到 
+main.cpp,PS5LM: ,PS5LM：
+market.cpp,Searching,搜索中
+market.cpp,Nothing found,没有找到
+market.cpp,Listing files,列出文件
+market.cpp,No GGUF files in this repository,这个仓库里没有 GGUF 文件
+market.cpp,too big: the weights alone need more than is free,太大：光是权重就超过可用空间
+market.cpp, is in Downloads already, 已在下载列表里
+market.cpp, added to Downloads, 已加入下载
+market.cpp,"Not enough space: %s%s needs %.1f GiB and 1 GiB spare, %s has %.1f GiB free%s",空间不足：%s%s 需要 %.1f GiB 并留 1 GiB 余量，%s 只剩 %.1f GiB%s
+market.cpp, and its image projector, 连同图像投影器
+market.cpp, after the downloads queued there,（该处排队的下载已算在内）
+market.cpp,Failed: the repository does not give this file's size,失败：仓库没有给出这个文件的大小
+market.cpp,the app's own storage is not visible to ftpsrv,app 自带的存储对 ftpsrv 不可见
+market.cpp,"written without ftpsrv, slower after about 2 GB",没走 ftpsrv 直接写入，超过约 2 GB 会变慢
+market.cpp,Failed: cannot write to ,失败：无法写入 
+market.cpp, is full, 已满
+market.cpp,Connection lost (,连接断开（
+market.cpp,"); trying again, attempt ",）；正在重试，第 
+market.cpp,Paused,已暂停
+market.cpp,Failed: ,失败：
+market.cpp,  ·  Cross tries again,  ·  × 键重试
+market.cpp,Checking the SHA-256,校验 SHA-256
+market.cpp,"Checking the SHA-256, ",校验 SHA-256，
+market.cpp,Failed: the checksum does not match; Cross downloads it again,失败：校验和不匹配；按 × 键重新下载
+market.cpp,Failed: could not rename the file,失败：无法重命名文件
+market.cpp,Saved to ,已保存到 
+model_plan.cpp,cannot open,打不开
+model_plan.cpp,not a GGUF file,不是 GGUF 文件
+model_plan.cpp,metadata could not be read,读不到元数据
+model_plan.cpp,PrismML's PQ2_0: convert it to Q2_0 on a PC with scripts/bonsai-pq2-to-q2.py,PrismML 的 PQ2_0：在 PC 上用 scripts/bonsai-pq2-to-q2.py 转成 Q2_0
+model_plan.cpp,"PrismML's PTQ1_0, which llama.cpp cannot load; get its Q2_0 file",PrismML 的 PTQ1_0，llama.cpp 加载不了；请下载它的 Q2_0 文件
+model_plan.cpp,Qwen 3.8 27B in ternary weights; Q2_0 is 7.1 GiB and keeps 64k with room to spare,Qwen 3.8 27B 的三值权重；Q2_0 为 7.1 GiB，64k 上下文还有余量
+model_plan.cpp,27B hybrid Gated DeltaNet; UD-Q2_K_XL holds 64k context on the GPU,27B 混合 Gated DeltaNet；UD-Q2_K_XL 在 GPU 上能撑 64k 上下文
+model_plan.cpp,MoE 35B-A3B or dense 27B; the MoE decodes fastest,MoE 35B-A3B 或稠密 27B；MoE 解码最快
+model_plan.cpp,hybrid like 3.8; 9B at Q4_K_M leaves room for long context,混合架构类似 3.8；9B 用 Q4_K_M 能留出长上下文空间
+model_plan.cpp,Qwen 3.5 based 9B,基于 Qwen 3.5 的 9B
+model_plan.cpp,"12B at Q3_K_M / IQ4_XS, E4B at Q4_0",12B 用 Q3_K_M / IQ4_XS，E4B 用 Q4_0
+model_plan.cpp,"20B MoE, 3.6B active; MXFP4 is its only size, so context stays short",20B MoE，激活 3.6B；只有 MXFP4 一种规格，上下文比较短
+model_plan.cpp,"3B and 8B, fast and plain",3B 与 8B，快而朴素
+model_plan.cpp,"hybrid Mamba, 1M context trained",混合 Mamba，按 100 万上下文训练
+model_plan.cpp,7B v0.3 and the Small line,7B v0.3 和 Small 系列
+model_plan.cpp,8B fits at any 4-bit quant,8B 在任何 4bit 量化都放得下
+model_plan.cpp,needs %.1f GiB with a 4k context; %.1f GiB is free,4k 上下文就要 %.1f GiB；可用 %.1f GiB
+model_plan.cpp,"%s%uk context, %s cache%s: %.1f of %.1f GiB",%s%uk 上下文，%s 缓存%s：%.1f / %.1f GiB
+model_plan.cpp,decision model (,决策模型（
+model_plan.cpp,"), ",），
+model_plan.cpp,", images",，图像
+suggested.hpp,"The strongest model that fits, with a 64k context",能放下的最强模型，64k 上下文
+suggested.hpp,"Qwen 3.8 27B in ternary weights, with a 64k context",Qwen 3.8 27B 三值权重，64k 上下文
+suggested.hpp,Fast all-rounder that leaves room for long chats,全能又快，留足长对话空间
+suggested.hpp,"Reads images, quick replies",能看图，回复快
+suggested.hpp,"Small and very fast, reads images",又小又快，能看图
+suggested.hpp,"Tiny and instant, for simple tasks",迷你极速，适合简单任务
+suggested.hpp,"Decisions about text, images and sound in a fraction of a second",文本、图像、声音的判断，零点几秒出结果
+suggested.hpp,Sharper decisions about text and images,文本和图像的判断更准
+suggested.hpp,Answers every question of a request together,一次请求里的所有问题一起回答
+activity.cpp,[image],[图像]
+activity.cpp,yes,是
+activity.cpp,no,否
+activity.cpp,Error: ,错误：
+activity.cpp,What does the writer want?,写的人想要什么？
+activity.cpp,Is the writer angry?,写的人生气吗？
+stats.cpp,Internal storage,内置存储
+stats.cpp,App storage,应用存储
+stats.cpp,<console IP>,<主机 IP>
+storage.cpp,M.2 drive,M.2 硬盘
+storage.cpp,USB drive,USB 硬盘
+storage.cpp,App storage,应用存储
+storage.cpp,Internal storage,内置存储
+fleet_worker.cpp,"fleet-worker.txt must be a regular file, not a link or device",fleet-worker.txt 必须是普通文件，不能是链接或设备
+fleet_worker.cpp,Cannot open fleet-worker.txt: ,打不开 fleet-worker.txt：
+fleet_worker.cpp,fleet-worker.txt changed or is not a regular file,fleet-worker.txt 变了，或不是普通文件
+fleet_worker.cpp,fleet-worker.txt is unreadable or exceeds 1024 bytes,fleet-worker.txt 读不了或超过 1024 字节
+fleet_worker.cpp,Refusing invalid fleet worker configuration,fleet worker 配置无效，拒绝启动
+fleet_worker.cpp,Cannot disable extra RPC listeners; refusing to start,关不掉多余的 RPC 监听，拒绝启动
+fleet_worker.cpp,No Vulkan backend; refusing CPU fallback,没有 Vulkan 后端，拒绝退回 CPU
+fleet_worker.cpp,Expected exactly one PS5 Vulkan device,期望恰好一个 PS5 Vulkan 设备
+fleet_worker.cpp,No Vulkan GPU device; refusing CPU fallback,没有 Vulkan GPU 设备，拒绝退回 CPU
+fleet_worker.cpp,RPC stopped or failed to bind; inspect /data/PS5LM/app.log and restart the title,RPC 已停止或绑定失败；查看 /data/PS5LM/app.log 并重启应用
+fleet_worker.cpp,RPC worker failed: ,RPC worker 失败：
+fleet_worker.cpp,RPC worker failed with an unknown exception,RPC worker 因未知异常失败
+fetch.cpp,too many redirects,重定向次数太多
+fetch.cpp,redirect without a Location,重定向缺少 Location
+preview_main.cpp,Internal storage,内置存储
+preview_main.cpp,M.2 drive,M.2 硬盘
+preview_main.cpp,USB drive,USB 硬盘
+preview_main.cpp,Opening the GPU and reading the models,正在打开 GPU 并读取模型
+preview_main.cpp,"64k context, q4_0 cache: 11.3 of 11.4 GiB",64k 上下文，q4_0 缓存：11.3 / 11.4 GiB
+preview_main.cpp,"64k context, q8_0 cache: 8.9 of 11.0 GiB",64k 上下文，q8_0 缓存：8.9 / 11.0 GiB
+preview_main.cpp,"64k context, q8_0 cache: 11.0 of 11.0 GiB",64k 上下文，q8_0 缓存：11.0 / 11.0 GiB
+preview_main.cpp,"64k context, q8_0 cache: 9.9 of 11.0 GiB",64k 上下文，q8_0 缓存：9.9 / 11.0 GiB
+preview_main.cpp,"64k context, q8_0 cache: 8.6 of 11.0 GiB",64k 上下文，q8_0 缓存：8.6 / 11.0 GiB
+preview_main.cpp,"64k context, q8_0 cache: 9.1 of 11.0 GiB",64k 上下文，q8_0 缓存：9.1 / 11.0 GiB
+preview_main.cpp,"32k context, q4_0 cache: 10.8 of 11.0 GiB",32k 上下文，q4_0 缓存：10.8 / 11.0 GiB
+preview_main.cpp,needs 11.6 GiB with a 4k context; 11.0 GiB is free,4k 上下文就要 11.6 GiB；可用 11.0 GiB
+preview_main.cpp,"decision model (lfm2-d1-omni), 4k context, f16 cache, images: 2.9 of 11.0 GiB",决策模型（lfm2-d1-omni），4k 上下文，f16 缓存，图像：2.9 / 11.0 GiB
+preview_main.cpp,too big: the weights alone need more than is free,太大：光是权重就超过可用空间
+preview_main.cpp,Rename the loop variable in parse_args to something clearer and explain why,把 parse_args 里的循环变量改成更清楚的名字，并说明理由
+preview_main.cpp,"Renamed i to arg_index: it says what the loop walks, and the next reader does not have to look up what i counts.",把 i 改名成 arg_index：它说明了循环在遍历什么，下一个读代码的人不用再查 i 数的是什么。
+preview_main.cpp,Write a haiku about a console that runs a language model,写一首俳句：一台跑语言模型的游戏机
+preview_main.cpp,"Fans hum through the night, a console dreams in tokens, words bloom on the TV.",风扇整夜低唱，游戏机用 token 做梦，字句在电视上开花。
+preview_main.cpp,How does the PS5's GPU run llama.cpp?,PS5 的 GPU 是怎么跑 llama.cpp 的？
+preview_main.cpp,"Through Vulkan. Mihawk-99's RADV port gives the console a full Vulkan 1.4 driver, so llama.cpp's own Vulkan ",靠 Vulkan。Mihawk-99 的 RADV 移植给主机补上了完整的 Vulkan 1.4 驱动，于是 llama.cpp 自带的 Vulkan 
+preview_main.cpp,"backend runs unchanged: every matrix product becomes a compute shader that ACO compiles on the console, and ",后端不用改就能跑：每个矩阵乘都变成计算着色器，由 ACO 在主机上编译，
+preview_main.cpp,the weights sit in the 12 GB the GPU and CPU share,权重就待在 GPU 和 CPU 共用的那 12 GB 里
+preview_main.cpp,Saved to /data/PS5LM/models/SmolLM2-135M-Instruct-F16.gguf,已保存到 /data/PS5LM/models/SmolLM2-135M-Instruct-F16.gguf
+preview_main.cpp,"Connection lost (sceHttp2ReadData 0x804101a3); trying again in 12 s, attempt 2",连接断开（sceHttp2ReadData 0x804101a3）；12 秒后重试，第 2 次

@@ -1,24 +1,15 @@
 #!/usr/bin/env bash
-# Bakes the dashboard's typeface, Manrope (OFL, third_party/fonts/manrope), into
-# the SDF .huifont files the app loads from assets/fonts, with accented Latin,
-# typographic quotes and dashes (the european set), as models write them: weight 500 for text,
-# 600 for titles and 200 for the large numbers. Needs fontTools and a host clang++.
+# PS5LM 汉化版：烘 dashboard 的字形（ps5/app/assets/fonts/manrope-*.huifont）。
+#
+# 汉化版把字形换成了 Noto Sans SC（OFL 1.1）：界面文案是中文，聊天面板还要显示
+# **模型生成的中文**，所以 regular 那个字重装了 GB2312 全集。真名见
+# bake-fonts-cn.py 的说明；文件名保持 manrope-*.huifont，main.cpp 的加载路径不用动。
+#
+# 上游原来的做法（Manrope + european 字符集，只够英文界面用）留在这里备查：
+#   bake_font manrope-$weight.ttf manrope-$weight.huifont 64 8 2048 european
+#
+# 依赖：fontTools（python3 -m pip install fonttools）+ 主机 clang++/g++。
+#   CN_FONT=/path/to/NotoSansSC-VF.ttf scripts/bake-fonts.sh
 set -euo pipefail
-
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
-kit="$root/third_party/ps5-homebrew-ui"
-src="$root/third_party/fonts/manrope"
-out="$root/ps5/app/assets/fonts"
-tmp="$root/build/fonts"
-mkdir -p "$tmp" "$out"
-"${HOST_CXX:-clang++}" -std=c++20 -O2 -w "$kit/tools/font-baker/bake_font.cpp" -o "$tmp/bake_font"
-for weight in 200 500 600; do
-    python3 -c 'import sys
-from fontTools.ttLib import TTFont
-from fontTools.varLib.instancer import instantiateVariableFont
-instantiateVariableFont(TTFont(sys.argv[1]), {"wght": int(sys.argv[2])}).save(sys.argv[3])' \
-        "$src/Manrope[wght].ttf" "$weight" "$tmp/manrope-$weight.ttf"
-    "$tmp/bake_font" "$tmp/manrope-$weight.ttf" "$out/manrope-$weight.huifont" 64 8 2048 european
-done
-cp "$src/OFL.txt" "$out/manrope-LICENSE.txt"
-echo "bake-fonts: $out"
+exec python3 "$root/scripts/bake-fonts-cn.py" "$@"
