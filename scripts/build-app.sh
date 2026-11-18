@@ -260,8 +260,9 @@ cp "$sce_sys/icon0.png" "$sce_sys/pic0.dds" "$sce_sys/pic1.dds" "$app/sce_sys/"
 cp "$vk/runtime/libc.prx" "$app/sce_module/libc.prx"
 # The dashboard's fonts and interface sounds, with their licences.
 mkdir -p "$app/assets/fonts" "$app/assets/audio"
-# Manrope for the screen (scripts/bake-fonts.sh), the kit's DejaVu Sans Mono for logs and code.
-cp "$root/ps5/app/assets/fonts/"manrope-* "$app/assets/fonts/"
+# 屏幕上的字：汉化版换成 Noto Sans SC 烘的图集（scripts/bake-fonts.sh），文件名仍叫
+# manrope-*；日志和代码用 kit 的 DejaVu Sans Mono。两套字体的许可都跟着进包。
+cp "$root/ps5/app/assets/fonts/"manrope-* "$root/ps5/app/assets/fonts/noto-sans-sc-LICENSE.txt" "$app/assets/fonts/"
 cp "$root/third_party/ps5-homebrew-ui/assets/fonts/"{dejavu-sans-mono.huifont,DejaVu-LICENSE.txt} "$app/assets/fonts/"
 # The interface sounds are PocketVibe's (ps5/app/assets/audio/sfx).
 # shortcut: they take the kit's default set name (glass), so no kit change picks
