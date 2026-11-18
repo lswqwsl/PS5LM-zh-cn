@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PS5LM Fleet</title>
+<title>PS5LM 集群</title>
 <style>
 :root {
   --bg: #f3f4f7; --surface: #ffffff; --ink: #121722; --muted: #5d6576; --line: #dcdfe7;
@@ -83,98 +83,98 @@ details summary { cursor: pointer; font-weight: 600; font-size: 13px; }
 </head>
 <body>
 <header>
-  <h1>PS5LM Fleet</h1>
-  <span class="pill" id="summary">loading</span>
+  <h1>PS5LM 集群</h1>
+  <span class="pill" id="summary">读取中</span>
   <span class="api" id="api"></span>
 </header>
 <main>
   <div class="col">
     <section aria-labelledby="pools-h">
       <div class="row spread">
-        <h2 id="pools-h">Pools</h2>
-        <button id="new-pool" class="small">New pool</button>
+        <h2 id="pools-h">模型池</h2>
+        <button id="new-pool" class="small">新建模型池</button>
       </div>
-      <p class="sub">A pool is one model and how it is served. Each replica serves all of it: split over its devices,
-        on one console by itself, on this PC's GPU, or a server elsewhere. Requests go to the pool their "model" names.</p>
+      <p class="sub">一个模型池是「一个模型 + 它怎么被服务」。每个副本都完整服务它：切分到它的几台设备上、
+        单独跑在一台主机上、跑在这台电脑的 GPU 上，或者一台别处的服务器上。请求按自己的 "model" 名字进到池里。</p>
       <div id="pool-form" hidden>
         <div class="form">
-          <label>Name<input id="p-id" placeholder="qwen27" autocomplete="off"></label>
-          <label>Context per request<input id="p-context" type="number" min="256" step="1024" value="32768"></label>
-          <label>Slots per replica<input id="p-slots" type="number" min="1" max="64" value="1"></label>
-          <label>Cache<select id="p-cache"><option>q8_0</option><option>q4_0</option><option>q5_0</option><option>f16</option></select></label>
-          <label class="wide">Model: a GGUF path on this computer, or an https:// URL<input id="p-model" autocomplete="off"></label>
-          <label class="wide">SHA-256 (optional)<input id="p-sha" placeholder="64 hex characters" autocomplete="off"></label>
-          <label class="wide">Replicas: one per line; devices of a split joined by +, optional :rpc, :app or :direct; or a server URL
+          <label>名称<input id="p-id" placeholder="qwen27" autocomplete="off"></label>
+          <label>每次请求的上下文<input id="p-context" type="number" min="256" step="1024" value="32768"></label>
+          <label>每个副本的槽位<input id="p-slots" type="number" min="1" max="64" value="1"></label>
+          <label>缓存<select id="p-cache"><option>q8_0</option><option>q4_0</option><option>q5_0</option><option>f16</option></select></label>
+          <label class="wide">模型：这台电脑上的 GGUF 路径，或一个 https:// 地址<input id="p-model" autocomplete="off"></label>
+          <label class="wide">SHA-256（可选）<input id="p-sha" placeholder="64 位十六进制" autocomplete="off"></label>
+          <label class="wide">副本：一行一个；同一次切分的设备用 + 连接，可加 :rpc、:app 或 :direct；也可以直接写服务器 URL
             <textarea id="p-replicas" rows="3" placeholder="ps5-a+pc-gpu&#10;ps5-b&#10;http://10.0.0.9:8080"></textarea></label>
-          <label>Or add, from free devices<input id="p-auto" type="number" min="0" placeholder="replicas"></label>
-          <label>devices each<input id="p-per" type="number" min="1" value="1"></label>
-          <label>of kind<select id="p-kind"><option value="">any</option><option>ps5</option><option>gpu</option><option>rpc</option></select></label>
-          <label>Aliases (spaces between)<input id="p-aliases" placeholder="qwen gpt-4o" autocomplete="off"></label>
-          <label class="check"><input id="p-shared" type="checkbox"> Slots share one context</label>
-          <label class="check"><input id="p-fa" type="checkbox" checked> Flash attention</label>
-          <label class="check"><input id="p-start" type="checkbox"> Start now</label>
+          <label>或者，从空闲设备里加<input id="p-auto" type="number" min="0" placeholder="replicas"></label>
+          <label>每个用几台设备<input id="p-per" type="number" min="1" value="1"></label>
+          <label>设备类型<select id="p-kind"><option value="">任意</option><option>ps5</option><option>gpu</option><option>rpc</option></select></label>
+          <label>别名（空格分隔）<input id="p-aliases" placeholder="qwen gpt-4o" autocomplete="off"></label>
+          <label class="check"><input id="p-shared" type="checkbox"> 所有槽位共用一个上下文</label>
+          <label class="check"><input id="p-fa" type="checkbox" checked> Flash Attention</label>
+          <label class="check"><input id="p-start" type="checkbox"> 立即启动</label>
         </div>
-        <div class="row"><button id="p-save" class="primary">Save pool</button><button id="p-cancel">Cancel</button></div>
+        <div class="row"><button id="p-save" class="primary">保存模型池</button><button id="p-cancel">取消</button></div>
       </div>
       <div id="pools"></div>
     </section>
     <section aria-labelledby="devices-h">
       <div class="row spread">
-        <h2 id="devices-h">Devices</h2>
+        <h2 id="devices-h">设备</h2>
         <div class="row">
-          <button id="search" class="small">Search the network</button>
-          <button id="new-device" class="small">Add device</button>
+          <button id="search" class="small">搜索网络</button>
+          <button id="new-device" class="small">添加设备</button>
         </div>
       </div>
-      <p class="sub">Consoles switch between worker mode and the app from here; a running pool's devices are its own.</p>
+      <p class="sub">主机在这里可以切到 worker 模式或切回 app；已经在跑的池子的设备归它自己管。</p>
       <div id="device-form" hidden>
         <div class="form">
-          <label>Kind<select id="d-kind"><option value="ps5">PS5 console</option><option value="gpu">GPU on this PC</option><option value="rpc">RPC server</option></select></label>
-          <label>Name<input id="d-id" autocomplete="off"></label>
-          <label class="d-net">Address<input id="d-address" placeholder="192.168.50.21" autocomplete="off"></label>
-          <label>Port<input id="d-port" type="number" placeholder="30052"></label>
+          <label>类型<select id="d-kind"><option value="ps5">PS5 主机</option><option value="gpu">这台电脑的 GPU</option><option value="rpc">RPC 服务器</option></select></label>
+          <label>名称<input id="d-id" autocomplete="off"></label>
+          <label class="d-net">地址<input id="d-address" placeholder="192.168.50.21" autocomplete="off"></label>
+          <label>端口<input id="d-port" type="number" placeholder="30052"></label>
           <label class="d-gpu" hidden>GPU<input id="d-device" value="CUDA0"></label>
-          <label>Memory MiB<input id="d-memory" type="number" placeholder="what it reports"></label>
-          <label>Reserve MiB<input id="d-reserve" type="number" value="512"></label>
-          <label>Tags<input id="d-tags" placeholder="rack1 lounge" autocomplete="off"></label>
-          <label class="d-ps5 wide">Weight cache GiB: how much of the weights hosts send the console keeps on its storage, so a
-            reload reads them there instead of over the network. 0 is off (the default); 32 holds a 27B model's share.
+          <label>内存 MiB<input id="d-memory" type="number" placeholder="它自己报的数"></label>
+          <label>预留 MiB<input id="d-reserve" type="number" value="512"></label>
+          <label>标签<input id="d-tags" placeholder="rack1 lounge" autocomplete="off"></label>
+          <label class="d-ps5 wide">权重缓存 GiB：host 发过来的权重里，主机自己留多少在自己的存储上，这样
+            重载就直接读本地，不用再走网络。0 是关（默认）；32 装得下 27B 模型的份额。
             <input id="d-cache" type="number" min="0" max="4096" value="0"></label>
-          <label class="check d-ps5"><input id="d-screen" type="checkbox"> Screen as a worker (about 350 MiB less for the model)</label>
+          <label class="check d-ps5"><input id="d-screen" type="checkbox"> worker 模式下也开屏幕（模型少约 350 MiB）</label>
         </div>
-        <div class="row"><button id="d-save" class="primary">Add device</button><button id="d-cancel">Cancel</button></div>
+        <div class="row"><button id="d-save" class="primary">添加设备</button><button id="d-cancel">取消</button></div>
       </div>
       <div id="consoles"></div>
       <div class="table-wrap"><table>
-        <thead><tr><th>Device</th><th>Where</th><th>Now</th><th>Replica</th><th>Memory</th><th></th></tr></thead>
+        <thead><tr><th>设备</th><th>位置</th><th>当前</th><th>副本</th><th>内存</th><th></th></tr></thead>
         <tbody id="devices"></tbody>
       </table></div>
     </section>
   </div>
   <div class="col">
     <section aria-labelledby="settings-h">
-      <h2 id="settings-h">API and settings</h2>
+      <h2 id="settings-h">API 与设置</h2>
       <p class="sub" id="api-sub"></p>
       <div class="form">
-        <label>API port<input id="s-port" type="number" min="1024" max="65535"></label>
-        <label>Network to search<input id="s-lan" placeholder="detected"></label>
-        <label>Controller memory MiB<input id="s-host" type="number"></label>
-        <label>Controller reserve MiB<input id="s-reserve" type="number"></label>
-        <label class="wide">API key (optional; every request needs it once set, and web pages on other sites can use the API only with it)<input id="s-key" type="password" autocomplete="off" placeholder="none"></label>
-        <label class="check wide"><input id="s-lan-api" type="checkbox"> Share the API on the network (0.0.0.0); needs an API key</label>
+        <label>API 端口<input id="s-port" type="number" min="1024" max="65535"></label>
+        <label>要搜索的网段<input id="s-lan" placeholder="自动探测"></label>
+        <label>控制端内存 MiB<input id="s-host" type="number"></label>
+        <label>控制端预留 MiB<input id="s-reserve" type="number"></label>
+        <label class="wide">API key（可选；设了之后每个请求都要带，别的站点的网页也只有在带上它时才能用这个 API）<input id="s-key" type="password" autocomplete="off" placeholder="无"></label>
+        <label class="check wide"><input id="s-lan-api" type="checkbox"> 把 API 开放到局域网（0.0.0.0）；需要 API key</label>
       </div>
-      <div class="row"><button id="s-save" class="primary">Save settings</button></div>
+      <div class="row"><button id="s-save" class="primary">保存设置</button></div>
     </section>
     <section aria-labelledby="jobs-h">
-      <h2 id="jobs-h">Activity</h2>
+      <h2 id="jobs-h">活动</h2>
       <div id="jobs"></div>
       <ul class="messages" id="messages"></ul>
     </section>
     <section aria-labelledby="agents-h">
-      <h2 id="agents-h">From a shell or an agent</h2>
-      <p class="sub">The same controls as JSON: <code>python3 -m fleet ctl status</code>, <code>ctl pool start ID --wait 900</code>,
-        <code>ctl device leave ps5-a --wait</code>, or <code>ctl config &gt; fleet.json</code> then <code>ctl apply fleet.json</code>.
-        See <code>python3 -m fleet ctl help</code>.</p>
+      <h2 id="agents-h">从命令行或 agent 操作</h2>
+      <p class="sub">同样的操作用 JSON：<code>python3 -m fleet ctl status</code>、<code>ctl pool start ID --wait 900</code>、
+        <code>ctl device leave ps5-a --wait</code>，或者先 <code>ctl config &gt; fleet.json</code> 再 <code>ctl apply fleet.json</code>。
+        细节见 <code>python3 -m fleet ctl help</code>。</p>
     </section>
   </div>
 </main>
@@ -198,16 +198,16 @@ async function post(path, body = {}, asked = false) {
     const response = await fetch(path, { method: "POST", headers, body: JSON.stringify(body) });
     const data = await response.json();
     if (response.status === 401 && data.token && !asked) {
-      const given = prompt("This control server takes changes only with its token (printed when it started, or its --token):");
+      const given = prompt("这个控制服务器只接受带 token 的改动（启动时打印过，或者它的 --token）：");
       if (given && given.trim()) { token.set(given.trim()); return post(path, body, true); }
     }
     if (data.state) render(data.state);
-    if (!data.ok) toast(data.error || "Refused", true);
+    if (!data.ok) toast(data.error || "被拒绝", true);
     else if (data.result) toast(data.result);
     else if (data.job) toast(data.job.label + "…");
     return data;
   } catch (error) {
-    toast("The control server did not answer: " + error, true);
+    toast("控制服务器没有回应：" + error, true);
     return { ok: false };
   }
 }
@@ -233,67 +233,72 @@ function el(tag, attrs = {}, ...children) {
 
 const TONE = { ready: "ok", worker: "ok", serving: "ok", direct: "ok", starting: "warn", loading: "warn", waiting: "warn",
   stopping: "warn", partial: "warn", checking: "", failed: "bad", offline: "bad", unknown: "bad", empty: "" };
-const pill = (text, tone = TONE[text] ?? "") => el("span", { class: "pill " + tone }, text);
+// The states come from the control server in English; the page says them in Chinese.
+const STATE_ZH = { ready: "就绪", serving: "服务中", worker: "worker", starting: "启动中", loading: "加载中",
+  waiting: "等待中", stopping: "停止中", stopped: "已停止", partial: "部分就绪", checking: "检查中",
+  failed: "失败", offline: "离线", unknown: "未知", idle: "空闲", empty: "空", queued: "排队中", running: "进行中" };
+const stateName = (name) => STATE_ZH[name] ?? name;
+const pill = (text, tone = TONE[text] ?? "") => el("span", { class: "pill " + tone }, stateName(text));
 const button = (label, fn, cls = "small") => el("button", { class: cls, on: { click: fn } }, label);
 const file = (path) => (path || "").split("?")[0].split("/").pop();
 
 function renderPools(s) {
   const box = $("pools");
-  if (!s.pools.length) { box.replaceChildren(el("p", { class: "empty" }, "No pools yet.")); return; }
+  if (!s.pools.length) { box.replaceChildren(el("p", { class: "empty" }, "还没有模型池。")); return; }
   box.replaceChildren(...s.pools.map((p) => {
     const head = el("div", { class: "row spread" },
-      el("div", { class: "row" }, el("h3", {}, p.id), pill(p.state), el("span", { class: "meta" }, `${p.ready} of ${p.replicas.length} ready`)),
+      el("div", { class: "row" }, el("h3", {}, p.id), pill(p.state), el("span", { class: "meta" }, `${p.ready} / ${p.replicas.length} 就绪`)),
       el("div", { class: "row" },
-        p.running ? button("Stop", () => post("/api/pools/stop", { id: p.id }))
-                  : button("Start", () => post("/api/pools/start", { id: p.id }), "small primary"),
-        button("Plan", () => post("/api/pools/plan", { id: p.id })),
-        button("Edit", () => editPool(p)),
-        button("Remove", () => confirm(`Remove pool ${p.id}?`) && post("/api/pools/remove", { id: p.id }), "small danger")));
+        p.running ? button("停止", () => post("/api/pools/stop", { id: p.id }))
+                  : button("启动", () => post("/api/pools/start", { id: p.id }), "small primary"),
+        button("试算", () => post("/api/pools/plan", { id: p.id })),
+        button("编辑", () => editPool(p)),
+        button("删除", () => confirm(`删除模型池 ${p.id}？`) && post("/api/pools/remove", { id: p.id }), "small danger")));
     const meta = el("div", { class: "meta" },
-      `${file(p.model) || "no model"} · ${p.context.toLocaleString()} tokens per request · ${p.slots} slot${p.slots > 1 ? "s" : ""}` +
-      `${p.shared_context ? " sharing one context" : ""} · ${p.cache_type} cache${p.flash_attn ? ", flash attention" : ""}` +
-      (p.aliases.length ? ` · also "${p.aliases.join('", "')}"` : ""));
+      `${file(p.model) || "没有模型"} · 每次请求 ${p.context.toLocaleString()} token · ${p.slots} 个槽位` +
+      `${p.shared_context ? "，共用一个上下文" : ""} · ${p.cache_type} 缓存${p.flash_attn ? "，Flash Attention" : ""}` +
+      (p.aliases.length ? ` · 也叫 "${p.aliases.join('", "')}"` : ""));
     const replicas = p.replicas.map((r) => {
       const where = r.url && r.via === "server" ? r.url : r.devices.join(" + ") + ` (${r.via === "rpc" ? "split" : r.via})`;
-      const load = r.state === "ready" ? `${r.in_flight}/${r.slots} busy · ${r.served} served` : "";
-      const retry = r.state === "failed" && r.retry_in ? ` · retrying in ${r.retry_in} s` : "";
+      const load = r.state === "ready" ? `${r.in_flight}/${r.slots} 忙 · 已服务 ${r.served}` : "";
+      const retry = r.state === "failed" && r.retry_in ? ` · ${r.retry_in} 秒后重试` : "";
       return el("div", { class: "replica" },
         el("div", { class: "row spread" },
           el("div", { class: "row" }, el("strong", {}, r.key), pill(r.state), el("span", { class: "meta" }, where)),
           el("div", { class: "row" }, el("span", { class: "meta" }, load),
-            p.running && r.state !== "stopped" ? button("Restart", () => post("/api/replicas/restart", { key: r.key })) : null)),
+            p.running && r.state !== "stopped" ? button("重启", () => post("/api/replicas/restart", { key: r.key })) : null)),
         r.detail ? el("div", { class: "detail" }, r.detail + retry) : null,
         r.layers ? el("div", { class: "layers" }, r.layers.map((n) =>
-          `${n.id}: blocks ${n.first}-${n.last}${n.output ? " + output" : ""}, ${n.weights_mib} + ${n.cache_mib} MiB` +
-          (r.check && r.check[n.id] ? ` (llama.cpp ${r.check[n.id].total_mib} of ${r.check[n.id].budget_mib})` : "")).join(" · ")) : null,
+          `${n.id}：第 ${n.first}-${n.last} 层${n.output ? " + 输出层" : ""}，${n.weights_mib} + ${n.cache_mib} MiB` +
+          (r.check && r.check[n.id] ? `（llama.cpp ${r.check[n.id].total_mib} / ${r.check[n.id].budget_mib}）` : "")).join(" · ")) : null,
         !r.layers && r.check ? el("div", { class: "layers" }, Object.entries(r.check).map(([id, c]) =>
-          `${id}: llama.cpp ${c.total_mib} of ${c.budget_mib} MiB`).join(" · ")) : null,
+          `${id}：llama.cpp ${c.total_mib} / ${c.budget_mib} MiB`).join(" · ")) : null,
         r.log && r.log.length && r.state !== "ready" ? el("pre", {}, r.log.join("\n")) : null);
     });
-    return el("div", { class: "pool" }, head, meta, replicas.length ? replicas : el("p", { class: "empty" }, "No replicas."));
+    return el("div", { class: "pool" }, head, meta, replicas.length ? replicas : el("p", { class: "empty" }, "还没有副本。"));
   }));
 }
 
 function memory(d) {
-  if (d.kind === "gpu" && state.gpus[d.device]) return `${state.gpus[d.device].free_mib} free`;
-  return d.memory_mib ? `${d.memory_mib} budget` : "reported";
+  if (d.kind === "gpu" && state.gpus[d.device]) return `${state.gpus[d.device].free_mib} 空闲`;
+  return d.memory_mib ? `${d.memory_mib} 预算` : "按上报";
 }
 
 function consoleSettings(d) {
-  const cache = d.cache_gib === 0 ? "no weight cache" : d.cache && d.cache.files ?
-    `weights kept: ${(d.cache.mib / 1024).toFixed(1)} of ${d.cache_gib} GiB` : `weight cache up to ${d.cache_gib} GiB`;
-  return `${d.screen ? "screen" : "no screen"} as a worker · ${cache}` +
-    (d.settings_pending ? " · settings apply at its next restart" : "");
+  const cache = d.cache_gib === 0 ? "不缓存权重" : d.cache && d.cache.files ?
+    `已留权重 ${(d.cache.mib / 1024).toFixed(1)} / ${d.cache_gib} GiB` : `权重缓存最多 ${d.cache_gib} GiB`;
+  return `worker 模式${d.screen ? "开" : "不开"}屏幕 · ${cache}` +
+    (d.settings_pending ? " · 设置会在它下次重启时生效" : "");
 }
 
 function renderDevices(s) {
   const rows = s.devices.map((d) => {
     const mode = d.status.mode;
-    const now = mode === "serving" && d.status.model ? `serving ${file(d.status.model)}` :
-      mode === "worker" && d.status.busy ? "worker, in use" : mode;
+    const now = mode === "serving" && d.status.model ? `正在服务 ${file(d.status.model)}` :
+      mode === "worker" && d.status.busy ? "worker，使用中" : stateName(mode);
     const actions = [];
-    const label = { worker: d.kind === "gpu" ? "Start worker" : "Make worker", leave: "Leave worker mode", quit: "Quit app",
-      unload: "Unload model", stop: "Stop worker", restart: "Restart", "clear-cache": "Clear cache", launch: "Open PS5LM" };
+    const label = { worker: d.kind === "gpu" ? "启动 worker" : "设为 worker", leave: "退出 worker 模式", quit: "关闭 app",
+      unload: "卸载模型", stop: "停掉 worker", restart: "重启", "clear-cache": "清空缓存", launch: "打开 PS5LM" };
     const owner = s.pools.find((p) => p.running && p.replicas.some((r) => r.devices.includes(d.id)));
     for (const action of owner ? [] : d.actions) {
       if (d.kind === "ps5" && action === "worker" && mode === "worker") continue;
@@ -305,20 +310,20 @@ function renderDevices(s) {
       if (d.kind === "ps5" && action === "clear-cache" && !(d.cache && d.cache.files)) continue;
       if (d.kind === "gpu" && action === "worker" && d.rpc_worker) continue;
       if (d.kind === "gpu" && action === "stop" && !d.rpc_worker) continue;
-      actions.push(button(label[action], () => (action !== "clear-cache" || confirm(`Delete the weights ${d.id} keeps?`)) &&
+      actions.push(button(label[action], () => (action !== "clear-cache" || confirm(`删掉 ${d.id} 留着的权重？`)) &&
         post("/api/devices/action", { id: d.id, action })));
     }
     if (owner) {
-      actions.push(el("span", { class: "meta" }, `in use by ${owner.id}; stop it to change this device`));
+      actions.push(el("span", { class: "meta" }, `${owner.id} 正在用它；要改这台设备先停掉那个池子`));
     }
-    actions.push(button("Edit", () => editDevice(d)));
+    actions.push(button("编辑", () => editDevice(d)));
     if (!owner) {
-      actions.push(button(d.enabled ? "Disable" : "Enable", () => post("/api/devices/update", { id: d.id, enabled: !d.enabled })));
-      actions.push(button("Remove", () => confirm(`Remove ${d.id}?`) && post("/api/devices/remove", { id: d.id }), "small danger"));
+      actions.push(button(d.enabled ? "禁用" : "启用", () => post("/api/devices/update", { id: d.id, enabled: !d.enabled })));
+      actions.push(button("删除", () => confirm(`删除 ${d.id}？`) && post("/api/devices/remove", { id: d.id }), "small danger"));
     }
-    const where = d.kind === "gpu" ? `${d.device}, worker port ${d.port}` : `${d.address}:${d.port}`;
+    const where = d.kind === "gpu" ? `${d.device}，worker 端口 ${d.port}` : `${d.address}:${d.port}`;
     return el("tr", {},
-      el("td", {}, el("div", {}, el("strong", {}, d.id)), el("span", { class: "kind" }, d.kind + (d.enabled ? "" : " · disabled")),
+      el("td", {}, el("div", {}, el("strong", {}, d.id)), el("span", { class: "kind" }, d.kind + (d.enabled ? "" : " · 已禁用")),
         d.kind === "ps5" ? el("div", { class: "meta" }, consoleSettings(d)) : null,
         d.tags.length ? el("div", { class: "meta" }, d.tags.join(" ")) : null),
       el("td", { class: "num" }, where),
@@ -327,11 +332,11 @@ function renderDevices(s) {
       el("td", { class: "num" }, memory(d)),
       el("td", {}, el("div", { class: "row" }, actions)));
   });
-  $("devices").replaceChildren(...(rows.length ? rows : [el("tr", {}, el("td", { colspan: 6, class: "empty" }, "No devices yet."))]));
+  $("devices").replaceChildren(...(rows.length ? rows : [el("tr", {}, el("td", { colspan: 6, class: "empty" }, "还没有设备。"))]));
   const fresh = s.consoles.filter((c) => !c.added);
   $("consoles").replaceChildren(...fresh.map((c) => el("div", { class: "notice warn row spread" },
-    `Found ${c.name || c.address} at ${c.address} (${c.state}${c.firmware ? ", firmware " + c.firmware : ""})`,
-    button("Add", () => post("/api/devices/add", { id: (c.name || "ps5-" + c.address.split(".").pop()).replace(/[^A-Za-z0-9_.-]/g, "-"),
+    `发现 ${c.name || c.address}，地址 ${c.address}（${stateName(c.state)}${c.firmware ? "，固件 " + c.firmware : ""}）`,
+    button("添加", () => post("/api/devices/add", { id: (c.name || "ps5-" + c.address.split(".").pop()).replace(/[^A-Za-z0-9_.-]/g, "-"),
       kind: "ps5", address: c.address })))));
 }
 
@@ -345,11 +350,11 @@ function render(s) {
   state = s;
   const ready = s.pools.filter((p) => p.state === "ready").length;
   const devicesUp = s.devices.filter((d) => !["offline", "unknown", "checking"].includes(d.status.mode)).length;
-  $("summary").textContent = `${ready}/${s.pools.length} pools ready · ${devicesUp}/${s.devices.length} devices up`;
+  $("summary").textContent = `${ready}/${s.pools.length} 个池子就绪 · ${devicesUp}/${s.devices.length} 台设备在线`;
   $("summary").className = "pill " + (s.pools.length && ready === s.pools.length ? "ok" : ready ? "warn" : "");
-  $("api").textContent = s.api.listening ? `API ${s.api.url}${s.api.lan ? " (and on the network)" : ""} · ${s.api.requests} requests` : s.api.error || "API not listening";
-  $("api-sub").textContent = `OpenAI and Anthropic requests at ${s.api.url}; "model" picks the pool.` +
-    (s.build.llama_server ? "" : " The host build is missing: run scripts/build-fleet-host.sh.");
+  $("api").textContent = s.api.listening ? `API ${s.api.url}${s.api.lan ? "（也在局域网里）" : ""} · 已处理 ${s.api.requests} 个请求` : s.api.error || "API 没在监听";
+  $("api-sub").textContent = `OpenAI 和 Anthropic 的请求发到 ${s.api.url}；"model" 选池子。` +
+    (s.build.llama_server ? "" : " 缺少 host 那份构建：跑一下 scripts/build-fleet-host.sh。");
   renderPools(s);
   renderDevices(s);
   renderActivity(s);
@@ -439,7 +444,7 @@ function editDevice(d) {
   $("d-cache").value = d && d.kind === "ps5" ? d.cache_gib : 0; $("d-screen").checked = !!(d && d.screen);
   deviceKind();
   if (d) $("d-reserve").value = d.reserve_mib;
-  $("d-save").textContent = d ? "Save device" : "Add device";
+  $("d-save").textContent = d ? "保存设备" : "添加设备";
   (d ? $("d-memory") : $("d-id")).focus();
 }
 

@@ -18,9 +18,12 @@
 | 「推荐」列表里的模型介绍 | ✅ 全中文 | `ps5/app/suggested.hpp` |
 | 请求面板里的「3 个问题」「是 0.87」「错误：…」 | ✅ 全中文 | `ps5/app/activity.cpp` |
 | 硬盘名（内置存储 / 应用存储 / M.2 硬盘 / USB 硬盘） | ✅ 全中文 | `stats.cpp`、`storage.cpp`，dashboard 里的比较也一起改了 |
-| 浏览器聊天页、模型库页 | ✅ 全中文 | `ps5/webui/index.html`、`ps5/ps5lm/library.html` |
-| README | ✅ 全中文 | 其余 `docs/*.md`、`site/`、`fleet/control.html` 保留英文 |
+| 浏览器聊天页、模型库页 | ✅ 全中文 | `ps5/webui/index.html`、`ps5/ps5lm/library.html`；app 现在把它打进包、用 `--path assets/www` 直接提供（[WEBUI.md](WEBUI.md)） |
+| 集群控制页（`python3 -m fleet control`） | ✅ 全中文 | `fleet/control.html`；页面里那些运行时状态文字来自 Python 控制服务器，仍是英文 |
+| README、`docs/LOCALIZATION.md`、`docs/QUIET.md`、`docs/WEBUI.md` | ✅ 全中文 | 其余 `docs/*.md`、`site/` 保留英文（面向构建与上游对照） |
+| 版本号 | ✅ 和上游一致（`0.11.0`） | `ps5/app/version.hpp` 与 `param.json` 的 `contentVersion`（`01.011.000`），发布 tag 也是 `v0.11.0` |
 | 字体 | ✅ 换成 Noto Sans SC | `ps5/app/assets/fonts/manrope-*.huifont` 重新烘焙见下 |
+| 静止画面不再逐帧重画（风扇） | ✅ 改了 | `ps5/app/main.cpp` 的 `frame_stamp`，见 [QUIET.md](QUIET.md) |
 | `app.log` / `llama.log` 日志行、llama-server 参数、API 路径、JSON 字段 | ❌ 保留英文 | 这些是给人和工具抓错误用的，翻了反而搜不到 |
 
 ## 为什么必须重烘字体
@@ -145,6 +148,9 @@ docs/media/localization-font.png   上面那个脚本对 manrope-500 的输出
 scripts/font-baker/bake_font.cpp   改了上游那个烘焙器：支持 @字符集文件
 scripts/font-baker/font_format.hpp .huifont 的二进制布局
 docs/LOCALIZATION.md               本文件
+docs/QUIET.md                      静止帧跳过（风扇）的做法与开关
+docs/WEBUI.md                      :8081 那一页是怎么接上的
+ps5/webui/app.json                 告诉聊天页「native app 没有 8082 模型库页」
 ps5/app/assets/fonts/noto-sans-sc-LICENSE.txt
 ```
 
@@ -152,11 +158,15 @@ ps5/app/assets/fonts/noto-sans-sc-LICENSE.txt
 
 ```
 scripts/bake-fonts.sh              变成 bake-fonts-cn.py 的壳（上游那份 Manrope 做法留在注释里）
+scripts/build-app.sh               打包 assets/www，并带 Noto 的许可
 README.md                          中文
 ps5/app/*.cpp, *.hpp               见上表
 ps5/app/assets/fonts/*.huifont     重新烘焙（Noto Sans SC）
 ps5/webui/index.html               浏览器聊天页
+ps5/webui/app.json                 （同上）
 ps5/ps5lm/library.html             模型库页
+fleet/control.html                 集群控制页（中文）
+.github/workflows/release-zh.yml   打中文包；并检查包里字体、聊天页、字体图集
 .gitignore                         *.en.bak、.deps/fonts/
 ```
 
@@ -169,8 +179,10 @@ ps5/ps5lm/library.html             模型库页
   `scripts/preview-app-ui.sh`（需要 Mesa 的 surfaceless EGL）。
 * **日志面板的中文字体是 DejaVu Sans Mono**（来自 ps5-homebrew-ui），里面没有汉字。所以日志行、
   API 页的 curl 示例、`llama-server` 参数都保持英文——它们本来就该是英文。
-* **`docs/` 其余文档、`site/`、`fleet/control.html` 没有翻译**，它们面向的是构建、移植和集群
-  调试，翻成中文反而不好和上游对照。
+* **`docs/` 其余文档和 `site/` 没有翻译**，它们面向的是构建、移植和集群调试，翻成中文反而不好和
+  上游对照。
+* **集群控制页的运行时文字还是英文**：页面本身的标签、按钮、提示都是中文了，但「活动」面板里的
+  状态行来自 `fleet/control.py` 的 job/note 消息（也会出现在 `ctl` 的命令行输出里），这一层没翻。
 * **`ps5/ps5lm/app.cpp`（payload 那一侧）的消息**保持英文：它是 HTTP 响应和 llama-server 的
   包装层，改了会让客户端和 issue 里的报错对不上。
 
@@ -179,9 +191,11 @@ ps5/ps5lm/library.html             模型库页
 **仓库里没有现成的 zip，这不奇怪：界面文案是编译进 `eboot.bin` 的。** 上游 release 里的
 `PPSA99575` 文件夹中，`eboot.bin` 是编译产物，`assets/fonts/*.huifont` 才是单独的资源。所以
 "拿上游的包、只把字体换掉"是行不通的 —— 那样只会变成"英文界面 + 中文字体"。要中文界面，
-必须交叉编译。
+必须交叉编译。编译好的包放在本仓库的
+[Releases](https://github.com/lswqwsl/PS5LM-zh-cn/releases/latest)（`ps5lm-app-v0.11.0.zip`），
+版本号和上游 0.11.0 一致。
 
-两条路，选一条：
+要自己编，两条路，选一条：
 
 ### 路线 A：让 GitHub Actions 编（不用自己有 Linux）
 

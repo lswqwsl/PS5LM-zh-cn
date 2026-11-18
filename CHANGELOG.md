@@ -90,6 +90,37 @@ v0.1.x are the upstream payload releases by cobanov.
 - Manual layer splits in the planner (`layer_counts`). A split can have one node.
 
 ### Changed
+
+- **The browser page on port 8081 is the app's own translated one.** The app
+  never served `ps5/webui/index.html`; llama-server fell back to llama.cpp's
+  own web UI, which is English and, being a modern bundle, renders as a blank
+  page in the console's browser (which is why `scripts/ps5-chat.sh` passes
+  `--path www` for the payload). `Models::start` now passes `--path
+  <app0>/assets/www`, `scripts/build-app.sh` packs that folder, and the page
+  uses `/v1/models` and `/v1/chat/completions` only, in plain ES5. A `--path`
+  in `app-args.txt` still wins; `PS5LM_WEBUI=llama` in `env.txt` keeps
+  llama.cpp's UI for a PC browser. The page hides its "模型" link when
+  `app.json` (which only the app ships) says there is no library page, and the
+  release workflow now fails if the package has no `assets/www/index.html` or
+  the page is not the Chinese one.
+- **A still screen is no longer drawn sixty times a second** (the fan with no
+  model loaded). The loop recorded and presented every frame whether or not
+  anything had changed: a full-screen gradient, a few thousand quads and a
+  swap, 60 times a second, which the console answers with heat and fan. Each
+  frame is now stamped after it is recorded (`frame_stamp` in
+  `ps5/app/main.cpp`: the quads, the runs, the backdrop, the glass flag) and
+  only a different stamp is presented; a screen still for half a second drops
+  to half rate, and one frame in two seconds goes up anyway (heartbeat). Every
+  turn of the loop is also paced at 1/60 s, so a driver whose swap does not
+  block can no longer spin. Backdrops that move with time compare different
+  every frame and keep their frames, as do the busy screen and a loading bar.
+  Knobs in `/data/PS5LM/env.txt`: `PS5LM_FPS=30` caps the rate, `PS5LM_STILL=0`
+  turns the skip off. `docs/QUIET.md` has the mechanism and how to read the
+  new `loop ... presented ... still ...` log line.
+- **简体中文界面（这个 fork）。** 电视端的五个页面、提示行、对话框，浏览器里的聊天页与模型库页
+  都是中文；正文图集换成 Noto Sans SC 的 GB2312 全集（7552 字形），所以模型生成的中文不再是
+  ????。改了什么、怎么自己重新烘字体见 `docs/LOCALIZATION.md`，网页端见 `docs/WEBUI.md`，
+  静止帧与风扇见 `docs/QUIET.md`。
 - The fleet's llama-server keeps one context checkpoint and no RAM prompt cache
   (`--ctx-checkpoints 1 --cache-ram 0`): saving either reads caches back from
   every worker over the network.
@@ -147,40 +178,6 @@ v0.1.x are the upstream payload releases by cobanov.
   (its reason included) before the process ends. The memory lines in `app.log` give the sink's figures.
   On the console at `-lv 4`, 5 minutes of ~1,800-token prompts: 16 requests, 7 over 15 s (worst 58 s)
   before; 25 requests, none stalled, after.
-
-## [0.11.2] - 2026-11-19
-
-### Changed
-- **The browser page on port 8081 is the app's own translated one.** The app
-  never served `ps5/webui/index.html`; llama-server fell back to llama.cpp's
-  own web UI, which is English and, being a modern bundle, renders as a blank
-  page in the console's browser (which is why `scripts/ps5-chat.sh` passes
-  `--path www` for the payload). `Models::start` now passes `--path
-  <app0>/assets/www`, `scripts/build-app.sh` packs that folder, and the page
-  uses `/v1/models` and `/v1/chat/completions` only, in plain ES5. A `--path`
-  in `app-args.txt` still wins; `PS5LM_WEBUI=llama` in `env.txt` keeps
-  llama.cpp's UI for a PC browser. The page hides its "模型" link when
-  `app.json` (which only the app ships) says there is no library page, and the
-  release workflow now fails if the package has no `assets/www/index.html` or
-  the page is not the Chinese one.
-
-## [0.11.1] - 2026-11-19
-
-### Changed
-- **A still screen is no longer drawn sixty times a second** (the fan with no
-  model loaded). The loop recorded and presented every frame whether or not
-  anything had changed: a full-screen gradient, a few thousand quads and a
-  swap, 60 times a second, which the console answers with heat and fan. Each
-  frame is now stamped after it is recorded (`frame_stamp` in
-  `ps5/app/main.cpp`: the quads, the runs, the backdrop, the glass flag) and
-  only a different stamp is presented; a screen still for half a second drops
-  to half rate, and one frame in two seconds goes up anyway (heartbeat). Every
-  turn of the loop is also paced at 1/60 s, so a driver whose swap does not
-  block can no longer spin. Backdrops that move with time compare different
-  every frame and keep their frames, as do the busy screen and a loading bar.
-  Knobs in `/data/PS5LM/env.txt`: `PS5LM_FPS=30` caps the rate, `PS5LM_STILL=0`
-  turns the skip off. `docs/QUIET.md` has the mechanism and how to read the
-  new `loop ... presented ... still ...` log line.
 
 ## [0.11.0] - 2026-11-02
 
