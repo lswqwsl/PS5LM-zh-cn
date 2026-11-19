@@ -26,9 +26,11 @@ console firmware, and it does not fetch assets from the network at configure
 time: `LLAMA_USE_PREBUILT_UI=OFF` is always set, so llama.cpp's UI comes only from
 `patches/0014-webui-chinese.patch` and its own `npm` build.
 
-The release workflow builds that UI (`LLAMA_BUILD_UI=ON`, node/npm installed in
-the container); `scripts/test-native-build.sh`, which validates the title and the
-console dashboard, skips it with `PS5LM_BUILD_UI=OFF`.
+The build needs node/npm for that UI (`LLAMA_BUILD_UI=ON`, which is the default;
+`scripts/build-app.sh` stops with a message when npm is missing rather than making
+a package with no page). The release workflow installs nodejs and npm in the
+container, because `scripts/test-native-build.sh` -- the script it builds with --
+builds the UI too, and the packaging step then checks that `eboot.bin` carries it.
 
 ## Reproduce the checks
 

@@ -119,14 +119,15 @@ if [[ ! -f "$glcache/ps5-opengl-sdk-1.0.0/sdk/manifest.sha256" ]]; then
 fi
 glsdk=$(bash "$ui/tools/fetch-opengl-sdk.sh")
 export PS5_OPENGL_SDK="$glsdk"
-# Cross-build validation omits llama.cpp's browser UI: this job checks the title
-# and the console dashboard, and has no node/npm. The release build does build it.
+# This is also what the release workflow builds, so it builds llama.cpp's browser
+# UI too (patches/0014 makes it Chinese, and build-app.sh needs node/npm for it).
+# A `tools/ui/dist` in the submodule would win over that and hide a broken npm
+# build, so refuse a checkout that carries one.
 [[ ! -e "$root/third_party/llama.cpp/tools/ui/dist/index.html" ]] || {
     echo 'title-check: remove custom source-tree browser assets or use a clean checkout' >&2; exit 2;
 }
 rm -rf -- "$root/build/app-ps5/llama/tools/ui/dist"
-export PS5LM_BUILD_UI=OFF
-timeout 1800 bash scripts/build-app.sh
+timeout 3600 bash scripts/build-app.sh
 bash "$vk/tools/inspect.sh" "$root/build/app-ps5/eboot.elf"
 title_id=$(python3 -c 'import json; print(json.load(open("ps5/app/sce_sys/param.json"))["titleId"])')
 app="$root/build/app-ps5/title/$title_id"

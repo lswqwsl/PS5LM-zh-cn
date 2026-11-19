@@ -149,13 +149,39 @@ jobs:
             [ "$a" = "$b" ] || { echo "包里的 $f.huifont 和仓库里的不一致" >&2; exit 1; }
           done
           # 浏览器打开 :8081 的那一页是 llama.cpp 自己的 UI，已汉化、编进 eboot：
-          # 检查它真的进去了（没有 UI 时 CMake 只会安静地产出没有页面的 server）
-          # 而且是中文的那一版。
-          eboot=build/release/unzipped/PPSA99575/eboot.bin
-          grep -aq 'manifest.webmanifest' "$eboot" || { echo "eboot 里没有 llama.cpp 的网页 UI（LLAMA_BUILD_UI 没生效？）" >&2; exit 1; }
-          grep -aq 'index.html' "$eboot" || { echo "eboot 里没有网页 UI 的 index.html" >&2; exit 1; }
-          grep -aq '说点什么' "$eboot" || { echo "eboot 里的网页 UI 不是汉化版（patches/0014 没打上？）" >&2; exit 1; }
-          grep -aq '新聊天' "$eboot" || { echo "eboot 里的网页 UI 少了中文界面" >&2; exit 1; }
+          # 检查它真的进去了（没有 UI 时 CMake 只会安静地产出没有页面的 server），
+          # 而且是中文的那一版。资源在 eboot 里是 gzip 过的，所以解压后再找文字。
+          python3 - <<'PY'
+          import pathlib, zlib
+          eboot = pathlib.Path('build/release/unzipped/PPSA99575/eboot.bin').read_bytes()
+          # 文件名表没压缩
+          for name in (b'manifest.webmanifest', b'index.html', b'build.json'):
+              if name not in eboot:
+                  raise SystemExit(f'eboot 里没有网页 UI 的 {name.decode()}（LLAMA_BUILD_UI 没生效？）')
+          assets, i = 0, 0
+          chinese = set()
+          while True:
+              i = eboot.find(b'\x1f\x8b\x08', i)
+              if i < 0:
+                  break
+              d = zlib.decompressobj(31)
+              try:
+                  data = d.decompress(eboot[i:i + 64 * 1024 * 1024]) + d.flush()
+              except zlib.error:
+                  i += 3
+                  continue
+              if data:
+                  assets += 1
+                  for word in ('说点什么', '新聊天', '设置', '模型'):
+                      if word.encode() in data:
+                          chinese.add(word)
+              i += 3
+          print(f'eboot 里的网页 UI：{assets} 个资源，中文命中 {sorted(chinese)}')
+          if assets < 10:
+              raise SystemExit(f'eboot 里只有 {assets} 个网页资源，UI 没编进去')
+          if not {'说点什么', '新聊天'} <= chinese:
+              raise SystemExit('eboot 里的网页 UI 不是汉化版（patches/0014 没打上？）')
+          PY
           ls -l build/release/
 
       # 上传步骤的 action 用 v4 tag；想更严可以把 tag 换成按 commit SHA 固定。
