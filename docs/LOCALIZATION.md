@@ -21,7 +21,7 @@
 | 浏览器聊天页（llama.cpp 自己的 UI） | ✅ 全中文 | `patches/0014-webui-chinese.patch` 改 `tools/ui/src` 的 882 条文字，构建时编进 `llama-server`（[WEBUI.md](WEBUI.md)） |
 | 模型库页（payload 那条路） | ✅ 全中文 | `ps5/ps5lm/library.html` |
 | 集群控制页（`python3 -m fleet control`） | ✅ 全中文 | `fleet/control.html`；页面里那些运行时状态文字来自 Python 控制服务器，仍是英文 |
-| README、`docs/LOCALIZATION.md`、`docs/WEBUI.md` | ✅ 全中文 | 其余 `docs/*.md` 保留英文（面向构建与上游对照） |
+| README、`docs/LOCALIZATION.md`、`docs/WEBUI.md` | ✅ 全中文 | 其余 `docs/*.md`、`site/` 保留英文（面向构建与上游对照） |
 | 版本号 | ✅ 和上游一致（`0.11.0`） | `ps5/app/version.hpp` 与 `param.json` 的 `contentVersion`（`01.011.000`），发布 tag 也是 `v0.11.0` |
 | 字体 | ✅ 换成 Noto Sans SC | `ps5/app/assets/fonts/manrope-*.huifont` 重新烘焙见下 |
 | `app.log` / `llama.log` 日志行、llama-server 参数、API 路径、JSON 字段 | ❌ 保留英文 | 这些是给人和工具抓错误用的，翻了反而搜不到 |
@@ -173,7 +173,7 @@ fleet/control.html                 集群控制页（中文）
   `scripts/preview-app-ui.sh`（需要 Mesa 的 surfaceless EGL）。
 * **日志面板的中文字体是 DejaVu Sans Mono**（来自 ps5-homebrew-ui），里面没有汉字。所以日志行、
   API 页的 curl 示例、`llama-server` 参数都保持英文——它们本来就该是英文。
-* **`docs/` 其余文档没有翻译**，它们面向的是构建、移植和集群调试，翻成中文反而不好和
+* **`docs/` 其余文档和 `site/` 没有翻译**，它们面向的是构建、移植和集群调试，翻成中文反而不好和
   上游对照。
 * **集群控制页的运行时文字还是英文**：页面本身的标签、按钮、提示都是中文了，但「活动」面板里的
   状态行来自 `fleet/control.py` 的 job/note 消息（也会出现在 `ctl` 的命令行输出里），这一层没翻。
