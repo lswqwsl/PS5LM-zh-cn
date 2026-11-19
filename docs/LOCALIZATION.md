@@ -20,10 +20,9 @@
 | 硬盘名（内置存储 / 应用存储 / M.2 硬盘 / USB 硬盘） | ✅ 全中文 | `stats.cpp`、`storage.cpp`，dashboard 里的比较也一起改了 |
 | 浏览器聊天页、模型库页 | ✅ 全中文 | `ps5/webui/index.html`、`ps5/ps5lm/library.html`；app 现在把它打进包、用 `--path assets/www` 直接提供（[WEBUI.md](WEBUI.md)） |
 | 集群控制页（`python3 -m fleet control`） | ✅ 全中文 | `fleet/control.html`；页面里那些运行时状态文字来自 Python 控制服务器，仍是英文 |
-| README、`docs/LOCALIZATION.md`、`docs/QUIET.md`、`docs/WEBUI.md` | ✅ 全中文 | 其余 `docs/*.md`、`site/` 保留英文（面向构建与上游对照） |
+| README、`docs/LOCALIZATION.md`、`docs/WEBUI.md` | ✅ 全中文 | 其余 `docs/*.md`、`site/` 保留英文（面向构建与上游对照） |
 | 版本号 | ✅ 和上游一致（`0.11.0`） | `ps5/app/version.hpp` 与 `param.json` 的 `contentVersion`（`01.011.000`），发布 tag 也是 `v0.11.0` |
 | 字体 | ✅ 换成 Noto Sans SC | `ps5/app/assets/fonts/manrope-*.huifont` 重新烘焙见下 |
-| 静止画面不再逐帧重画（风扇） | ✅ 改了 | `ps5/app/main.cpp` 的 `frame_stamp`，见 [QUIET.md](QUIET.md) |
 | `app.log` / `llama.log` 日志行、llama-server 参数、API 路径、JSON 字段 | ❌ 保留英文 | 这些是给人和工具抓错误用的，翻了反而搜不到 |
 
 ## 为什么必须重烘字体
@@ -148,7 +147,6 @@ docs/media/localization-font.png   上面那个脚本对 manrope-500 的输出
 scripts/font-baker/bake_font.cpp   改了上游那个烘焙器：支持 @字符集文件
 scripts/font-baker/font_format.hpp .huifont 的二进制布局
 docs/LOCALIZATION.md               本文件
-docs/QUIET.md                      静止帧跳过（风扇）的做法与开关
 docs/WEBUI.md                      :8081 那一页是怎么接上的
 ps5/webui/app.json                 告诉聊天页「native app 没有 8082 模型库页」
 ps5/app/assets/fonts/noto-sans-sc-LICENSE.txt

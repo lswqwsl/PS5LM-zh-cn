@@ -19,8 +19,7 @@
 > **本仓库是 [cobanov/PS5LM](https://github.com/cobanov/PS5LM) 的简体中文汉化分支，版本号跟着上游走（0.11.0）。**
 > 电视端五个页面、提示行、对话框，浏览器里的聊天页与模型库页都是中文；正文图集换成带 GB2312
 > 汉字的 Noto Sans SC（7552 字形），所以聊天面板里模型生成的中文不再是 ???? 号。改了什么见
-> [docs/LOCALIZATION.md](docs/LOCALIZATION.md)、[docs/WEBUI.md](docs/WEBUI.md)、
-> [docs/QUIET.md](docs/QUIET.md)。
+> [docs/LOCALIZATION.md](docs/LOCALIZATION.md) 与 [docs/WEBUI.md](docs/WEBUI.md)。
 >
 > **安装包在 [Releases](https://github.com/lswqwsl/PS5LM-zh-cn/releases/latest) 里**：
 > `ps5lm-app-v0.11.0.zip`，解压得到 `PPSA99575`，覆盖到 `/data/homebrew`。界面文案编译在
@@ -143,10 +142,6 @@ curl http://<主机>:8081/v1/systemone -H 'Content-Type: application/json' -d '{
 如果 HEN 没把主机的存储（`/data`）开放给 PS5LM，app 会在第一次启动时说清楚，并提供自带的存储：
 `/download0/PS5LM` 里最多 16 GB，用来放设置、日志和模型（放不下的下载会在开始前被拒绝）。
 存在 app 存储里的模型会留在库里。**设置 > 音效与存储** 里能看到当前用的是哪一种。
-
-没载模型时风扇也会明显变响：界面每秒画 60 帧，而静止的页面其实一帧都没变。这一版把没有变化的帧
-跳过去，静止的界面几乎不再占 GPU，载模型前的待机也就安静下来；`/data/PS5LM/env.txt` 里写
-`PS5LM_FPS=30` 还能再降一档。原理、开关和日志怎么看写在 [docs/QUIET.md](docs/QUIET.md)。
 
 出问题时，**设置 > 调试报告** 会写出 `/data/PS5LM/debug-report.txt`（插了 U 盘时再写一份到 U 盘）：
 app 版本、系统软件、存储、模型、设置、两个日志的结尾，以及哪些 payload 端口有响应，API 密钥和

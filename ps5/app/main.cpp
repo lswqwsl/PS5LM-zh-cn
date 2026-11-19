@@ -66,7 +66,6 @@
 #include <ps5platform/kernel.h>
 
 #include "audio/mixer.hpp"
-#include "core/frame_stats.hpp"
 #include "core/input.hpp"
 #include "core/save_file.hpp"
 #include "gfx/renderer.hpp"
@@ -336,65 +335,6 @@ void keep_awake(bool work) {
         last = now;
     }
 }
-
-// ---- a still frame costs nothing -----------------------------------------------
-// The vertical blank paces the loop, so an idle dashboard is drawn and
-// presented sixty times a second: a full-screen gradient and a few thousand
-// quads every frame, for a picture that does not change. On a console that is
-// heat, and the fan is the answer. So the frame is recorded as usual and
-// compared with the one that is up; only a different one is presented, and a
-// still loop drops to half rate. A backdrop that moves with time — every mode
-// but the flat gradient, which is what this app draws — never compares equal,
-// so those screens keep their frames.
-bool backdrop_moves(hui::gfx::BackdropMode mode) {
-    return mode != hui::gfx::BackdropMode::none && mode != hui::gfx::BackdropMode::gradient;
-}
-
-std::uint64_t hash_bytes(std::uint64_t hash, const void * data, std::size_t bytes) {
-    const auto * p = static_cast<const unsigned char *>(data);
-    for (std::size_t i = 0; i < bytes; ++i) {
-        hash = (hash ^ p[i]) * 1099511628211ull;
-    }
-    return hash;
-}
-
-// What the TV would show, as a number: the quads, the runs that share a
-// texture and a clip rectangle, the backdrop, and whether the frame asks for
-// glass. Two frames with the same stamp are the same pixels.
-std::uint64_t frame_stamp(const DashboardFrame & frame) {
-    std::uint64_t hash = 1469598103934665603ull;
-    for (const hui::gfx::DrawList * list : { &frame.scene, &frame.overlay }) {
-        const auto & instances = list->instances();
-        const auto & mesh = list->mesh_vertices();
-        hash = hash_bytes(hash, instances.data(), instances.size() * sizeof(hui::gfx::Instance));
-        hash = hash_bytes(hash, mesh.data(), mesh.size() * sizeof(hui::gfx::MeshVertex));
-        for (const hui::gfx::Run & run : list->runs()) {
-            // The padding in Run is never written, so the fields go in one by one.
-            hash = hash_bytes(hash, &run.first, sizeof run.first);
-            hash = hash_bytes(hash, &run.count, sizeof run.count);
-            hash = hash_bytes(hash, &run.texture, sizeof run.texture);
-            hash = hash_bytes(hash, &run.clipped, sizeof run.clipped);
-            hash = hash_bytes(hash, &run.mesh, sizeof run.mesh);
-            hash = hash_bytes(hash, &run.clip, sizeof run.clip);
-        }
-    }
-    const hui::gfx::BackdropSpec & spec = frame.backdrop;
-    hash = hash_bytes(hash, &spec.mode, sizeof spec.mode);
-    hash = hash_bytes(hash, spec.colors, sizeof spec.colors);
-    hash = hash_bytes(hash, spec.params, sizeof spec.params);
-    if (backdrop_moves(spec.mode)) {
-        hash = hash_bytes(hash, &spec.time, sizeof spec.time);
-    }
-    const unsigned char glass = frame.glass ? 1 : 0;
-    return hash_bytes(hash, &glass, sizeof glass);
-}
-
-// A still screen is still presented once in a while: the display is not the
-// only thing that reads the swap, and one frame in two seconds costs nothing.
-// Past half a second of stillness the loop also runs at half rate: what is
-// left to save on a screen that does not move is the drawing itself.
-constexpr int kStillHeartbeat = 60;
-constexpr int kStillHalfRate  = 30;
 
 std::vector<std::string> read_lines(const std::string & path) {
     std::vector<std::string> out;
@@ -990,11 +930,8 @@ int main(int, char **) {
     setenv("LLAMA_CACHE", data_path("cache").c_str(), 0);
     // Driver and backend switches to measure with, one NAME=value a line in
     // env.txt, set before the GPU opens; only the driver's, ggml's and llama's,
-    // and the app's own: PS5LM_FPS caps the frame rate (10..60),
-    // PS5LM_STILL=0 turns the still-frame skip off, PS5LM_WEBUI=llama serves
-    // llama.cpp's own chat page instead of the app's.
-    int  target_fps = 60;
-    bool skip_still = true;
+    // and the app's own: PS5LM_WEBUI=llama serves llama.cpp's own chat page,
+    // PS5LM_WEBUI=off serves no page at all.
     for (const auto & line : read_lines(g_files.env)) {
         const size_t eq = line.find('=');
         const std::string name = line.substr(0, eq == std::string::npos ? 0 : eq);
@@ -1005,18 +942,13 @@ int main(int, char **) {
         }
         if (known && !value.empty()) {
             setenv(name.c_str(), value.c_str(), 1);
-            if (name == "PS5LM_FPS") {
-                target_fps = std::clamp(std::atoi(value.c_str()), 10, 60);
-            } else if (name == "PS5LM_STILL") {
-                skip_still = value[0] != '0';
-            } else if (name == "PS5LM_WEBUI") {
+            if (name == "PS5LM_WEBUI") {
                 g_builtin_webui = value == "llama";
                 g_webui_off = value == "off" || value == "none" || value == "0";
             }
         }
         ps5lm::log_line("env %s%s\n", line.c_str(), known ? "" : " (ignored)");
     }
-    ps5lm::log_line("frame %d fps at most, still frames %s\n", target_fps, skip_still ? "presented once" : "always");
     mkdir(g_files.models.c_str(), 0777);
     ps5lm::log_line("start\n");
     // What the system gave the title, before the screen and the GPU take any
@@ -1041,29 +973,13 @@ int main(int, char **) {
 
     Dashboard dash(fonts);
     DashboardFrame frame;
-    // The still-frame skip (see frame_stamp above): what the TV is showing,
-    // how long it has not changed, and whether the next frame must go up
-    // anyway (a screenshot reads the framebuffer).
-    std::uint64_t shown_stamp = 0;
-    bool          have_stamp  = false;
-    int           still_for   = 0;
-    bool          force_draw  = false;
-    const auto render = [&]() -> bool {  // false: the TV already shows this frame
+    const auto render = [&] {
         frame.backdrop = {};
         frame.scene.clear();
         frame.overlay.clear();
         frame.glass = false;
         frame.glass_texture = renderer.glass_texture();
         dash.draw(frame);
-        const std::uint64_t stamp = frame_stamp(frame);
-        if (skip_still && have_stamp && !force_draw && stamp == shown_stamp && still_for < kStillHeartbeat) {
-            ++still_for;
-            return false;
-        }
-        force_draw = false;
-        still_for = 0;
-        shown_stamp = stamp;
-        have_stamp = true;
         renderer.begin();
         renderer.backdrop(frame.backdrop);
         renderer.draw(frame.scene);
@@ -1072,14 +988,12 @@ int main(int, char **) {
         }
         renderer.draw(frame.overlay);
         display.present(renderer);
-        return true;
     };
     // The splash at once, so a restart for a model is never a black screen.
     if (ui_ok) {
         dash.set_busy("启动中", "正在打开 GPU 并读取模型");
-        if (render()) {
-            display.swap();
-        }
+        render();
+        display.swap();
     }
     sceSystemServiceHideSplashScreen();
 
@@ -1133,17 +1047,11 @@ int main(int, char **) {
             quiet.clear();
             dash.update(hui::InputFrame{}, 1.0f / 60.0f, quiet);
             if (ui_ok) {
-                // A picture is read from the framebuffer, so it needs this
-                // frame drawn and presented even when it is the one already up.
-                const bool shot = n % 60 == 45 && access("/data/PS5LM/screenshot", F_OK) == 0;
-                force_draw = shot;
-                if (render()) {
-                    display.swap();
-                }
-                if (shot) {
-                    take_request_file("/data/PS5LM/screenshot");
+                render();
+                if (n % 60 == 45 && !take_request_file("/data/PS5LM/screenshot").empty()) {
                     save_screen("/data/PS5LM/screen.bmp", display.width(), display.height());
                 }
+                display.swap();
             } else {
                 sceKernelUsleep(16667);
             }
@@ -1288,9 +1196,8 @@ int main(int, char **) {
             quiet.clear();
             dash.update(hui::InputFrame{}, std::min(0.05f, (float) (now - at) / 1e6f), quiet);
             at = now;
-            if (render()) {
-                display.swap();
-            }
+            render();
+            display.swap();
         }
     }
     pthread_join(booting, nullptr);
@@ -1328,11 +1235,6 @@ int main(int, char **) {
     bool was_serving = false;
     bool rescanning = false;
     uint64_t restart_at = 0;  // the frame to stop the model and restart on, or 0
-    // What the loop costs, for the log: the frame times, and how much of each
-    // frame went to drawing, to the swap, and to nothing at all (still).
-    hui::FrameStats frame_ms;
-    std::uint64_t  presented_frames = 0, still_frames = 0;
-    int64_t        draw_us = 0, swap_us = 0;
     for (uint64_t n = 0;; ++n) {
         const int64_t now = hui::sys::monotonic_us();
         const float dt = n == 0 ? 1.0f / 60.0f : std::min(0.05f, (float) (now - last) / 1e6f);
@@ -1615,55 +1517,14 @@ int main(int, char **) {
             restart_at = n + 3;  // three frames with the busy screen on the TV first
         }
 
-        // A picture is read from the framebuffer, so that frame must go up
-        // even when it is the one already on the TV.
-        bool shot = false;
-        if (ui_ok && n % 60 == 45) {
-            shot = access(data_path("screenshot").c_str(), F_OK) == 0;
-            force_draw = shot;
-        }
-        const int64_t draw_started = hui::sys::monotonic_us();
-        bool presented = false;
         if (ui_ok) {
-            presented = render();
+            render();
+            if (n % 60 == 45 && !take_request_file(data_path("screenshot")).empty()) {
+                const bool ok = save_screen(data_path("screen.bmp").c_str(), display.width(), display.height());
+                ps5lm::log_line("screenshot %s\n", ok ? "saved" : "failed");
+            }
         }
-        const int64_t drawn = hui::sys::monotonic_us();
-        if (presented || !ui_ok) {
-            display.swap();
-        }
-        const int64_t swapped = hui::sys::monotonic_us();
-        draw_us += drawn - draw_started;
-        if (presented) {
-            swap_us += swapped - drawn;
-            ++presented_frames;
-        } else {
-            ++still_frames;
-        }
-        if (shot) {
-            take_request_file(data_path("screenshot"));
-            const bool ok = save_screen(data_path("screen.bmp").c_str(), display.width(), display.height());
-            ps5lm::log_line("screenshot %s\n", ok ? "saved" : "failed");
-        }
-        frame_ms.add((double) (swapped - now) / 1000.0);
-        // The vertical blank paces a frame that changed; a still one has to be
-        // paced here, or the loop spins and the fan answers.
-        const int64_t period = 1000000 / (still_for >= kStillHalfRate ? std::max(1, target_fps / 2) : target_fps);
-        const int64_t spent = swapped - now;
-        if (spent < period) {
-            hui::sys::sleep_us((std::uint32_t) (period - spent));
-        }
-        if (n % 600 == 599) {  // about every ten seconds: what the loop costs
-            char summary[160];
-            frame_ms.format(summary, sizeof summary);
-            const std::uint64_t total = presented_frames + still_frames;
-            ps5lm::log_line("loop %s draw %.2f ms, swap %.2f ms, presented %llu, still %llu\n", summary,
-                            total ? (double) draw_us / 1000.0 / (double) total : 0.0,
-                            presented_frames ? (double) swap_us / 1000.0 / (double) presented_frames : 0.0,
-                            (unsigned long long) presented_frames, (unsigned long long) still_frames);
-            frame_ms.reset();
-            presented_frames = still_frames = 0;
-            draw_us = swap_us = 0;
-        }
+        display.swap();
         if (n % 60 == 0) {
             quit_if_asked();
         }
