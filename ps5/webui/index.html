@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PS5LM</title>
 <!--
-  The chat page llama-server serves on the PS5 (ps5lm.elf, port 8081).
-  cobanov.dev's palette in the PS5's own type (SST, the system font, when the
-  browser has it), laid out like a plain chat client: one reading column,
-  your messages in a quiet box, answers as text. Plain ES5 and
-  XMLHttpRequest with no external files, because the PS5 browser renders
-  modern bundles blank. Sized from the viewport, so it reads on a TV and on
-  a phone.
+  The chat page llama-server serves on the PS5 (:8081). Plain ES5 and
+  XMLHttpRequest with no external files, because the console's browser renders
+  modern bundles blank.
+  It asks /health until the model is loaded, so a request is never sent into a
+  server that is still loading; when a streamed answer produces nothing it asks
+  again without streaming; and a failure shows the HTTP status and the server's
+  own words instead of "stopped".
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 <style>
@@ -25,9 +25,6 @@
     font-family: "SST", "SST Roman", "SST-Roman", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.55; }
   body { display: flex; flex-direction: column; }
   a { color: var(--accent); text-decoration: none; }
-  /* The PS5's own focus: a white frame around what the cursor is on. Kept
-     apart from :focus-visible, since a browser that does not know it drops
-     the whole rule, frame included. */
   button:focus, input:focus { outline: 3px solid var(--text); outline-offset: 2px; }
   :focus-visible { outline: 3px solid var(--text); outline-offset: 2px; }
 
@@ -36,6 +33,10 @@
   .brand { color: var(--text); font-weight: 500; }
   .model { color: var(--muted); font-size: 0.875rem; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .top a { font-size: 0.875rem; padding: 0.5rem 0; }
+  .state { font-size: 0.8125rem; color: var(--faint); white-space: nowrap; }
+  .state.ready { color: #7bd8a4; }
+  .state.wait { color: #f2c27a; }
+  .state.bad { color: #ff9c97; }
 
   .scroll { flex: 1; overflow-y: auto; }
   .column { max-width: 46rem; margin: 0 auto; padding: 2rem 1.5rem; }
@@ -54,7 +55,8 @@
     border-radius: 6px; padding: 0.6rem 1rem; max-width: 80%; }
   .bot { color: var(--body); }
   .bot .meta { display: block; color: var(--faint); font-size: 0.8125rem; margin-top: 0.4rem; }
-  .bot .error { color: #e5a29a; }
+  .bot .error { color: #e5a29a; display: block; }
+  .bot .hint { color: var(--faint); display: block; font-size: 0.8125rem; }
   .caret { display: inline-block; width: 0.5em; height: 1.1em; vertical-align: text-bottom; background: var(--muted); }
 
   .composer { border-top: 1px solid var(--border); background: var(--bg); }
@@ -66,12 +68,14 @@
     border: 0; border-radius: 4px; padding: 0 1.4rem; cursor: pointer; }
   .composer button:hover { background: #ffffff; }
   .composer button.stop { background: var(--quiet); color: var(--text); border: 1px solid var(--border); }
+  .composer button:disabled { opacity: 0.45; cursor: default; }
 </style>
 </head>
 <body>
 <header class="top">
   <span class="brand">ps5lm</span>
   <span class="model" id="model"></span>
+  <span class="state wait" id="state">连接中…</span>
   <a id="models" href="#">模型</a>
 </header>
 
@@ -92,7 +96,7 @@
 <div class="composer">
   <form id="form">
     <input id="input" type="text" autocomplete="off" placeholder="说点什么">
-    <button id="send" type="submit">发送</button>
+    <button id="send" type="submit" disabled>发送</button>
   </form>
 </div>
 
@@ -100,7 +104,6 @@
 (function () {
   // What the model knows about itself. The name fills in from /v1/models.
   var modelName = '一个语言模型';
-  // Small models copy an example answer far better than they follow a rule.
   function systemPrompt() {
     return '你是 ' + modelName + '，一个开源权重的语言模型，用 PS5LM（llama.cpp 的移植）在这台 ' +
       'PlayStation 5 上本地运行。你跑在主机自己的 CPU 上，全程离线，对话不会离开这台主机。' +
@@ -113,36 +116,73 @@
   var form = document.getElementById('form');
   var input = document.getElementById('input');
   var send = document.getElementById('send');
+  var stateBox = document.getElementById('state');
+  var modelBox = document.getElementById('model');
   var messages = [];
   var xhr = null;
+  var ready = false;
 
-  // ps5lm.elf serves its model library on port 8082. The native app has no
-  // such page (its library is the one on the TV) and says so in app.json,
-  // which only it ships: without the file the link stays.
+  // The native app has no model-library page (its library is on the TV) and
+  // says so in app.json, which only it ships: without the file the link stays.
   var library = document.getElementById('models');
   library.href = 'http://' + location.hostname + ':8082/';
-  var app_info = new XMLHttpRequest();
-  app_info.open('GET', '/app.json');
-  app_info.onload = function () {
-    if (app_info.status !== 200) return;
-    var conf = {};
-    try { conf = JSON.parse(app_info.responseText); } catch (e) { return; }
-    if (conf.library === '') library.style.display = 'none';
-  };
-  app_info.send();
-
-  var info = new XMLHttpRequest();
-  info.open('GET', '/v1/models');
-  info.onload = function () {
+  xhrGet('/app.json', function (status, text) {
+    if (status !== 200) return;
     try {
-      var id = JSON.parse(info.responseText).data[0].id;
-      // Qwen3.5-2B-Q4_K_M.gguf reads as Qwen3.5 2B.
-      modelName = id.split('/').pop().replace(/\.gguf$/, '')
-        .replace(/-(UD-)?(I?Q[0-9].*|BF16|F16|F32)$/i, '').replace(/-/g, ' ');
-      document.getElementById('model').textContent = modelName;
-    } catch (e) {}
-  };
-  info.send();
+      if (JSON.parse(text).library === '') library.style.display = 'none';
+    } catch (error) { /* not our file: keep the link */ }
+  });
+
+  function xhrGet(path, done) {
+    var request = new XMLHttpRequest();
+    request.open('GET', path);
+    request.onloadend = function () { done(request.status, request.responseText || ''); };
+    request.onerror = function () { done(0, ''); };
+    request.send();
+  }
+
+  function setState(text, kind) {
+    stateBox.textContent = text;
+    stateBox.className = 'state ' + (kind || '');
+  }
+
+  // The model is loaded when /health says so; until then the server answers
+  // /v1/chat/completions with an error and a request is wasted.
+  function checkHealth() {
+    xhrGet('/health', function (status, text) {
+      var ok = false;
+      if (status === 200) {
+        ok = true;
+        try { ok = JSON.parse(text).status === 'ok'; } catch (error) { ok = true; }
+      }
+      if (ok) {
+        ready = true;
+        send.disabled = false;
+        setState('就绪', 'ready');
+        input.focus();
+      } else {
+        ready = false;
+        send.disabled = true;
+        setState(status === 0 ? '连不上服务器' : '模型还没加载好', status === 0 ? 'bad' : 'wait');
+        setTimeout(checkHealth, 2000);
+      }
+    });
+  }
+
+  function loadName() {
+    xhrGet('/v1/models', function (status, text) {
+      if (status !== 200) return;
+      try {
+        var id = JSON.parse(text).data[0].id;
+        modelName = id.split('/').pop().replace(/\.gguf$/, '')
+          .replace(/-(UD-)?(I?Q[0-9].*|BF16|F16|F32)$/i, '').replace(/-/g, ' ');
+        modelBox.textContent = modelName;
+      } catch (error) { /* keep the default name */ }
+    });
+  }
+
+  checkHealth();
+  loadName();
 
   function add(cls) {
     var empty = document.getElementById('empty');
@@ -158,6 +198,23 @@
     send.className = on ? 'stop' : '';
   }
 
+  // What the server said, in its own words, is worth more than "failed".
+  function describe(status, text) {
+    if (status === 0) return '连接断了：服务器没在监听，或者刚被重启/停止。';
+    var detail = '';
+    try {
+      var body = JSON.parse(text);
+      detail = body.error && (body.error.message || body.error);
+    } catch (error) {
+      detail = (text || '').replace(/^\s+|\s+$/g, '').slice(0, 200);
+    }
+    return '服务器返回 ' + status + (detail ? '：' + detail : '。');
+  }
+
+  function parseStream(seen, pending) {
+    return { seen: seen, pending: pending };
+  }
+
   function ask(text) {
     messages.push({ role: 'user', content: text });
     if (messages.length > 12) messages = messages.slice(messages.length - 12);
@@ -168,20 +225,70 @@
     mine.appendChild(box);
 
     var out = add('bot');
-    var body = document.createTextNode('');
+    var answer = document.createTextNode('');
     var caret = document.createElement('span');
     caret.className = 'caret';
-    out.appendChild(body);
+    out.appendChild(answer);
     out.appendChild(caret);
     bottom();
 
-    var answer = '', seen = 0, pending = '';
+    var spoken = '', seen = 0, pending = '';
+    var streaming = true;
+
+    function finish(text_) {
+      if (caret.parentNode) caret.parentNode.removeChild(caret);
+      if (text_) {
+        answer.nodeValue = text_;
+        messages.push({ role: 'assistant', content: text_ });
+      }
+      busy(false);
+      bottom();
+      input.focus();
+    }
+
+    function fail(status, text_) {
+      var span = document.createElement('span');
+      span.className = 'error';
+      span.textContent = describe(status, text_);
+      out.appendChild(span);
+      if (status === 0 || status === 503) {
+        ready = false;
+        send.disabled = true;
+        setState('模型还没加载好', 'wait');
+        setTimeout(checkHealth, 2000);
+      }
+      finish('');
+    }
+
+    function whole() {
+      // The streamed answer came to nothing: ask once more without streaming,
+      // which needs no incremental responseText from the browser.
+      var again = new XMLHttpRequest();
+      again.open('POST', '/v1/chat/completions');
+      again.setRequestHeader('Content-Type', 'application/json');
+      again.onloadend = function () {
+        if (again.status !== 200) { fail(again.status, again.responseText); return; }
+        var body = null;
+        try { body = JSON.parse(again.responseText); } catch (error) { body = null; }
+        var text_ = body && body.choices && body.choices[0] && body.choices[0].message &&
+          body.choices[0].message.content;
+        if (!text_) { fail(again.status, again.responseText); return; }
+        answer.nodeValue = text_;
+        finish(text_);
+      };
+      again.send(JSON.stringify({
+        messages: [{ role: 'system', content: systemPrompt() }].concat(messages),
+        max_tokens: 256,
+        chat_template_kwargs: { enable_thinking: false }
+      }));
+    }
+
     xhr = new XMLHttpRequest();
     xhr.open('POST', '/v1/chat/completions');
     xhr.setRequestHeader('Content-Type', 'application/json');
 
-    // Server-sent events arrive in pieces: handle whole "data:" lines.
     xhr.onprogress = function () {
+      if (!streaming) return;
       pending += xhr.responseText.substring(seen);
       seen = xhr.responseText.length;
       var lines = pending.split('\n');
@@ -192,11 +299,11 @@
         var data = line.substring(5).replace(/^\s+/, '');
         if (data === '[DONE]') continue;
         var chunk;
-        try { chunk = JSON.parse(data); } catch (e) { continue; }
+        try { chunk = JSON.parse(data); } catch (error) { continue; }
         var delta = chunk.choices && chunk.choices[0] && chunk.choices[0].delta;
         if (delta && delta.content) {
-          answer += delta.content;
-          body.nodeValue = answer;
+          spoken += delta.content;
+          answer.nodeValue = spoken;
         }
         if (chunk.timings) {
           var meta = document.createElement('span');
@@ -210,24 +317,22 @@
     };
 
     xhr.onloadend = function () {
-      xhr.onprogress();
-      if (caret.parentNode) caret.parentNode.removeChild(caret);
-      if (!answer) {
-        var err = document.createElement('span');
-        err.className = 'error';
-        err.textContent = xhr.status === 0 ? '已停止。' :
-          '没有回答（' + xhr.status + '）。到主机上的 PS5LM 看看模型是否已经加载。';
-        out.appendChild(err);
-      } else {
-        messages.push({ role: 'assistant', content: answer });
-      }
+      streaming = false;
+      if (xhr.onprogress) xhr.onprogress();
+      var status = xhr.status, text_ = xhr.responseText || '';
       xhr = null;
       busy(false);
-      bottom();
-      input.focus();
+      if (spoken) { finish(spoken); return; }
+      if (status !== 200) { fail(status, text_); return; }
+      // 200 with nothing: this browser may not deliver a streamed body.
+      if (!caret.parentNode) return;
+      var hint = document.createElement('span');
+      hint.className = 'hint';
+      hint.textContent = '这个浏览器没有收到流式内容，改用整段回答重试一次…';
+      out.appendChild(hint);
+      whole();
     };
 
-    // Small models on a few CPU cores: short answers, no thinking phase.
     xhr.send(JSON.stringify({
       messages: [{ role: 'system', content: systemPrompt() }].concat(messages),
       stream: true,
@@ -240,6 +345,7 @@
   form.onsubmit = function (e) {
     e.preventDefault();
     if (xhr) { xhr.abort(); return; }
+    if (!ready) { checkHealth(); return; }
     var text = input.value.replace(/^\s+|\s+$/g, '');
     if (!text) return;
     input.value = '';
@@ -248,7 +354,7 @@
 
   var ideas = document.querySelectorAll('.idea');
   for (var k = 0; k < ideas.length; k++) {
-    ideas[k].onclick = function () { if (!xhr) ask(this.textContent); };
+    ideas[k].onclick = function () { if (!xhr && ready) ask(this.textContent); };
   }
 })();
 </script>
