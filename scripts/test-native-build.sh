@@ -62,6 +62,30 @@ fetch_pinned https://github.com/mihawk-99/PS5_PayloadSDK.git "$sdk_fork" "$sdk_r
 # Upstream scripts verify the v0.42 SDK release and zlib archive SHA-256s.
 # These are public homebrew sources/tools, not proprietary firmware dumps.
 export PS5_PAYLOAD_SDK_FORK="$sdk_fork"
+# zlib.net sometimes serves a truncated archive, and then upstream's script
+# aborts the whole build with "sha256sum: WARNING: 1 computed checksum did NOT
+# match" -- three build attempts in a row did exactly that. Fetch the same pinned
+# archive here, check it, and let the script build from the verified copy; the
+# maintainer's release on GitHub is the second source.
+zlib_version=1.3.2
+zlib_hash=bb329a0a2cd0274d05519d61c667c062e06990d72e125ee2dfa8de64f0119d16
+zlib_archive="$vk/.deps/native/zlib/zlib-$zlib_version.tar.gz"
+if ! printf '%s  %s\n' "$zlib_hash" "$zlib_archive" | sha256sum --check --strict >/dev/null 2>&1; then
+    mkdir -p "$(dirname "$zlib_archive")"
+    for url in "https://zlib.net/fossils/zlib-$zlib_version.tar.gz" \
+               "https://github.com/madler/zlib/releases/download/v$zlib_version/zlib-$zlib_version.tar.gz"; do
+        for try in 1 2 3; do
+            if curl -fsSL --retry 2 -o "$zlib_archive.part" "$url" &&
+               printf '%s  %s\n' "$zlib_hash" "$zlib_archive.part" | sha256sum --check --strict >/dev/null 2>&1; then
+                mv "$zlib_archive.part" "$zlib_archive"
+                echo "zlib: $url 的档已核验"
+                break 2
+            fi
+            echo "zlib: $url 第 $try 次下载不完整，重试" >&2
+            sleep 3
+        done
+    done
+fi
 timeout 300 bash "$vk/tools/setup-native-dependencies.sh"
 export PS5_VULKAN_ROOT="$vk"
 export PS5_PAYLOAD_SDK="$vk/.deps/native/ps5-payload-sdk"
