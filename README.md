@@ -16,13 +16,13 @@
   <a href="https://github.com/lswqwsl/PS5LM-zh-cn/issues">问题反馈</a>
 </p>
 
-> **本仓库是 [cobanov/PS5LM](https://github.com/cobanov/PS5LM) 的简体中文汉化分支，版本号跟着上游走（0.11.0）。**
+> **本仓库是 [cobanov/PS5LM](https://github.com/cobanov/PS5LM) 的简体中文汉化分支，版本号是上游号加汉化后缀（现在是 `0.11.0-zh.1`，`contentVersion` 仍是 `01.011.000`）。**
 > 电视端五个页面、提示行、对话框，浏览器里的聊天页与模型库页都是中文；正文图集换成带 GB2312
 > 汉字的 Noto Sans SC（7552 字形），所以聊天面板里模型生成的中文不再是 ???? 号。改了什么见
 > [docs/LOCALIZATION.md](docs/LOCALIZATION.md) 与 [docs/WEBUI.md](docs/WEBUI.md)。
 >
 > **安装包在 [Releases](https://github.com/lswqwsl/PS5LM-zh-cn/releases/latest) 里**：
-> `ps5lm-app-v0.11.0.zip`，解压得到 `PPSA99575`，覆盖到 `/data/homebrew`。界面文案编译在
+> `ps5lm-app-v0.11.0-zh.1.zip`，解压得到 `PPSA99575`，覆盖到 `/data/homebrew`。界面文案编译在
 > `eboot.bin` 里，没法只换字体，所以要发重新编译过的整包；想自己从头打一次，用仓库里的
 > GitHub Actions 工作流（约 40~60 分钟），见
 > [docs/LOCALIZATION.md 的「怎么拿到能装到 PS5 上的 zip」](docs/LOCALIZATION.md#怎么拿到能装到-ps5-上的-zip)。
@@ -117,7 +117,7 @@ curl http://<主机>:8081/v1/systemone -H 'Content-Type: application/json' -d '{
 | [elfldr](https://github.com/ps5-payload-dev/elfldr)（9021 端口） | 通过 ps5-exporter 读温度、功耗和真实剩余空间；通过 app 自带的 ftpsrv 全速下载 | 建议 |
 | [ftpsrv](https://github.com/ps5-payload-dev/ftpsrv)（2121 端口） | 安装 app、从 PC 拷模型；它在跑时下载会通过它写入 | 建议 |
 
-1. 从 [Releases](https://github.com/lswqwsl/PS5LM-zh-cn/releases/latest) 下载 `ps5lm-app-v0.11.0.zip` 并解压。
+1. 从 [Releases](https://github.com/lswqwsl/PS5LM-zh-cn/releases/latest) 下载最新的 `ps5lm-app-v<版本>.zip`（现在是 `ps5lm-app-v0.11.0-zh.1.zip`）并解压。
 2. 用 FTP 把 `PPSA99575` 文件夹拷到 `/data/homebrew`。ShadowMountPlus 会把 **PS5LM** 加到主屏幕。
 3. 打开 PS5LM，进 **模型 > 推荐** 拿一个模型；或者把 `.gguf` 拷到 `/data/PS5LM/models`，或 U 盘上的
    `PS5LM/models`。

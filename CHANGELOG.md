@@ -7,6 +7,12 @@ v0.1.x are the upstream payload releases by cobanov.
 
 ## [Unreleased]
 
+## [0.11.0-zh.1] - 2026-11-19
+
+这个 fork 的第一个带后缀的包。名字里的 `0.11.0` 是它基于的上游版本，`zh.N` 是汉化自己的第
+N 次发布；`contentVersion` 仍是 `01.011.000`（主机用它判断装的是不是旧版）。
+
+
 ### Added
 - **A fleet worker leaves worker mode on request**: a `/data/PS5LM/leave-worker` file
   makes it delete `fleet-worker.txt` and restart as the app, the way a model change

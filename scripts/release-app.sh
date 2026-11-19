@@ -19,7 +19,7 @@ zip="$out/ps5lm-app-v$version.zip"
 grep -q "^## \[$version\]" "$root/CHANGELOG.md" || { echo "release-app: CHANGELOG.md has no [$version] entry" >&2; exit 1; }
 # The console compares contentVersion (NN.NNN.NNN) to tell an installed copy is
 # outdated: major+1, minor, patch, so 0.8.2 ships as 01.008.002.
-IFS=. read -r major minor patch <<< "$version"
+IFS=. read -r major minor patch <<< "${version%%-*}"   # 0.11.0-zh.1 -> 0.11.0
 content=$(printf '%02d.%03d.%03d' $((major + 1)) "$minor" "$patch")
 grep -q "\"contentVersion\": \"$content\"" "$root/ps5/app/sce_sys/param.json" ||
     { echo "release-app: set contentVersion to $content in ps5/app/sce_sys/param.json" >&2; exit 1; }

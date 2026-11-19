@@ -22,7 +22,7 @@
 | 模型库页（payload 那条路） | ✅ 全中文 | `ps5/ps5lm/library.html` |
 | 集群控制页（`python3 -m fleet control`） | ✅ 全中文 | `fleet/control.html`；页面里那些运行时状态文字来自 Python 控制服务器，仍是英文 |
 | README、`docs/LOCALIZATION.md`、`docs/WEBUI.md` | ✅ 全中文 | 其余 `docs/*.md`、`site/` 保留英文（面向构建与上游对照） |
-| 版本号 | ✅ 和上游一致（`0.11.0`） | `ps5/app/version.hpp` 与 `param.json` 的 `contentVersion`（`01.011.000`），发布 tag 也是 `v0.11.0` |
+| 版本号 | ✅ 上游号 + 汉化后缀（`0.11.0-zh.1`） | `ps5/app/version.hpp`；`contentVersion` 仍是 `01.011.000`（用它跟上游对齐，主机只看它判断新旧），tag 是 `v0.11.0-zh.1` |
 | 字体 | ✅ 换成 Noto Sans SC | `ps5/app/assets/fonts/manrope-*.huifont` 重新烘焙见下 |
 | `app.log` / `llama.log` 日志行、llama-server 参数、API 路径、JSON 字段 | ❌ 保留英文 | 这些是给人和工具抓错误用的，翻了反而搜不到 |
 
@@ -190,8 +190,8 @@ fleet/control.html                 集群控制页（中文）
 `PPSA99575` 文件夹中，`eboot.bin` 是编译产物，`assets/fonts/*.huifont` 才是单独的资源。所以
 "拿上游的包、只把字体换掉"是行不通的 —— 那样只会变成"英文界面 + 中文字体"。要中文界面，
 必须交叉编译。编译好的包放在本仓库的
-[Releases](https://github.com/lswqwsl/PS5LM-zh-cn/releases/latest)（`ps5lm-app-v0.11.0.zip`），
-版本号和上游 0.11.0 一致。
+[Releases](https://github.com/lswqwsl/PS5LM-zh-cn/releases/latest)（`ps5lm-app-v0.11.0-zh.1.zip`），
+版本号是上游 0.11.0 加汉化后缀。
 
 要自己编，两条路，选一条：
 
@@ -203,7 +203,7 @@ fleet/control.html                 集群控制页（中文）
 1. 把这个仓库推到你自己的 GitHub（私有仓库也行）；
 2. 打开 **Actions → 打包汉化版（PS5 title zip）→ Run workflow**（推到 `main` / `zh-cn` 分支或
    打 `v*` tag 也会自动跑）；
-3. 等 40~60 分钟，在该次运行的 **Artifacts** 里下载 `ps5lm-app-zh-v0.11.0.zip`（含 `.sha256`）。
+3. 等 40~60 分钟，在该次运行的 **Artifacts** 里下载 `ps5lm-app-zh-v0.11.0-zh.1.zip`（含 `.sha256`）。
 
 工作流会先检查字体是不是汉化版（`manrope-500` 必须装够 7000+ 字形），打包后再比对包里的
 `.huifont` 和仓库里的是否一致，防止"拿英文字体打出来的包"混进来。免费额度和 2 核跑满 1 小时
@@ -222,7 +222,7 @@ scripts/release-app.sh         # 打包成 build/release/ps5lm-app-v<版本>.zip
 ```
 
 `release-app.sh` 会校验 `CHANGELOG.md` 里有 `## [<版本>]` 条目、`param.json` 的 `contentVersion`
-与 `version.hpp` 对应（当前 v0.11.0 ↔ `01.011.000`，都已就绪）。
+与 `version.hpp` 对应（当前 `0.11.0-zh.1` ↔ `01.011.000`，都已就绪）。
 
 ### 装到主机上
 
