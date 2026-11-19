@@ -151,6 +151,10 @@ export PS5_OPENGL_SDK="$glsdk"
     echo 'title-check: remove custom source-tree browser assets or use a clean checkout' >&2; exit 2;
 }
 rm -rf -- "$root/build/app-ps5/llama/tools/ui/dist"
+# b9bf94ff... : llama.cpp's web UI (vite) needs more heap than node's default on a
+# 2-CPU container -- "FATAL ERROR: Reached heap limit" kills the UI build, and the
+# package then ships without a page. Give it a fixed 4 GiB.
+export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=4096}"
 timeout 3600 bash scripts/build-app.sh
 bash "$vk/tools/inspect.sh" "$root/build/app-ps5/eboot.elf"
 title_id=$(python3 -c 'import json; print(json.load(open("ps5/app/sce_sys/param.json"))["titleId"])')
