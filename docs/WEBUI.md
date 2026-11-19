@@ -14,7 +14,7 @@
 
 1. `patches/0014-webui-chinese.patch` 把 `tools/ui/src` 里**用户能看到的文字**换成中文：
    模板里的文本节点、`placeholder`/`title`/`aria-label`/`alt`、以及模块里
-   `label`/`title`/`description` 这类字符串，共 395 条（495 处），另外 `app.html` 的
+   `label`/`title`/`description` 这类字符串，共 425 条（541 处），另外 `app.html` 的
    `lang` 改成 `zh-CN`。只动引号里的内容，不碰任何代码结构。
 2. `scripts/build-app.sh` 用 `-DLLAMA_BUILD_UI=ON -DLLAMA_USE_PREBUILT_UI=OFF` 配置 CMake：
    它会跑 `tools/ui` 的 `npm ci && npm run build`，把构建出的 `dist/` 逐个 gzip 后
@@ -36,7 +36,7 @@ node 20），本地构建同理。`scripts/build-app.sh` 找不到 `npm` 会直�
 
 ## 翻译是怎么做的、怎么改
 
-- 清单：`tools/ui/src` 里模板文本 + 那些属性/字段，共 285 + 141 条候选，其中 395 条翻成中文、
+- 清单：`tools/ui/src` 里模板文本 + 那些属性/字段，共 285 + 141 + 34 条候选，其中 425 条翻成中文、
   15 条故意跳过（Svelte 表达式片段、`llama-server -hf ...` 这种命令行示例、以及纯内部的
   迁移日志说明）。
 - 术语：conversation 会话、chat 聊天、model 模型、server 服务器、context 上下文、

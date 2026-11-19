@@ -219,9 +219,18 @@ index fa40339..44f31a2 100644
  		{:else}
  			<div class="max-h-80 overflow-y-auto p-2 pr-1">
 diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActionReasoning.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActionReasoning.svelte
-index 29de5ec..ed540eb 100644
+index 29de5ec..c083dea 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActionReasoning.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActionReasoning.svelte
+@@ -19,7 +19,7 @@
+ 	// a phone picks the level in a drawer, where a thumb reaches it
+ 	let isMobile = $derived(deviceStore.isMobile);
+ 
+-	const MAX_EFFORT_HINT = 'Maximum reasoning effort with extended context usage';
++	const MAX_EFFORT_HINT = '最高推理强度，会占用更多上下文';
+ 
+ 	function select(level: ReasoningEffortLevel): void {
+ 		reasoning.select(level);
 @@ -72,7 +72,7 @@
  <!-- the level belongs to the chat, not to the model list -->
  {#if isMobile}
@@ -1303,6 +1312,25 @@ index 6e30ceb..b7f37dc 100644
 +	title="放弃修改？"
  	variant="destructive"
  />
+diff --git a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageReasoningBlock.svelte b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageReasoningBlock.svelte
+index 31a6325..5cc2b08 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageReasoningBlock.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageReasoningBlock.svelte
+@@ -26,10 +26,10 @@
+ 
+ 	const currentConfig = settingsStore.config;
+ 
+-	const REASONING_HEADER = 'Reasoning';
+-	const REASONING_HEADER_PENDING = 'Reasoning...';
+-	const REASONING_SUBTITLE_ERROR = 'Error';
+-	const REASONING_SUBTITLE_CANCELLED = 'Cancelled';
++	const REASONING_HEADER = '推理';
++	const REASONING_HEADER_PENDING = '推理中…';
++	const REASONING_SUBTITLE_ERROR = '错误';
++	const REASONING_SUBTITLE_CANCELLED = '已取消';
+ 
+ 	const isPending = $derived(section.type === AgenticSectionType.REASONING_PENDING);
+ 	const title = $derived(isPending && isStreaming ? REASONING_HEADER_PENDING : REASONING_HEADER);
 diff --git a/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenDialogsAndAlerts.svelte b/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenDialogsAndAlerts.svelte
 index feba9ee..3a7825a 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenDialogsAndAlerts.svelte
@@ -3778,7 +3806,7 @@ index 40c3f2f..27621a7 100644
  	{/if}
  </div>
 diff --git a/tools/ui/src/lib/constants/attachment-menu.constants.ts b/tools/ui/src/lib/constants/attachment-menu.constants.ts
-index dc9db74..9c90bd9 100644
+index dc9db74..59e7e75 100644
 --- a/tools/ui/src/lib/constants/attachment-menu.constants.ts
 +++ b/tools/ui/src/lib/constants/attachment-menu.constants.ts
 @@ -23,7 +23,7 @@ export const ATTACHMENT_FILE_ITEMS: AttachmentMenuItem[] = [
@@ -3807,7 +3835,7 @@ index dc9db74..9c90bd9 100644
  	},
  	{
  		action: AttachmentAction.FILE_UPLOAD,
-@@ -48,7 +48,7 @@ export const ATTACHMENT_FILE_ITEMS: AttachmentMenuItem[] = [
+@@ -48,19 +48,19 @@ export const ATTACHMENT_FILE_ITEMS: AttachmentMenuItem[] = [
  		hasEnabledTooltip: true,
  		icon: FILE_TYPE_ICONS.pdf,
  		id: AttachmentMenuItemId.PDF,
@@ -3816,6 +3844,24 @@ index dc9db74..9c90bd9 100644
  	}
  ];
  
+-export const ATTACHMENT_TOOLTIP_TEXT = 'Add files, prompts, tools or MCP Servers';
++export const ATTACHMENT_TOOLTIP_TEXT = '添加文件、提示词、工具或 MCP 服务器';
+ 
+ /** Text shared by the add menu's two surfaces: the desktop dropdown and the mobile drawer. */
+ export const ATTACHMENT_MENU_TEXT = {
+-	ADD_FILES: 'Add files',
+-	ADD_TO_CHAT: 'Add to chat',
+-	DESCRIPTION: 'Add files, system prompt or pick the tools the model may call',
+-	SYSTEM_MESSAGE: 'System Message',
+-	TOOLS: 'Tools'
++	ADD_FILES: '添加文件',
++	ADD_TO_CHAT: '加入聊天',
++	DESCRIPTION: '添加文件、系统提示词，或选择模型可以调用的工具',
++	SYSTEM_MESSAGE: '系统消息',
++	TOOLS: '工具'
+ } as const;
+ 
+ /** Modality labels behind the file-upload row's enabled-when flags, both surfaces. */
 diff --git a/tools/ui/src/lib/constants/browser-info.ts b/tools/ui/src/lib/constants/browser-info.ts
 index e99c324..35df825 100644
 --- a/tools/ui/src/lib/constants/browser-info.ts
@@ -3829,6 +3875,55 @@ index e99c324..35df825 100644
  			name: BROWSER_INFO_TOOL_NAME,
  			parameters: {
  				properties: {},
+diff --git a/tools/ui/src/lib/constants/chat-tabs.constants.ts b/tools/ui/src/lib/constants/chat-tabs.constants.ts
+index 1c0bb05..b98ffef 100644
+--- a/tools/ui/src/lib/constants/chat-tabs.constants.ts
++++ b/tools/ui/src/lib/constants/chat-tabs.constants.ts
+@@ -2,10 +2,10 @@
+ export const NEW_CHAT_TAB_ID = 'new-chat';
+ 
+ /** Label shown for the new-chat sentinel tab. */
+-export const NEW_CHAT_LABEL = 'New chat';
++export const NEW_CHAT_LABEL = '新聊天';
+ 
+ /** Fallback label for conversations without an auto-generated title. */
+-export const UNNAMED_CHAT_LABEL = 'Chat';
++export const UNNAMED_CHAT_LABEL = '聊天';
+ 
+ /**
+  * Tab bar max width so it stays clear of the sidebar strip. The expanded strip
+diff --git a/tools/ui/src/lib/constants/error.constants.ts b/tools/ui/src/lib/constants/error.constants.ts
+index 17527fc..f24f1c8 100644
+--- a/tools/ui/src/lib/constants/error.constants.ts
++++ b/tools/ui/src/lib/constants/error.constants.ts
+@@ -1,17 +1,17 @@
+ export const ERROR_MESSAGES = {
+ 	HTTP: {
+-		ACCESS_DENIED: 'Access denied',
+-		GENERIC: 'Request failed',
+-		INTERNAL_ERROR: 'Server error - check server logs',
+-		NOT_FOUND: 'Not found',
+-		TEMPORARILY_UNAVAILABLE: 'Server temporarily unavailable'
++		ACCESS_DENIED: '拒绝访问',
++		GENERIC: '请求失败',
++		INTERNAL_ERROR: '服务器出错，请查看服务器日志',
++		NOT_FOUND: '未找到',
++		TEMPORARILY_UNAVAILABLE: '服务器暂时不可用'
+ 	},
+ 	NETWORK: {
+-		GENERIC: 'Failed to connect to server',
+-		NXDOMAIN: 'Server not found - check server address',
+-		REFUSED: 'Connection refused - server may be offline',
+-		TIMEOUT: 'Request timed out',
+-		UNREACHABLE: 'Server is not running or unreachable'
++		GENERIC: '连不上服务器',
++		NXDOMAIN: '找不到服务器，请检查服务器地址',
++		REFUSED: '连接被拒绝，服务器可能没开',
++		TIMEOUT: '请求超时',
++		UNREACHABLE: '服务器没在运行或连不上'
+ 	}
+ };
+ 
 diff --git a/tools/ui/src/lib/constants/get-datetime.ts b/tools/ui/src/lib/constants/get-datetime.ts
 index 19418dc..3ae495b 100644
 --- a/tools/ui/src/lib/constants/get-datetime.ts
@@ -3842,6 +3937,73 @@ index 19418dc..3ae495b 100644
  			name: GET_DATETIME_TOOL_NAME,
  			parameters: {
  				properties: {},
+diff --git a/tools/ui/src/lib/constants/headers.constants.ts b/tools/ui/src/lib/constants/headers.constants.ts
+index d477fc8..0598572 100644
+--- a/tools/ui/src/lib/constants/headers.constants.ts
++++ b/tools/ui/src/lib/constants/headers.constants.ts
+@@ -6,7 +6,7 @@ export const HEADERS = {
+ 	/** Canonical casing for the Authorization header (RFC 7235) */
+ 	AUTHORIZATION: 'Authorization',
+ 	/** Bearer scheme prefix used for Authorization headers (RFC 6750) */
+-	BEARER: 'Bearer ',
++	BEARER: 'Bearer',
+ 	/** Content-Type HTTP header name */
+ 	CONTENT_TYPE: 'Content-Type',
+ 	/** Partial-redaction rules for MCP headers: header name -> visible trailing chars */
+diff --git a/tools/ui/src/lib/constants/huggingface.constants.ts b/tools/ui/src/lib/constants/huggingface.constants.ts
+index 47b6a89..839a8ff 100644
+--- a/tools/ui/src/lib/constants/huggingface.constants.ts
++++ b/tools/ui/src/lib/constants/huggingface.constants.ts
+@@ -206,7 +206,7 @@ export const DAYS_PER_WEEK = 7;
+ export const DAYS_PER_MONTH = 30;
+ export const DAYS_PER_YEAR = 365;
+ 
+-export const TODAY_LABEL = 'Today';
++export const TODAY_LABEL = '今天';
+ export const YESTERDAY_LABEL = 'Yesterday';
+ export const DAYS_AGO_LABEL = 'days ago';
+ export const WEEKS_AGO_LABEL = 'weeks ago';
+diff --git a/tools/ui/src/lib/constants/mcp-resource.constants.ts b/tools/ui/src/lib/constants/mcp-resource.constants.ts
+index c2639da..c88216f 100644
+--- a/tools/ui/src/lib/constants/mcp-resource.constants.ts
++++ b/tools/ui/src/lib/constants/mcp-resource.constants.ts
+@@ -43,7 +43,7 @@ export const RESOURCE_TEXT_CONTENT_SEPARATOR = '\n\n';
+ export const RESOURCE_UNKNOWN_TYPE = 'unknown type';
+ 
+ // Label prefix for binary blob content
+-export const BINARY_CONTENT_LABEL = 'Binary content';
++export const BINARY_CONTENT_LABEL = '二进制内容';
+ 
+ /**
+  * Mapping from image MIME types to file extensions.
+diff --git a/tools/ui/src/lib/constants/models-discover-download.constants.ts b/tools/ui/src/lib/constants/models-discover-download.constants.ts
+index 721d46d..41009fd 100644
+--- a/tools/ui/src/lib/constants/models-discover-download.constants.ts
++++ b/tools/ui/src/lib/constants/models-discover-download.constants.ts
+@@ -18,7 +18,7 @@ export const SPEC_TYPE: Record<ModelDraftSidecar, string> = {
+ /** Bit-depth bucket for files that carry no quant token; rendered as "Other". */
+ export const OTHER_BIT_DEPTH = 99;
+ 
+-export const OTHER_BIT_DEPTH_LABEL = 'Other';
++export const OTHER_BIT_DEPTH_LABEL = '其他';
+ 
+ /** Suffix appended after a bit-depth number to label a row, e.g. `4-bit`. */
+ export const BIT_DEPTH_LABEL_SUFFIX = '-bit';
+diff --git a/tools/ui/src/lib/constants/path-display.constants.ts b/tools/ui/src/lib/constants/path-display.constants.ts
+index fd10017..d4117a4 100644
+--- a/tools/ui/src/lib/constants/path-display.constants.ts
++++ b/tools/ui/src/lib/constants/path-display.constants.ts
+@@ -9,8 +9,8 @@
+ 
+ import { UrlProtocol } from '$lib/enums';
+ 
+-export const CWD_CHANGED_PREFIX = 'Set working directory to ';
+-export const CWD_CLEARED_TEXT = 'Working directory cleared';
++export const CWD_CHANGED_PREFIX = '把工作目录设为';
++export const CWD_CLEARED_TEXT = '工作目录已清除';
+ 
+ /** Trailing separator that marks a path as a directory. */
+ export const DIRECTORY_PATH_SUFFIX = '/';
 diff --git a/tools/ui/src/lib/constants/pwa.constants.ts b/tools/ui/src/lib/constants/pwa.constants.ts
 index e807f4a..6d31121 100644
 --- a/tools/ui/src/lib/constants/pwa.constants.ts
@@ -3856,9 +4018,20 @@ index e807f4a..6d31121 100644
  	icons: [
  		{ sizes: '64x64', src: 'pwa-64x64.png', type: 'image/png' },
 diff --git a/tools/ui/src/lib/constants/read-media.ts b/tools/ui/src/lib/constants/read-media.ts
-index f9ac228..4567d9e 100644
+index f9ac228..c5cb9cf 100644
 --- a/tools/ui/src/lib/constants/read-media.ts
 +++ b/tools/ui/src/lib/constants/read-media.ts
+@@ -10,8 +10,8 @@ import type { OpenAIToolDefinition } from '$lib/types';
+ export const READ_MEDIA_TOOL_NAME = BuiltInTool.BROWSER_READ_MEDIA;
+ 
+ // header lines of the tool result, parsed back by the read_media renderer
+-export const PREFIX_FILE = 'File: ';
+-export const PREFIX_SIZE = 'Size: ';
++export const PREFIX_FILE = '文件：';
++export const PREFIX_SIZE = '大小：';
+ export const PREFIX_MIME = 'MIME: ';
+ 
+ /** Byte count of the `Size: ` header line, e.g. `Size: 12345 bytes` -> capture group 1 is `12345`. */
 @@ -53,7 +53,7 @@ export function buildReadMediaToolDefinition(
  			parameters: {
  				properties: {
@@ -4439,6 +4612,19 @@ index 4c0d759..e5e64b2 100644
  				type: SettingsFieldType.TEXTAREA
  			}
  		],
+diff --git a/tools/ui/src/lib/constants/title-generation.constants.ts b/tools/ui/src/lib/constants/title-generation.constants.ts
+index 0496daa..0ff52cf 100644
+--- a/tools/ui/src/lib/constants/title-generation.constants.ts
++++ b/tools/ui/src/lib/constants/title-generation.constants.ts
+@@ -2,7 +2,7 @@
+ export const TITLE_GENERATION = {
+ 	DEFAULT_PROMPT:
+ 		'Based on the following interaction, generate a short, concise title (maximum 6-8 words) that captures the main topic. Return ONLY the title text, nothing else. Do not use quotes.\n\nUser: {{USER}}\n\nAssistant: {{ASSISTANT}}\n\nTitle:',
+-	FALLBACK: 'New Chat',
++	FALLBACK: '新聊天',
+ 	MIN_LENGTH: 3,
+ 	PREFIX_PATTERN: /^(Title:|Subject:|Topic:)\s*/i,
+ 	QUOTE_PATTERN: /^["]|["]$/g
 diff --git a/tools/ui/src/lib/constants/tool-ui.constants.ts b/tools/ui/src/lib/constants/tool-ui.constants.ts
 index b5c09a6..d3e5324 100644
 --- a/tools/ui/src/lib/constants/tool-ui.constants.ts
@@ -4491,9 +4677,18 @@ index b5c09a6..d3e5324 100644
  	}
  } as const;
 diff --git a/tools/ui/src/lib/constants/ui.constants.ts b/tools/ui/src/lib/constants/ui.constants.ts
-index 9467939..4a58929 100644
+index 9467939..d2a1839 100644
 --- a/tools/ui/src/lib/constants/ui.constants.ts
 +++ b/tools/ui/src/lib/constants/ui.constants.ts
+@@ -11,7 +11,7 @@ export const COPY_FEEDBACK_RESET_MS = 1500;
+ export const MODELS_DIALOG_VIEW_FADE_MS = 150;
+ 
+ export const FORK_TREE_DEPTH_PADDING = 8;
+-export const SYSTEM_MESSAGE_PLACEHOLDER = 'System message';
++export const SYSTEM_MESSAGE_PLACEHOLDER = '系统消息';
+ 
+ /** Data attributes for app-level DOM contracts. */
+ export const UI_DATA_ATTRS = {
 @@ -78,7 +78,7 @@ export const SIDEBAR_ACTIONS_ITEMS: DesktopIconStripItem[] = [
  		action: SidebarAction.NEW_CHAT,
  		icon: SquarePen,
@@ -4511,6 +4706,19 @@ index 9467939..4a58929 100644
 +		tooltip: '设置'
  	}
  ];
+diff --git a/tools/ui/src/lib/constants/working-directory.constants.ts b/tools/ui/src/lib/constants/working-directory.constants.ts
+index cb63e92..65f2b7a 100644
+--- a/tools/ui/src/lib/constants/working-directory.constants.ts
++++ b/tools/ui/src/lib/constants/working-directory.constants.ts
+@@ -7,7 +7,7 @@
+  */
+ 
+ /** Label shown for the working-directory picker / `/cwd` slash command. */
+-export const SET_WORKING_DIRECTORY_LABEL = 'Set working directory';
++export const SET_WORKING_DIRECTORY_LABEL = '选择工作目录';
+ 
+ export const GLOB = {
+ 	/** `C:`, the drive part of a Windows absolute path. */
 diff --git a/tools/ui/src/lib/stores/chat/index.svelte.ts b/tools/ui/src/lib/stores/chat/index.svelte.ts
 index 4bdcc68..a90cc29 100644
 --- a/tools/ui/src/lib/stores/chat/index.svelte.ts
@@ -4691,6 +4899,25 @@ index bc057e4..ae28354 100644
  						type: JsonSchemaType.STRING
  					},
  					timeout_ms: {
+diff --git a/tools/ui/src/lib/utils/search-results.ts b/tools/ui/src/lib/utils/search-results.ts
+index 0fe861d..aee50fa 100644
+--- a/tools/ui/src/lib/utils/search-results.ts
++++ b/tools/ui/src/lib/utils/search-results.ts
+@@ -26,12 +26,12 @@ const LINE_BREAK_RE = /\r?\n/;
+ // Sentinel the search-result wire format uses when a field is absent
+ // (e.g. `Author: N/A`). Treated identically to a missing field so the
+ // rendered card hides the row either way.
+-const NOT_AVAILABLE_VALUE = 'N/A';
++const NOT_AVAILABLE_VALUE = '无';
+ // Section header that announces the start of the multi-line Highlights
+ // block. Everything from that line onward (until the next `---`
+ // separator or end of chunk) is captured verbatim as highlight text
+ // instead of being re-scanned for `Title:`/`URL:`/... field lines.
+-const HIGHLIGHTS_SECTION_HEADER = 'Highlights:';
++const HIGHLIGHTS_SECTION_HEADER = '高亮：';
+ // Field name conventionally used by web-search tools (Exa etc.) as the
+ // user-supplied query parameter. Extracted so future tool schemas that
+ // adopt the same convention stay grep-compatible with this parser.
 diff --git a/tools/ui/src/routes/+error.svelte b/tools/ui/src/routes/+error.svelte
 index 6ba527f..0e2fb3c 100644
 --- a/tools/ui/src/routes/+error.svelte
