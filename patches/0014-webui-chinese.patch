@@ -9,6 +9,93 @@ index ef2787a..aecc980 100644
  	<head>
  		<meta charset="utf-8" />
  
+diff --git a/tools/ui/src/lib/components/app/actions/ActionIconCopyToClipboard.svelte b/tools/ui/src/lib/components/app/actions/ActionIconCopyToClipboard.svelte
+index f4dc669..8d247cb 100644
+--- a/tools/ui/src/lib/components/app/actions/ActionIconCopyToClipboard.svelte
++++ b/tools/ui/src/lib/components/app/actions/ActionIconCopyToClipboard.svelte
+@@ -4,7 +4,7 @@
+ 	import { ICON_CLASS_DEFAULT } from '$lib/constants';
+ 	import { copyToClipboard } from '$lib/utils';
+ 
+-	export let ariaLabel: string = 'Copy to clipboard';
++	export let ariaLabel: string = '复制到剪贴板';
+ 	export let canCopy: boolean = true;
+ 	export let text: string;
+ </script>
+diff --git a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemMcpPrompt.svelte b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemMcpPrompt.svelte
+index 2fee5cf..3aaabb3 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemMcpPrompt.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemMcpPrompt.svelte
+@@ -35,7 +35,7 @@
+ 		<div
+ 			class="absolute top-10 right-2 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100"
+ 		>
+-			<ActionIcon icon={X} onclick={() => onRemove?.()} stopPropagationOnClick tooltip="Remove" />
++			<ActionIcon icon={X} onclick={() => onRemove?.()} stopPropagationOnClick tooltip="移除" />
+ 		</div>
+ 	{/if}
+ </div>
+diff --git a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemMcpResource.svelte b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemMcpResource.svelte
+index 80ef25b..4ddd96b 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemMcpResource.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemMcpResource.svelte
+@@ -63,7 +63,7 @@
+ 					iconSize="h-2 w-2"
+ 					onclick={() => onRemove?.(attachment.id)}
+ 					stopPropagationOnClick
+-					tooltip="Remove"
++					tooltip="移除"
+ 				/>
+ 			{/if}
+ 		</button>
+diff --git a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemThumbnailFile.svelte b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemThumbnailFile.svelte
+index 409a3a0..c6c88e7 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemThumbnailFile.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemThumbnailFile.svelte
+@@ -70,7 +70,7 @@
+ 		if (attachment?.type === AttachmentType.PDF) {
+ 			const pdfAttachment = attachment as DatabaseMessageExtraPdfFile;
+ 
+-			return pdfAttachment.processedAsImages ? 'Sent as Image' : 'Sent as Text';
++			return pdfAttachment.processedAsImages ? '按图片发送' : '按文本发送';
+ 		}
+ 
+ 		return null;
+@@ -101,7 +101,7 @@
+ 	<div
+ 		class="absolute top-2 right-2 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"
+ 	>
+-		<ActionIcon icon={X} onclick={() => onRemove?.(id)} stopPropagationOnClick tooltip="Remove" />
++		<ActionIcon icon={X} onclick={() => onRemove?.(id)} stopPropagationOnClick tooltip="移除" />
+ 	</div>
+ {/snippet}
+ 
+diff --git a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemThumbnailImage.svelte b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemThumbnailImage.svelte
+index 79a8f11..8af7af1 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemThumbnailImage.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsList/ChatAttachmentsListItem/ChatAttachmentsListItemThumbnailImage.svelte
+@@ -58,7 +58,7 @@
+ 				icon={X}
+ 				onclick={() => onRemove?.(id)}
+ 				stopPropagationOnClick
+-				tooltip="Remove"
++				tooltip="移除"
+ 			/>
+ 		</div>
+ 	{/if}
+diff --git a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsPreview/ChatAttachmentsPreview.svelte b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsPreview/ChatAttachmentsPreview.svelte
+index efcf197..22c3506 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsPreview/ChatAttachmentsPreview.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsPreview/ChatAttachmentsPreview.svelte
+@@ -102,7 +102,7 @@
+ 		currentItem?.name ||
+ 			currentItem?.uploadedFile?.name ||
+ 			currentItem?.attachment?.name ||
+-			'Unknown File'
++			'未知文件'
+ 	);
+ 	let isAudio = $derived(
+ 		currentItem ? isAudioFile(currentItem.attachment, currentItem.uploadedFile) : false
 diff --git a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsPreview/ChatAttachmentsPreviewCurrentItem/ChatAttachmentsPreviewCurrentItemAudio.svelte b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsPreview/ChatAttachmentsPreviewCurrentItem/ChatAttachmentsPreviewCurrentItemAudio.svelte
 index 90392c9..fe1728c 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsPreview/ChatAttachmentsPreviewCurrentItem/ChatAttachmentsPreviewCurrentItemAudio.svelte
@@ -28,11 +115,15 @@ index 90392c9..fe1728c 100644
  
  		<p class="text-sm text-white/50">{currentItem?.name || 'Audio'}</p>
 diff --git a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsPreview/ChatAttachmentsPreviewCurrentItem/ChatAttachmentsPreviewCurrentItemPdf.svelte b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsPreview/ChatAttachmentsPreviewCurrentItem/ChatAttachmentsPreviewCurrentItemPdf.svelte
-index 6b7fad6..bce310e 100644
+index 6b7fad6..f046987 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsPreview/ChatAttachmentsPreviewCurrentItem/ChatAttachmentsPreviewCurrentItemPdf.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatAttachments/ChatAttachmentsPreview/ChatAttachmentsPreviewCurrentItem/ChatAttachmentsPreviewCurrentItemPdf.svelte
-@@ -72,7 +72,7 @@
- 				throw new Error('No PDF file available for conversion');
+@@ -69,10 +69,10 @@
+ 			if (file) {
+ 				pdfImages = await convertPDFToImage(file);
+ 			} else {
+-				throw new Error('No PDF file available for conversion');
++				throw new Error('没有可转换的 PDF 文件');
  			}
  		} catch (error) {
 -			pdfImagesError = error instanceof Error ? error.message : 'Failed to load PDF images';
@@ -156,7 +247,7 @@ index 9b01570..4942fdf 100644
  		onclick={onNext}
  		size="icon"
 diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatForm.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatForm.svelte
-index 397ddc3..9c0a1ce 100644
+index 397ddc3..9217720 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatForm.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatForm/ChatForm.svelte
 @@ -101,7 +101,7 @@
@@ -168,6 +259,32 @@ index 397ddc3..9c0a1ce 100644
  		showAddButton = true,
  		showModelSelector = true,
  		uploadedFiles = $bindable([]),
+@@ -520,7 +520,7 @@
+ 
+ 	async function handleMicClick() {
+ 		if (!audioRecorder || !recordingSupported) {
+-			console.warn('Audio recording not supported');
++			console.warn('不支持录音');
+ 
+ 			return;
+ 		}
+@@ -534,14 +534,14 @@
+ 
+ 				onFilesAdd?.([audioFile]);
+ 			} catch (error) {
+-				console.error('Failed to stop recording:', error);
++				console.error('停止录音失败：', error);
+ 			}
+ 		} else {
+ 			try {
+ 				await audioRecorder.startRecording();
+ 				isRecording = true;
+ 			} catch (error) {
+-				console.error('Failed to start recording:', error);
++				console.error('开始录音失败：', error);
+ 			}
+ 		}
+ 	}
 diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActionAdd/ChatFormActionAddToolsSubmenu.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActionAdd/ChatFormActionAddToolsSubmenu.svelte
 index fa40339..44f31a2 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActionAdd/ChatFormActionAddToolsSubmenu.svelte
@@ -259,9 +376,18 @@ index 29de5ec..c083dea 100644
  						? 'px-1'
  						: 'px-1.75!'} py-1 text-xs hover:bg-transparent!"
 diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActionRecord.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActionRecord.svelte
-index 7c305ac..1da8dad 100644
+index 7c305ac..dcfed56 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActionRecord.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActionRecord.svelte
+@@ -34,7 +34,7 @@
+ 				onclick={onMicClick}
+ 				type="button"
+ 			>
+-				<span class="sr-only">{isRecording ? 'Stop recording' : 'Start recording'}</span>
++				<span class="sr-only">{isRecording ? '停止录音' : '开始录音'}</span>
+ 
+ 				{#if isRecording}
+ 					<Square class="{ICON_CLASS_DEFAULT} animate-pulse fill-white" />
 @@ -46,7 +46,7 @@
  
  		{#if !hasAudioModality}
@@ -285,9 +411,18 @@ index 5eaee01..fe6bab8 100644
  		<ArrowUp class="h-12 w-12" />
  	</Button>
 diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActions.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActions.svelte
-index d789251..ddad29f 100644
+index d789251..df79dd1 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActions.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormActions/ChatFormActions.svelte
+@@ -62,7 +62,7 @@
+ 	let hasModelSelected = $derived(formModel.hasModelSelected);
+ 	let isSelectedModelInCache = $derived(formModel.isSelectedModelInCache);
+ 	let submitTooltip = $derived.by(() => {
+-		if (!hasModelSelected) return 'Please select a model first';
++		if (!hasModelSelected) return '请先选择一个模型';
+ 
+ 		if (!isSelectedModelInCache) return 'Selected model is not available, please select another';
+ 
 @@ -181,11 +181,11 @@
  			class="group h-8 w-8 rounded-full p-0 max-md:h-9 max-md:w-9"
  			onclick={() =>
@@ -464,9 +599,20 @@ index de3d2f4..5b301cb 100644
  				<span class="text-muted-foreground">·</span>
  
 diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormCurrentWorkingDirectory/ChatFormCurrentWorkingDirectory.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormCurrentWorkingDirectory/ChatFormCurrentWorkingDirectory.svelte
-index ecd1698..432da34 100644
+index ecd1698..3460a4f 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormCurrentWorkingDirectory/ChatFormCurrentWorkingDirectory.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormCurrentWorkingDirectory/ChatFormCurrentWorkingDirectory.svelte
+@@ -71,8 +71,8 @@
+ 	);
+ 	const searchUnavailableMessage = $derived(
+ 		fileSearchKey === null
+-			? 'File search is unavailable on this server - type a full path and press Enter'
+-			: 'File search is disabled - type a full path and press Enter, or enable "Search files" in Settings > Tools'
++			? '这个服务器上没法搜索文件，输入完整路径后按回车'
++			: 'File search is disabled - type a full path and press Enter, or enable "搜索文件" in Settings > Tools'
+ 	);
+ 
+ 	let searchInputRef: HTMLInputElement | null = $state(null);
 @@ -349,7 +349,7 @@
  		class="pointer-events-none absolute inset-0 opacity-0"
  		tabindex={-1}
@@ -505,6 +651,27 @@ index ecd1698..432da34 100644
  						>{abbreviateHome(searchScope, homeBase)}</span
  					>
  				</span>
+diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormCurrentWorkingDirectory/ChatFormCurrentWorkingDirectoryChip.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormCurrentWorkingDirectory/ChatFormCurrentWorkingDirectoryChip.svelte
+index 5a7b054..82588db 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormCurrentWorkingDirectory/ChatFormCurrentWorkingDirectoryChip.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormCurrentWorkingDirectory/ChatFormCurrentWorkingDirectoryChip.svelte
+@@ -57,14 +57,14 @@
+ 			class="w-0 overflow-hidden opacity-0 transition-[width,opacity] duration-200 ease-out group-hover:w-auto group-hover:opacity-100"
+ 		>
+ 			<ActionIcon
+-				ariaLabel="Reset working directory"
++				ariaLabel="重置工作目录"
+ 				class="!h-4 !w-4 shrink-0 text-muted-foreground hover:text-foreground"
+ 				{disabled}
+ 				icon={X}
+ 				iconSize="h-3 w-3"
+ 				onclick={onClear}
+ 				stopPropagationOnClick
+-				tooltip="Reset working directory"
++				tooltip="重置工作目录"
+ 			/>
+ 		</div>
+ 	{/if}
 diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormCurrentWorkingDirectory/ChatFormCurrentWorkingDirectoryResultsList.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormCurrentWorkingDirectory/ChatFormCurrentWorkingDirectoryResultsList.svelte
 index db86a4b..5debbb5 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormCurrentWorkingDirectory/ChatFormCurrentWorkingDirectoryResultsList.svelte
@@ -562,8 +729,38 @@ index 70251ea..7c3e128 100644
  		value = $bindable('')
  	}: Props = $props();
  
+diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPicker/ChatFormPickerPopover.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPicker/ChatFormPickerPopover.svelte
+index 2d91ceb..6fb9b38 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPicker/ChatFormPickerPopover.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPicker/ChatFormPickerPopover.svelte
+@@ -17,7 +17,7 @@
+ 		isOpen = $bindable(false),
+ 		onClose,
+ 		onKeydown,
+-		srLabel = 'Open picker'
++		srLabel = '打开选择器'
+ 	}: Props = $props();
+ </script>
+ 
+diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerCommand.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerCommand.svelte
+index e3ff9d7..ba5d071 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerCommand.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerCommand.svelte
+@@ -98,10 +98,10 @@
+ 	class={className}
+ 	{onClose}
+ 	onKeydown={handleKeydown}
+-	srLabel="Open command picker"
++	srLabel="打开命令选择器"
+ >
+ 	<ChatFormPickerList
+-		emptyMessage="No matching command"
++		emptyMessage="没有匹配的命令"
+ 		isLoading={false}
+ 		itemKey={(command) => command.name}
+ 		items={filteredCommands}
 diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerMcpPrompts/ChatFormPickerMcpPrompts.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerMcpPrompts/ChatFormPickerMcpPrompts.svelte
-index f6a3ee1..ced3114 100644
+index f6a3ee1..7ef9060 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerMcpPrompts/ChatFormPickerMcpPrompts.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerMcpPrompts/ChatFormPickerMcpPrompts.svelte
 @@ -143,7 +143,7 @@
@@ -575,6 +772,30 @@ index f6a3ee1..ced3114 100644
  
  			onPromptLoadError?.(placeholderId, errorMessage);
  		}
+@@ -360,7 +360,7 @@
+ 	class={className}
+ 	{onClose}
+ 	onKeydown={handleKeydown}
+-	srLabel="Open prompt picker"
++	srLabel="打开提示词选择器"
+ >
+ 	{#if selectedPrompt}
+ 		{@const prompt = selectedPrompt}
+@@ -403,12 +403,12 @@
+ 	{:else}
+ 		<ChatFormPickerList
+ 			bind:searchQuery={internalSearchQuery}
+-			emptyMessage="No MCP prompts available"
++			emptyMessage="没有可用的 MCP 提示词"
+ 			{isLoading}
+ 			itemKey={(prompt) => prompt.serverName + ':' + prompt.name}
+ 			items={filteredPrompts}
+ 			{scrollTrigger}
+-			searchPlaceholder="Search prompts..."
++			searchPlaceholder="搜索提示词…"
+ 			{selectedIndex}
+ 			{showSearchInput}
+ 		>
 diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerMcpPrompts/ChatFormPromptPickerArgumentForm.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerMcpPrompts/ChatFormPromptPickerArgumentForm.svelte
 index e0eed66..9b4422b 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerMcpPrompts/ChatFormPromptPickerArgumentForm.svelte
@@ -591,9 +812,22 @@ index e0eed66..9b4422b 100644
  	</div>
  </form>
 diff --git a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerMention.svelte b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerMention.svelte
-index d09a3d3..c2d748c 100644
+index d09a3d3..d33e166 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerMention.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatForm/ChatFormPickers/ChatFormPickerMention.svelte
+@@ -133,10 +133,10 @@
+ 		}
+ 
+ 		if (!fileSearchEnabled) {
+-			return 'File search is disabled - enable "Search files" in Settings > Tools to use @-mentions';
++			return 'File search is disabled - enable "搜索文件" in Settings > Tools to use @-mentions';
+ 		}
+ 
+-		return searchError ? `Search failed - ${searchError}` : 'No matching files or folders';
++		return searchError ? `Search failed - ${searchError}` : '没有匹配的文件或文件夹';
+ 	});
+ 
+ 	const showTooltip = $derived(!deviceStore.isMobile);
 @@ -211,7 +211,7 @@
  		class="pointer-events-none absolute inset-0 opacity-0"
  		tabindex={-1}
@@ -844,9 +1078,18 @@ index de72054..0eeb1f2 100644
  							<span class="exit-sep">&middot;</span>
  
 diff --git a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessage/ChatMessageToolCall/ChatMessageToolCallBlockFileGlobSearch.svelte b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessage/ChatMessageToolCall/ChatMessageToolCallBlockFileGlobSearch.svelte
-index e1e9e10..6cb0e5a 100644
+index e1e9e10..94e4e6a 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessage/ChatMessageToolCall/ChatMessageToolCallBlockFileGlobSearch.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessage/ChatMessageToolCall/ChatMessageToolCallBlockFileGlobSearch.svelte
+@@ -23,7 +23,7 @@
+ 	{#snippet titleSnippet()}
+ 		{#if fileGlobMeta}
+ 			<span class="text-muted-foreground"
+-				>{fileGlobMeta.include === '**' ? 'List files' : 'Search files'}&nbsp;</span
++				>{fileGlobMeta.include === '**' ? '列出文件' : '搜索文件'}&nbsp;</span
+ 			>
+ 
+ 			{#if fileGlobMeta.include !== '**'}
 @@ -40,9 +40,7 @@
  
  	{#snippet children(meta, ctx)}
@@ -1131,7 +1374,7 @@ index 8be39f8..5401474 100644
  	role="group"
  >
 diff --git a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessage/ChatMessageUser/ChatMessageUserPending.svelte b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessage/ChatMessageUser/ChatMessageUserPending.svelte
-index 40b299a..428b62b 100644
+index 40b299a..96e18d8 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessage/ChatMessageUser/ChatMessageUserPending.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessage/ChatMessageUser/ChatMessageUserPending.svelte
 @@ -29,7 +29,7 @@
@@ -1143,6 +1386,21 @@ index 40b299a..428b62b 100644
  	class="group flex flex-col items-end gap-3 transition-opacity hover:opacity-80 md:gap-2 {className} sticky bottom-32"
  	role="group"
  >
+@@ -50,11 +50,11 @@
+ 					<div
+ 						class="pointer-events-auto inset-0 flex items-center gap-1 opacity-0 transition-all duration-150 group-hover:opacity-100"
+ 					>
+-						<ActionIcon icon={Edit} onclick={editCtx.handleEdit} tooltip="Edit" />
++						<ActionIcon icon={Edit} onclick={editCtx.handleEdit} tooltip="编辑" />
+ 
+-						<ActionIcon icon={Trash2} onclick={onDelete} tooltip="Delete" />
++						<ActionIcon icon={Trash2} onclick={onDelete} tooltip="删除" />
+ 
+-						<ActionIcon icon={ArrowUp} onclick={onSendImmediately} tooltip="Send immediately" />
++						<ActionIcon icon={ArrowUp} onclick={onSendImmediately} tooltip="立即发送" />
+ 					</div>
+ 				</div>
+ 			</div>
 diff --git a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionCard/ChatMessageActionCardContinueRequest.svelte b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionCard/ChatMessageActionCardContinueRequest.svelte
 index f79d260..934e48e 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionCard/ChatMessageActionCardContinueRequest.svelte
@@ -1166,7 +1424,7 @@ index f79d260..934e48e 100644
  	{/snippet}
  </ChatMessageActionCard>
 diff --git a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionCard/ChatMessageActionCardPermissionRequest.svelte b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionCard/ChatMessageActionCardPermissionRequest.svelte
-index d6d56dd..bfad3a3 100644
+index d6d56dd..d2366b2 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionCard/ChatMessageActionCardPermissionRequest.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionCard/ChatMessageActionCardPermissionRequest.svelte
 @@ -32,14 +32,12 @@
@@ -1196,6 +1454,15 @@ index d6d56dd..bfad3a3 100644
  					tool
  				</DropdownMenu.Item>
  
+@@ -66,7 +63,7 @@
+ 							? TOOL_SERVER_LABELS[ToolSource.SERVER]
+ 							: source === ToolSource.CUSTOM
+ 								? TOOL_SERVER_LABELS[ToolSource.CUSTOM]
+-								: 'MCP Tools'}
++								: 'MCP 工具'}
+ 					<DropdownMenu.Item onclick={() => onDecision(ToolPermissionDecision.ALWAYS_SERVER)}>
+ 						Approve all tools from {providerName}
+ 					</DropdownMenu.Item>
 @@ -74,8 +71,6 @@
  			</DropdownMenu.Content>
  		</DropdownMenu.Root>
@@ -1207,10 +1474,38 @@ index d6d56dd..bfad3a3 100644
  	{/snippet}
  </ChatMessageActionCard>
 diff --git a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionIcons/ChatMessageActionIcons.svelte b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionIcons/ChatMessageActionIcons.svelte
-index 68ec5c8..524bf9e 100644
+index 68ec5c8..4221566 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionIcons/ChatMessageActionIcons.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionIcons/ChatMessageActionIcons.svelte
-@@ -99,7 +99,7 @@
+@@ -77,29 +77,29 @@
+ 		<div
+ 			class="pointer-events-auto inset-0 flex items-center gap-1 opacity-100 transition-all duration-150"
+ 		>
+-			<ActionIcon icon={Copy} onclick={messageActions.copy} tooltip="Copy" />
++			<ActionIcon icon={Copy} onclick={messageActions.copy} tooltip="复制" />
+ 
+-			<ActionIcon icon={Edit} onclick={editCtx.startEdit} tooltip="Edit" />
++			<ActionIcon icon={Edit} onclick={editCtx.startEdit} tooltip="编辑" />
+ 
+ 			{#if role === MessageRole.ASSISTANT && onRegenerate}
+-				<ActionIcon icon={RefreshCw} onclick={() => onRegenerate()} tooltip="Regenerate" />
++				<ActionIcon icon={RefreshCw} onclick={() => onRegenerate()} tooltip="重新生成" />
+ 			{/if}
+ 
+ 			{#if role === MessageRole.ASSISTANT && onContinue}
+-				<ActionIcon icon={ArrowRight} onclick={onContinue} tooltip="Continue" />
++				<ActionIcon icon={ArrowRight} onclick={onContinue} tooltip="继续" />
+ 			{/if}
+ 
+ 			{#if messageActions.forkConversation}
+-				<ActionIcon icon={GitBranch} onclick={handleOpenForkDialog} tooltip="Fork conversation" />
++				<ActionIcon icon={GitBranch} onclick={handleOpenForkDialog} tooltip="分支会话" />
+ 			{/if}
+ 
+-			<ActionIcon icon={Trash2} onclick={messageActions.requestDelete} tooltip="Delete" />
++			<ActionIcon icon={Trash2} onclick={messageActions.requestDelete} tooltip="删除" />
+ 		</div>
+ 	</div>
  
  	{#if showRawOutputSwitch}
  		<div class="flex items-center gap-2">
@@ -1219,7 +1514,20 @@ index 68ec5c8..524bf9e 100644
  
  			<Switch
  				checked={rawOutputEnabled}
-@@ -121,7 +121,7 @@
+@@ -110,40 +110,40 @@
+ </div>
+ 
+ <DialogConfirmation
+-	cancelText="Cancel"
++	cancelText="取消"
+ 	confirmText={messageActions.deletionInfo && messageActions.deletionInfo.totalCount > 1
+ 		? `Delete ${messageActions.deletionInfo.totalCount} Messages`
+ 		: 'Delete'}
+ 	description={messageActions.deletionInfo && messageActions.deletionInfo.totalCount > 1
+ 		? `This will delete ${messageActions.deletionInfo.totalCount} messages including: ${messageActions.deletionInfo.userMessages} user message${messageActions.deletionInfo.userMessages > 1 ? 's' : ''} and ${messageActions.deletionInfo.assistantMessages} assistant response${messageActions.deletionInfo.assistantMessages > 1 ? 's' : ''}. All messages in this branch and their responses will be permanently removed. This action cannot be undone.`
+-		: 'Are you sure you want to delete this message? This action cannot be undone.'}
++		: '确定要删除这条消息吗？这个操作无法撤销。'}
+ 	icon={Trash2}
  	onCancel={() => messageActions.setShowDeleteDialog(false)}
  	onConfirm={handleConfirmDelete}
  	open={messageActions.showDeleteDialog}
@@ -1228,7 +1536,14 @@ index 68ec5c8..524bf9e 100644
  	variant="destructive"
  />
  
-@@ -133,17 +133,17 @@
+ <DialogConfirmation
+ 	bind:open={showForkDialog}
+-	cancelText="Cancel"
+-	confirmText="Fork"
+-	description="Create a new conversation branching from this message."
++	cancelText="取消"
++	confirmText="分支"
++	description="从这条消息创建一个新的分支会话。"
  	icon={GitBranch}
  	onCancel={() => (showForkDialog = false)}
  	onConfirm={handleConfirmFork}
@@ -1260,8 +1575,30 @@ index 68ec5c8..524bf9e 100644
  		</div>
  	</div>
  </DialogConfirmation>
+diff --git a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionIcons/ChatMessageActionIconsBranchingControls.svelte b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionIcons/ChatMessageActionIconsBranchingControls.svelte
+index fbd79b7..0e29a87 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionIcons/ChatMessageActionIconsBranchingControls.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageActions/ChatMessageActionIcons/ChatMessageActionIconsBranchingControls.svelte
+@@ -34,7 +34,7 @@
+ 			disabled={!hasPrevious}
+ 			icon={ChevronLeft}
+ 			onclick={() => messageActions.navigateToSibling(previousSiblingId!)}
+-			tooltip="Previous version"
++			tooltip="上一版本"
+ 		/>
+ 
+ 		<span class="px-1 font-mono text-xs">
+@@ -46,7 +46,7 @@
+ 			disabled={!hasNext}
+ 			icon={ChevronRight}
+ 			onclick={() => messageActions.navigateToSibling(nextSiblingId!)}
+-			tooltip="Next version"
++			tooltip="下一版本"
+ 		/>
+ 	</div>
+ {/if}
 diff --git a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageEditForm.svelte b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageEditForm.svelte
-index 6e30ceb..b7f37dc 100644
+index 6e30ceb..ef44aa1 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageEditForm.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageEditForm.svelte
 @@ -109,7 +109,7 @@
@@ -1273,7 +1610,7 @@ index 6e30ceb..b7f37dc 100644
  		showAddButton={editCtx.messageRole === MessageRole.USER}
  		showModelSelector={editCtx.messageRole === MessageRole.USER}
  		value={editCtx.editedContent}
-@@ -121,27 +121,20 @@
+@@ -121,37 +121,30 @@
  		<div class="flex items-center gap-2">
  			<Switch bind:checked={saveWithoutRegenerate} class="scale-75" id="save-only-switch" />
  
@@ -1304,7 +1641,13 @@ index 6e30ceb..b7f37dc 100644
  </div>
  
  <DialogConfirmation
-@@ -152,6 +145,6 @@
+ 	bind:open={showDiscardDialog}
+-	cancelText="Keep editing"
+-	confirmText="Discard"
+-	description="You have unsaved changes. Are you sure you want to discard them?"
++	cancelText="继续编辑"
++	confirmText="放弃"
++	description="你有未保存的修改，确定要放弃吗？"
  	icon={AlertTriangle}
  	onCancel={() => (showDiscardDialog = false)}
  	onConfirm={editCtx.cancel}
@@ -1331,11 +1674,188 @@ index 31a6325..5cc2b08 100644
  
  	const isPending = $derived(section.type === AgenticSectionType.REASONING_PENDING);
  	const title = $derived(isPending && isStreaming ? REASONING_HEADER_PENDING : REASONING_HEADER);
+diff --git a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageStatistics/ChatMessageStatistics.svelte b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageStatistics/ChatMessageStatistics.svelte
+index 01fb39b..247eea0 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageStatistics/ChatMessageStatistics.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessageStatistics/ChatMessageStatistics.svelte
+@@ -174,8 +174,8 @@
+ 			{#if hasPromptStats || isLive}
+ 				{@render viewButton({
+ 					icon: BookOpenText,
+-					label: 'Reading',
+-					tooltipText: 'Processing',
++					label: '读取中',
++					tooltipText: '处理中',
+ 					view: ChatMessageStatsView.READING
+ 				})}
+ 			{/if}
+@@ -183,24 +183,24 @@
+ 			{@render viewButton({
+ 				disabled: isGenerationDisabled,
+ 				icon: Sparkles,
+-				label: 'Generation',
+-				tooltipText: isGenerationDisabled ? 'Waiting for tokens...' : 'Generation',
++				label: '生成',
++				tooltipText: isGenerationDisabled ? '正在等待 token…' : 'Generation',
+ 				view: ChatMessageStatsView.GENERATION
+ 			})}
+ 
+ 			{#if hasAgenticStats}
+ 				{@render viewButton({
+ 					icon: Wrench,
+-					label: 'Tools',
+-					tooltipText: 'Tool calls',
++					label: '工具',
++					tooltipText: '工具调用',
+ 					view: ChatMessageStatsView.TOOLS
+ 				})}
+ 
+ 				{#if !hideSummary}
+ 					{@render viewButton({
+ 						icon: Layers,
+-						label: 'Summary',
+-						tooltipText: 'Agentic summary',
++						label: '摘要',
++						tooltipText: '代理式汇总',
+ 						view: ChatMessageStatsView.SUMMARY
+ 					})}
+ 				{/if}
+@@ -213,56 +213,56 @@
+ 			<ChatMessageStatisticsBadge
+ 				class="bg-transparent"
+ 				icon={WholeWord}
+-				tooltipLabel="Generated tokens"
++				tooltipLabel="已生成 token"
+ 				value="{predictedTokens?.toLocaleString()} tokens"
+ 			/>
+ 
+ 			<ChatMessageStatisticsBadge
+ 				class="bg-transparent"
+ 				icon={Clock}
+-				tooltipLabel="Generation time"
++				tooltipLabel="生成耗时"
+ 				value={formattedTime}
+ 			/>
+ 
+ 			<ChatMessageStatisticsBadge
+ 				class="bg-transparent"
+ 				icon={Gauge}
+-				tooltipLabel="Generation speed"
++				tooltipLabel="生成速度"
+ 				value="{fixedFormatter.format(tokensPerSecond)} t/s"
+ 			/>
+ 		{:else if activeView === ChatMessageStatsView.TOOLS && hasAgenticStats}
+ 			<ChatMessageStatisticsBadge
+ 				class="bg-transparent"
+ 				icon={Wrench}
+-				tooltipLabel="Tool calls executed"
++				tooltipLabel="已执行的工具调用"
+ 				value="{agenticTimings!.toolCallsCount.toLocaleString()} calls"
+ 			/>
+ 
+ 			<ChatMessageStatisticsBadge
+ 				class="bg-transparent"
+ 				icon={Clock}
+-				tooltipLabel="Tool execution time"
++				tooltipLabel="工具执行耗时"
+ 				value={formattedAgenticToolsTime}
+ 			/>
+ 
+ 			<ChatMessageStatisticsBadge
+ 				class="bg-transparent"
+ 				icon={Gauge}
+-				tooltipLabel="Tool execution rate"
++				tooltipLabel="工具执行速度"
+ 				value="{fixedFormatter.format(agenticToolsPerSecond)} calls/s"
+ 			/>
+ 		{:else if activeView === ChatMessageStatsView.SUMMARY && hasAgenticStats}
+ 			<ChatMessageStatisticsBadge
+ 				class="bg-transparent"
+ 				icon={Layers}
+-				tooltipLabel="Agentic turns (LLM calls)"
++				tooltipLabel="代理轮次（LLM 调用）"
+ 				value="{agenticTimings!.turns.toLocaleString()} turns"
+ 			/>
+ 
+ 			<ChatMessageStatisticsBadge
+ 				class="bg-transparent"
+ 				icon={WholeWord}
+-				tooltipLabel="Total tokens generated"
++				tooltipLabel="已生成 token 总数"
+ 				value="{agenticTimings!.llm.predicted_n.toLocaleString()} tokens"
+ 			/>
+ 
+@@ -276,21 +276,21 @@
+ 			<ChatMessageStatisticsBadge
+ 				class="bg-transparent"
+ 				icon={WholeWord}
+-				tooltipLabel="Prompt tokens"
++				tooltipLabel="提示词 token"
+ 				value="{promptTokens?.toLocaleString()} tokens"
+ 			/>
+ 
+ 			<ChatMessageStatisticsBadge
+ 				class="bg-transparent"
+ 				icon={Clock}
+-				tooltipLabel="Prompt processing time"
++				tooltipLabel="提示词处理耗时"
+ 				value={formattedPromptTime ?? '0s'}
+ 			/>
+ 
+ 			<ChatMessageStatisticsBadge
+ 				class="bg-transparent"
+ 				icon={Gauge}
+-				tooltipLabel="Prompt processing speed"
++				tooltipLabel="提示词处理速度"
+ 				value="{fixedFormatter.format(promptTokensPerSecond!)} tokens/s"
+ 			/>
+ 		{/if}
+diff --git a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessages.svelte b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessages.svelte
+index 0078225..a5ac507 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessages.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatMessages/ChatMessages.svelte
+@@ -38,7 +38,7 @@
+ 				asPlainText
+ 			);
+ 
+-			await copyToClipboard(clipboardContent, 'Message copied to clipboard');
++			await copyToClipboard(clipboardContent, '消息已复制到剪贴板');
+ 		},
+ 
+ 		delete: async (message: DatabaseMessage) => {
+diff --git a/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenActionScrollDown.svelte b/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenActionScrollDown.svelte
+index 655c34b..3322116 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenActionScrollDown.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenActionScrollDown.svelte
+@@ -8,12 +8,12 @@
+ 
+ <div class="pointer-events-auto flex justify-center relative h-0">
+ 	<ActionIcon
+-		ariaLabel="Scroll to bottom"
++		ariaLabel="滚到底部"
+ 		class="h-9 w-9 rounded-full bg-muted/60 border border-border/20 shadow-sm text-accent-foreground absolute bottom-4"
+ 		icon={ArrowDown}
+ 		iconSize={ICON_CLASS_DEFAULT}
+ 		{onclick}
+ 		size="lg"
+-		tooltip="Scroll to bottom"
++		tooltip="滚到底部"
+ 	/>
+ </div>
 diff --git a/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenDialogsAndAlerts.svelte b/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenDialogsAndAlerts.svelte
-index feba9ee..3a7825a 100644
+index feba9ee..e81a75d 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenDialogsAndAlerts.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenDialogsAndAlerts.svelte
-@@ -32,7 +32,7 @@
+@@ -26,13 +26,13 @@
+ 
+ <DialogConfirmation
+ 	bind:open={showDeleteDialog}
+-	cancelText="Cancel"
+-	confirmText="Delete"
+-	description="Are you sure you want to delete this conversation? This action cannot be undone and will permanently remove all messages in this conversation."
++	cancelText="取消"
++	confirmText="删除"
++	description="确定要删除这个会话吗？这个操作无法撤销，会永久删掉这个会话里的所有消息。"
  	icon={Trash2}
  	onCancel={() => (showDeleteDialog = false)}
  	onConfirm={handleDeleteConfirm}
@@ -1360,10 +1880,10 @@ index ab4adb2..af9a693 100644
  	</div>
  </div>
 diff --git a/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenGreeting.svelte b/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenGreeting.svelte
-index 5af00eb..acf5e19 100644
+index 5af00eb..22c032d 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenGreeting.svelte
 +++ b/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenGreeting.svelte
-@@ -14,10 +14,9 @@
+@@ -14,10 +14,10 @@
  		isEmpty && 'mb-[calc(50dvh-8rem)] md:mb-8 pointer-events-auto block!'
  	]}
  >
@@ -1372,10 +1892,23 @@ index 5af00eb..acf5e19 100644
  
  	<p class="text-muted-foreground md:text-lg">
 -		{serverStore.props?.modalities?.audio ? 'Record audio, type a message ' : 'Type a message'} or upload
--		files to get started
-+		{serverStore.props?.modalities?.audio ? '录音，说点什么 ' : '说点什么'}，或者上传文件开始
++		{serverStore.props?.modalities?.audio ? 'Record audio, type a message ' : '说点什么'} or upload
+ 		files to get started
  	</p>
  </div>
+diff --git a/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenServerError.svelte b/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenServerError.svelte
+index 796ae63..a9a46d5 100644
+--- a/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenServerError.svelte
++++ b/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenServerError.svelte
+@@ -18,7 +18,7 @@
+ 			{/if}
+ 
+ 			<Alert.Title class="flex items-center justify-between">
+-				<span>{isLoadingModel ? 'Loading model' : 'Server unavailable'}</span>
++				<span>{isLoadingModel ? '正在加载模型' : '服务器不可用'}</span>
+ 
+ 				{#if !isLoadingModel}
+ 					<button
 diff --git a/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenStreamResumeStatus.svelte b/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenStreamResumeStatus.svelte
 index 4fd1023..a6e330a 100644
 --- a/tools/ui/src/lib/components/app/chat/ChatScreen/ChatScreenStreamResumeStatus.svelte
@@ -1462,6 +1995,19 @@ index 52b2810..cbf031a 100644
 +		<p>新聊天</p>
  	</Tooltip.Content>
  </Tooltip.Root>
+diff --git a/tools/ui/src/lib/components/app/chat/index.ts b/tools/ui/src/lib/components/app/chat/index.ts
+index e5c7e1c..4e977f0 100644
+--- a/tools/ui/src/lib/components/app/chat/index.ts
++++ b/tools/ui/src/lib/components/app/chat/index.ts
+@@ -690,7 +690,7 @@ export { default as ChatScreenForm } from './ChatScreen/ChatScreenForm.svelte';
+ export { default as ChatScreenServerError } from './ChatScreen/ChatScreenServerError.svelte';
+ 
+ /**
+- * Stream resume status indicator. Shows a small "Reconnecting to the stream..."
++ * Stream resume status indicator. Shows a small "正在重新连接数据流…"
+  * banner with a spinner while `chatStore.streamConnectionState` is `resuming`,
+  * i.e. after a dropped connection is reattaching to the live SSE replay buffer.
+  * Renders nothing otherwise. Shown inside ChatScreen only on an active conversation route.
 diff --git a/tools/ui/src/lib/components/app/content/CollapsibleContentBlock.svelte b/tools/ui/src/lib/components/app/content/CollapsibleContentBlock.svelte
 index ecdd75b..f8bdb58 100644
 --- a/tools/ui/src/lib/components/app/content/CollapsibleContentBlock.svelte
@@ -1489,9 +2035,63 @@ index ce1d637..4d2ae42 100644
  
  	<Collapsible.Content>
 diff --git a/tools/ui/src/lib/components/app/content/MarkdownContent/MarkdownContent.svelte b/tools/ui/src/lib/components/app/content/MarkdownContent/MarkdownContent.svelte
-index 895e9a8..47f4a62 100644
+index 895e9a8..f14ef3e 100644
 --- a/tools/ui/src/lib/components/app/content/MarkdownContent/MarkdownContent.svelte
 +++ b/tools/ui/src/lib/components/app/content/MarkdownContent/MarkdownContent.svelte
+@@ -240,7 +240,7 @@
+ 		try {
+ 			await copyCodeToClipboard(info.rawCode);
+ 		} catch (error) {
+-			console.error('Failed to copy code:', error);
++			console.error('复制代码失败：', error);
+ 		}
+ 	}
+ 
+@@ -521,7 +521,7 @@
+ 				try {
+ 					await copyToClipboard(mermaidSyntax);
+ 				} catch (error) {
+-					console.error('Failed to copy mermaid syntax:', error);
++					console.error('复制 mermaid 源码失败：', error);
+ 				}
+ 
+ 				return;
+@@ -563,7 +563,7 @@
+ 				try {
+ 					await copyToClipboard(preElement.getAttribute(SVG.SOURCE_ATTR) ?? '');
+ 				} catch (error) {
+-					console.error('Failed to copy svg source:', error);
++					console.error('复制 svg 源码失败：', error);
+ 				}
+ 
+ 				return;
+@@ -676,7 +676,7 @@
+ 				nodes: Array.from(nodes) as unknown as NodeListOf<HTMLElement>
+ 			});
+ 		} catch (error) {
+-			console.error('Failed to render mermaid diagram:', error);
++			console.error('渲染 mermaid 图失败：', error);
+ 		}
+ 	}
+ 
+@@ -769,7 +769,7 @@
+ 				}
+ 			}
+ 		} catch (error) {
+-			console.error('Failed to process markdown:', error);
++			console.error('处理 markdown 失败：', error);
+ 			renderedBlocks = [];
+ 			unstableBlockHtml = markdown.replace(/\n/g, '<br>');
+ 		} finally {
+@@ -848,7 +848,7 @@
+ 
+ 					<div class="code-block-actions">
+ 						<ActionIconCopyToClipboard
+-							ariaLabel="Diagram incomplete"
++							ariaLabel="图表不完整"
+ 							canCopy={false}
+ 							text={incompleteCodeBlock.code}
+ 						/>
 @@ -856,7 +856,7 @@
  				</div>
  
@@ -1501,6 +2101,15 @@ index 895e9a8..47f4a62 100644
  				</div>
  			</div>
  		{:else if streamingSvgCode !== null}
+@@ -866,7 +866,7 @@
+ 
+ 					<div class="code-block-actions">
+ 						<ActionIconCopyToClipboard
+-							ariaLabel="Diagram incomplete"
++							ariaLabel="图表不完整"
+ 							canCopy={false}
+ 							text={incompleteCodeBlock.code}
+ 						/>
 @@ -881,7 +881,7 @@
  					</div>
  				{:else}
@@ -1510,6 +2119,115 @@ index 895e9a8..47f4a62 100644
  					</div>
  				{/if}
  			</div>
+diff --git a/tools/ui/src/lib/components/app/content/MarkdownContent/markdown-handlers.ts b/tools/ui/src/lib/components/app/content/MarkdownContent/markdown-handlers.ts
+index 0a1db19..d87fd92 100644
+--- a/tools/ui/src/lib/components/app/content/MarkdownContent/markdown-handlers.ts
++++ b/tools/ui/src/lib/components/app/content/MarkdownContent/markdown-handlers.ts
+@@ -60,7 +60,7 @@ export function createHandleCopyClick() {
+ 		try {
+ 			await copyCodeToClipboard(rawCode);
+ 		} catch (error) {
+-			console.error('Failed to copy code:', error);
++			console.error('复制代码失败：', error);
+ 		}
+ 	};
+ }
+@@ -141,7 +141,7 @@ export function createHandleMermaidClick(mermaidState: MermaidPreviewState) {
+ 				try {
+ 					await copyToClipboard(mermaidSyntax);
+ 				} catch (error) {
+-					console.error('Failed to copy mermaid syntax:', error);
++					console.error('复制 mermaid 源码失败：', error);
+ 				}
+ 
+ 				return;
+diff --git a/tools/ui/src/lib/components/app/content/MarkdownContent/markdown-utils.ts b/tools/ui/src/lib/components/app/content/MarkdownContent/markdown-utils.ts
+index 9e2c0f4..fe8fbce 100644
+--- a/tools/ui/src/lib/components/app/content/MarkdownContent/markdown-utils.ts
++++ b/tools/ui/src/lib/components/app/content/MarkdownContent/markdown-utils.ts
+@@ -65,7 +65,7 @@ export function getCodeInfoFromTarget(target: HTMLElement): CodeInfo | null {
+ 	const wrapper = target.closest('.code-block-wrapper');
+ 
+ 	if (!wrapper) {
+-		console.error('No wrapper found');
++		console.error('没有找到包装');
+ 
+ 		return null;
+ 	}
+@@ -73,7 +73,7 @@ export function getCodeInfoFromTarget(target: HTMLElement): CodeInfo | null {
+ 	const codeElement = wrapper.querySelector<HTMLElement>(`code[${MARKDOWN_DATA_ATTRS.CODE_ID}]`);
+ 
+ 	if (!codeElement) {
+-		console.error('No code element found in wrapper');
++		console.error('包装里没有找到代码元素');
+ 
+ 		return null;
+ 	}
+diff --git a/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/code-block-utils.ts b/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/code-block-utils.ts
+index 4eb38e4..2337e1f 100644
+--- a/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/code-block-utils.ts
++++ b/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/code-block-utils.ts
+@@ -80,7 +80,7 @@ export function createPreviewButton(
+ export function createToggleSourceButton(
+ 	id: string,
+ 	idAttribute: string,
+-	title: string = 'Toggle source'
++	title: string = '切换源码'
+ ): Element {
+ 	return createButton(TOGGLE_SOURCE_BTN_CLASS, title, CODE_ICON_SVG, id, idAttribute, {
+ 		'aria-pressed': 'false'
+diff --git a/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/enhance-code-blocks.ts b/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/enhance-code-blocks.ts
+index f42ab1c..a58d3da 100644
+--- a/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/enhance-code-blocks.ts
++++ b/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/enhance-code-blocks.ts
+@@ -69,11 +69,11 @@ export const rehypeEnhanceCodeBlocks: Plugin<[], Root> = () => {
+ 			};
+ 
+ 			const actions: Element[] = [
+-				createCopyButton(codeId, MARKDOWN_DATA_ATTRS.CODE_ID, 'Copy code')
++				createCopyButton(codeId, MARKDOWN_DATA_ATTRS.CODE_ID, '复制代码')
+ 			];
+ 
+ 			if (language.toLowerCase() === 'html') {
+-				actions.push(createPreviewButton(codeId, MARKDOWN_DATA_ATTRS.CODE_ID, 'Preview code'));
++				actions.push(createPreviewButton(codeId, MARKDOWN_DATA_ATTRS.CODE_ID, '预览代码'));
+ 			}
+ 
+ 			const header = createBlockHeader(language, codeId, MARKDOWN_DATA_ATTRS.CODE_ID, actions);
+diff --git a/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/enhance-mermaid-blocks.ts b/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/enhance-mermaid-blocks.ts
+index d1f85b7..ae902c7 100644
+--- a/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/enhance-mermaid-blocks.ts
++++ b/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/enhance-mermaid-blocks.ts
+@@ -80,9 +80,9 @@ export const rehypeEnhanceMermaidBlocks: Plugin<[], Root> = () => {
+ 			};
+ 
+ 			const actions = [
+-				createCopyButton(mermaidId, MERMAID_ID_ATTR, 'Copy mermaid syntax'),
+-				createToggleSourceButton(mermaidId, MERMAID_ID_ATTR, 'Toggle mermaid source'),
+-				createPreviewButton(mermaidId, MERMAID_ID_ATTR, 'Preview diagram')
++				createCopyButton(mermaidId, MERMAID_ID_ATTR, '复制 mermaid 源码'),
++				createToggleSourceButton(mermaidId, MERMAID_ID_ATTR, '切换 mermaid 源码'),
++				createPreviewButton(mermaidId, MERMAID_ID_ATTR, '预览图表')
+ 			];
+ 			const header = createBlockHeader(MERMAID_LANGUAGE, mermaidId, MERMAID_ID_ATTR, actions);
+ 			const preservedCode = (node.data as DiagramPreData | undefined)?.sourceCode;
+diff --git a/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/enhance-svg-blocks.ts b/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/enhance-svg-blocks.ts
+index e1ec489..69df37f 100644
+--- a/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/enhance-svg-blocks.ts
++++ b/tools/ui/src/lib/components/app/content/MarkdownContent/plugins/rehype/enhance-svg-blocks.ts
+@@ -61,9 +61,9 @@ export const rehypeEnhanceSvgBlocks: Plugin<[], Root> = () => {
+ 			};
+ 
+ 			const actions = [
+-				createCopyButton(svgId, SVG.ID_ATTR, 'Copy svg source'),
+-				createToggleSourceButton(svgId, SVG.ID_ATTR, 'Toggle svg source'),
+-				createPreviewButton(svgId, SVG.ID_ATTR, 'Preview svg')
++				createCopyButton(svgId, SVG.ID_ATTR, '复制 svg 源码'),
++				createToggleSourceButton(svgId, SVG.ID_ATTR, '切换 svg 源码'),
++				createPreviewButton(svgId, SVG.ID_ATTR, '预览 svg')
+ 			];
+ 			const header = createBlockHeader(SVG.LANGUAGE, svgId, SVG.ID_ATTR, actions);
+ 			const preservedCode = (node.data as DiagramPreData | undefined)?.sourceCode;
 diff --git a/tools/ui/src/lib/components/app/content/MermaidPreviewControls.svelte b/tools/ui/src/lib/components/app/content/MermaidPreviewControls.svelte
 index 62cdbad..18958db 100644
 --- a/tools/ui/src/lib/components/app/content/MermaidPreviewControls.svelte
@@ -1566,6 +2284,28 @@ index 62cdbad..18958db 100644
  		>
  			<Download class="mermaid-preview-btn-icon {ICON_CLASS_DEFAULT}" />
  		</button>
+diff --git a/tools/ui/src/lib/components/app/content/index.ts b/tools/ui/src/lib/components/app/content/index.ts
+index 9b43fe9..7212de5 100644
+--- a/tools/ui/src/lib/components/app/content/index.ts
++++ b/tools/ui/src/lib/components/app/content/index.ts
+@@ -82,7 +82,7 @@ export { default as SyntaxHighlightedCode } from './SyntaxHighlightedCode.svelte
+  * ```svelte
+  * <CollapsibleContentBlock
+  *   bind:open
+- *   title="Thinking..."
++ *   title="思考中…"
+  *   isStreaming
+  * >
+  *   {reasoningContent}
+@@ -100,7 +100,7 @@ export { default as CollapsibleContentBlock } from './CollapsibleContentBlock.sv
+  *
+  * @example
+  * ```svelte
+- * <CollapsibleTerminalBlock bind:open title="Run command">
++ * <CollapsibleTerminalBlock bind:open title="运行命令">
+  *   <pre>{output}</pre>
+  * </CollapsibleTerminalBlock>
+  * ```
 diff --git a/tools/ui/src/lib/components/app/dialogs/DialogChatAttachmentsPreview.svelte b/tools/ui/src/lib/components/app/dialogs/DialogChatAttachmentsPreview.svelte
 index 5ce0de9..f19d889 100644
 --- a/tools/ui/src/lib/components/app/dialogs/DialogChatAttachmentsPreview.svelte
@@ -1580,9 +2320,24 @@ index 5ce0de9..f19d889 100644
  				onclick={handleClose}
  			>
 diff --git a/tools/ui/src/lib/components/app/dialogs/DialogChatError.svelte b/tools/ui/src/lib/components/app/dialogs/DialogChatError.svelte
-index 76a470c..2701bd5 100644
+index 76a470c..c4204de 100644
 --- a/tools/ui/src/lib/components/app/dialogs/DialogChatError.svelte
 +++ b/tools/ui/src/lib/components/app/dialogs/DialogChatError.svelte
+@@ -14,11 +14,11 @@
+ 	let { contextInfo, message, onOpenChange, open = $bindable(), type }: Props = $props();
+ 
+ 	const isTimeout = $derived(type === ErrorDialogType.TIMEOUT);
+-	const title = $derived(isTimeout ? 'TCP Timeout' : 'Server Error');
++	const title = $derived(isTimeout ? 'TCP 超时' : '服务器错误');
+ 	const description = $derived(
+ 		isTimeout
+-			? 'The request did not receive a response from the server before timing out.'
+-			: 'The server responded with an error message. Review the details below.'
++			? '请求在超时前没有从服务器收到响应。'
++			: '服务器返回了错误信息，详情见下。'
+ 	);
+ 	const iconClass = $derived(isTimeout ? 'text-destructive' : 'text-amber-500');
+ 	const badgeClass = $derived(
 @@ -57,14 +57,14 @@
  			{#if contextInfo}
  				<div class="mt-2 space-y-1 text-xs opacity-80">
@@ -1629,19 +2384,27 @@ index 4bd5988..f7584dd 100644
  		</DialogPrimitive.Content>
  	</DialogPrimitive.Portal>
 diff --git a/tools/ui/src/lib/components/app/dialogs/DialogConfirmDownload.svelte b/tools/ui/src/lib/components/app/dialogs/DialogConfirmDownload.svelte
-index e772810..9578bff 100644
+index e772810..c147552 100644
 --- a/tools/ui/src/lib/components/app/dialogs/DialogConfirmDownload.svelte
 +++ b/tools/ui/src/lib/components/app/dialogs/DialogConfirmDownload.svelte
-@@ -26,14 +26,14 @@
- 			confirmText: 'Cancel download',
+@@ -22,18 +22,18 @@
+ 	// destructive confirmations identically.
+ 	const COPY = {
+ 		[ModelDownloadConfirmAction.CANCEL]: {
+-			cancelText: 'Keep downloading',
+-			confirmText: 'Cancel download',
++			cancelText: '继续下载',
++			confirmText: '取消下载',
  			description: (name: string) =>
  				`This stops the download of ${name} and removes the partial files. Pause it instead to keep the progress.`,
 -			title: 'Cancel download'
 +			title: '取消下载'
  		},
  		[ModelDownloadConfirmAction.DELETE]: {
- 			cancelText: 'Keep model',
- 			confirmText: 'Delete',
+-			cancelText: 'Keep model',
+-			confirmText: 'Delete',
++			cancelText: '保留模型',
++			confirmText: '删除',
  			description: (name: string) =>
  				`This permanently removes ${name} from disk. You can download it again later.`,
 -			title: 'Delete model'
@@ -1649,6 +2412,19 @@ index e772810..9578bff 100644
  		}
  	} as const;
  
+diff --git a/tools/ui/src/lib/components/app/dialogs/DialogConfirmation.svelte b/tools/ui/src/lib/components/app/dialogs/DialogConfirmation.svelte
+index 8a50320..0d5b273 100644
+--- a/tools/ui/src/lib/components/app/dialogs/DialogConfirmation.svelte
++++ b/tools/ui/src/lib/components/app/dialogs/DialogConfirmation.svelte
+@@ -20,7 +20,7 @@
+ 	let {
+ 		cancelText = 'Cancel',
+ 		children,
+-		confirmText = 'Confirm',
++		confirmText = '确认',
+ 		description,
+ 		icon,
+ 		onCancel,
 diff --git a/tools/ui/src/lib/components/app/dialogs/DialogConversationRename.svelte b/tools/ui/src/lib/components/app/dialogs/DialogConversationRename.svelte
 index d83c5f0..adcdcfb 100644
 --- a/tools/ui/src/lib/components/app/dialogs/DialogConversationRename.svelte
@@ -1747,12 +2523,15 @@ index 14417d5..b5d18ec 100644
  	</AlertDialog.Content>
  </AlertDialog.Root>
 diff --git a/tools/ui/src/lib/components/app/dialogs/DialogExportSettings.svelte b/tools/ui/src/lib/components/app/dialogs/DialogExportSettings.svelte
-index 79bfc1e..bc94205 100644
+index 79bfc1e..5b4ca32 100644
 --- a/tools/ui/src/lib/components/app/dialogs/DialogExportSettings.svelte
 +++ b/tools/ui/src/lib/components/app/dialogs/DialogExportSettings.svelte
-@@ -61,13 +61,13 @@
+@@ -59,15 +59,15 @@
+ 				for="include-sensitive"
+ 			>
  				{#if includeSensitiveData}
- 					<span class="text-destructive">Include sensitive data (not recommended)</span>
+-					<span class="text-destructive">Include sensitive data (not recommended)</span>
++					<span class="text-destructive">包含敏感数据（不推荐）</span>
  				{:else}
 -					<span>Include sensitive data</span>
 +					<span>包含敏感数据</span>
@@ -1767,7 +2546,7 @@ index 79bfc1e..bc94205 100644
  			<AlertDialog.Action
  				class="bg-destructive text-white hover:bg-destructive/80"
 diff --git a/tools/ui/src/lib/components/app/dialogs/DialogFileUploadError.svelte b/tools/ui/src/lib/components/app/dialogs/DialogFileUploadError.svelte
-index 1d747bf..e083878 100644
+index 1d747bf..0e33ebb 100644
 --- a/tools/ui/src/lib/components/app/dialogs/DialogFileUploadError.svelte
 +++ b/tools/ui/src/lib/components/app/dialogs/DialogFileUploadError.svelte
 @@ -27,17 +27,15 @@
@@ -1800,6 +2579,15 @@ index 1d747bf..e083878 100644
  								</div>
  							{/each}
  						</div>
+@@ -63,7 +61,7 @@
+ 									</p>
+ 
+ 									<p class="mt-1 text-xs text-muted-foreground">
+-										{fileErrorData.modalityReasons[file.name] || 'Not supported by current model'}
++										{fileErrorData.modalityReasons[file.name] || '当前模型不支持'}
+ 									</p>
+ 								</div>
+ 							{/each}
 @@ -73,7 +71,7 @@
  			</div>
  
@@ -1855,9 +2643,18 @@ index fbe711c..38e632f 100644
  					{/snippet}
  				</ModelsManager>
 diff --git a/tools/ui/src/lib/components/app/dialogs/DialogMcpResourcePreview.svelte b/tools/ui/src/lib/components/app/dialogs/DialogMcpResourcePreview.svelte
-index e09a9ab..5a263fd 100644
+index e09a9ab..00c6e6f 100644
 --- a/tools/ui/src/lib/components/app/dialogs/DialogMcpResourcePreview.svelte
 +++ b/tools/ui/src/lib/components/app/dialogs/DialogMcpResourcePreview.svelte
+@@ -88,7 +88,7 @@
+ 
+ 		<div class="flex items-center justify-end gap-1">
+ 			<ActionIconCopyToClipboard
+-				ariaLabel="Copy content"
++				ariaLabel="复制内容"
+ 				canCopy={!!extra.content}
+ 				text={extra.content}
+ 			/>
 @@ -98,7 +98,7 @@
  				disabled={!extra.content}
  				onclick={handleDownload}
@@ -1877,17 +2674,48 @@ index e09a9ab..5a263fd 100644
  		</div>
  	</Dialog.Content>
 diff --git a/tools/ui/src/lib/components/app/dialogs/DialogMcpResourcesBrowser.svelte b/tools/ui/src/lib/components/app/dialogs/DialogMcpResourcesBrowser.svelte
-index be91e75..860dd11 100644
+index be91e75..740cf27 100644
 --- a/tools/ui/src/lib/components/app/dialogs/DialogMcpResourcesBrowser.svelte
 +++ b/tools/ui/src/lib/components/app/dialogs/DialogMcpResourcesBrowser.svelte
-@@ -109,7 +109,7 @@
- 				templatePreviewError = 'Failed to read resource';
+@@ -106,10 +106,10 @@
+ 			if (content) {
+ 				templatePreviewContent = content;
+ 			} else {
+-				templatePreviewError = 'Failed to read resource';
++				templatePreviewError = '读取资源失败';
  			}
  		} catch (error) {
 -			templatePreviewError = error instanceof Error ? error.message : 'Unknown error';
 +			templatePreviewError = error instanceof Error ? error.message : '未知错误';
  		} finally {
  			templatePreviewLoading = false;
+ 		}
+@@ -135,7 +135,7 @@
+ 				toast.success(`Resource attached: ${knownResource.title || knownResource.name}`);
+ 			} else {
+ 				if (mcpStore.resources.isAttached(templatePreviewUri)) {
+-					toast.info('Resource already attached');
++					toast.info('资源已经附加过了');
+ 					handleOpenChange(false);
+ 
+ 					return;
+@@ -155,7 +155,7 @@
+ 
+ 			handleOpenChange(false);
+ 		} catch (error) {
+-			console.error('Failed to attach template resource:', error);
++			console.error('附加模板资源失败：', error);
+ 		} finally {
+ 			isAttaching = false;
+ 		}
+@@ -238,7 +238,7 @@
+ 
+ 			handleOpenChange(false);
+ 		} catch (error) {
+-			console.error('Failed to attach resources:', error);
++			console.error('附加资源失败：', error);
+ 		} finally {
+ 			isAttaching = false;
  		}
 @@ -260,16 +260,14 @@
  			<Dialog.Title class="flex items-center gap-2">
@@ -1947,9 +2775,26 @@ index be91e75..860dd11 100644
  			{#if hasTemplateResult}
  				<Button disabled={isAttaching} onclick={handleAttachTemplateResource}>
 diff --git a/tools/ui/src/lib/components/app/dialogs/DialogMcpServerAddNew.svelte b/tools/ui/src/lib/components/app/dialogs/DialogMcpServerAddNew.svelte
-index 9fd6883..6338260 100644
+index 9fd6883..75726e5 100644
 --- a/tools/ui/src/lib/components/app/dialogs/DialogMcpServerAddNew.svelte
 +++ b/tools/ui/src/lib/components/app/dialogs/DialogMcpServerAddNew.svelte
+@@ -70,14 +70,14 @@
+ 	});
+ 
+ 	let newServerUrlError = $derived.by(() => {
+-		if (!newServerUrl.trim()) return 'URL is required';
++		if (!newServerUrl.trim()) return '需要 URL';
+ 
+ 		try {
+ 			new URL(newServerUrl);
+ 
+ 			return null;
+ 		} catch {
+-			return 'Invalid URL format';
++			return 'URL 格式无效';
+ 		}
+ 	});
+ 	let newServerHeaderPairsValid = $derived(
 @@ -249,16 +249,16 @@
  		onOpenAutoFocus={(event) => deviceStore.isMobile && event.preventDefault()}
  	>
@@ -2079,10 +2924,52 @@ index 56efc47..3d8ce59 100644
  			</Dialog.Close>
  		</Dialog.Header>
  
+diff --git a/tools/ui/src/lib/components/app/dialogs/index.ts b/tools/ui/src/lib/components/app/dialogs/index.ts
+index 45cc9b2..952236f 100644
+--- a/tools/ui/src/lib/components/app/dialogs/index.ts
++++ b/tools/ui/src/lib/components/app/dialogs/index.ts
+@@ -98,8 +98,8 @@ export { default as DialogExportSettings } from './DialogExportSettings.svelte';
+  * ```svelte
+  * <DialogConfirmation
+  *   bind:open={showDelete}
+- *   title="Delete conversation?"
+- *   description="This action cannot be undone."
++ *   title="删除会话？"
++ *   description="这个操作无法撤销。"
+  *   variant="destructive"
+  *   onConfirm={handleDelete}
+  *   onCancel={() => showDelete = false}
+@@ -289,7 +289,7 @@ export { default as DialogChatError } from './DialogChatError.svelte';
+  * - FileX icon indicating file error
+  * - List of empty file names in monospace font
+  * - Explanation of what happened and why
+- * - Single "Got it" dismiss button
++ * - Single "知道了" dismiss button
+  *
+  * @example
+  * ```svelte
+@@ -318,7 +318,7 @@ export { default as DialogEmptyFileAlert } from './DialogEmptyFileAlert.svelte';
+  * - File name in monospace with contextual error messages
+  * - Summary of supported file types for the current model
+  * - Scrollable content area for large error lists
+- * - Single "Got it" dismiss button
++ * - Single "知道了" dismiss button
+  *
+  * @example
+  * ```svelte
 diff --git a/tools/ui/src/lib/components/app/forms/KeyValuePairs.svelte b/tools/ui/src/lib/components/app/forms/KeyValuePairs.svelte
-index 9bd2756..c3bd167 100644
+index 9bd2756..6f477c8 100644
 --- a/tools/ui/src/lib/components/app/forms/KeyValuePairs.svelte
 +++ b/tools/ui/src/lib/components/app/forms/KeyValuePairs.svelte
+@@ -25,7 +25,7 @@
+ 	let {
+ 		addButtonLabel = 'Add',
+ 		class: className = '',
+-		emptyMessage = 'No items configured.',
++		emptyMessage = '没有配置任何项。',
+ 		keyPlaceholder = 'Key',
+ 		onPairsChange,
+ 		pairs,
 @@ -152,7 +152,7 @@
  					></textarea>
  
@@ -2092,6 +2979,28 @@ index 9bd2756..c3bd167 100644
  						class="mt-1.5 shrink-0 cursor-pointer rounded-md p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
  						onclick={() => removePair(index)}
  						type="button"
+diff --git a/tools/ui/src/lib/components/app/forms/SearchInput.svelte b/tools/ui/src/lib/components/app/forms/SearchInput.svelte
+index 054d477..2e50833 100644
+--- a/tools/ui/src/lib/components/app/forms/SearchInput.svelte
++++ b/tools/ui/src/lib/components/app/forms/SearchInput.svelte
+@@ -26,7 +26,7 @@
+ 		onClose,
+ 		onInput,
+ 		onKeyDown,
+-		placeholder = 'Search...',
++		placeholder = '搜索…',
+ 		ref = $bindable(null),
+ 		size = 'default',
+ 		value = $bindable('')
+@@ -73,7 +73,7 @@
+ 
+ 	{#if showClearButton}
+ 		<button
+-			aria-label={value ? 'Clear search' : 'Close'}
++			aria-label={value ? '清除搜索' : 'Close'}
+ 			class="absolute top-1/2 right-3 -translate-y-1/2 transform cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
+ 			onclick={handleClear}
+ 			type="button"
 diff --git a/tools/ui/src/lib/components/app/mcp/McpActiveServersAvatars.svelte b/tools/ui/src/lib/components/app/mcp/McpActiveServersAvatars.svelte
 index 3319dcf..ac92ac8 100644
 --- a/tools/ui/src/lib/components/app/mcp/McpActiveServersAvatars.svelte
@@ -2171,11 +3080,15 @@ index 5969547..79774d2 100644
  	{/if}
  {/if}
 diff --git a/tools/ui/src/lib/components/app/mcp/McpResourcePreview.svelte b/tools/ui/src/lib/components/app/mcp/McpResourcePreview.svelte
-index eb84b2a..309c1bb 100644
+index eb84b2a..a3bed06 100644
 --- a/tools/ui/src/lib/components/app/mcp/McpResourcePreview.svelte
 +++ b/tools/ui/src/lib/components/app/mcp/McpResourcePreview.svelte
-@@ -55,7 +55,7 @@
- 				error = 'Failed to load resource content';
+@@ -52,10 +52,10 @@
+ 			if (result) {
+ 				content = result;
+ 			} else {
+-				error = 'Failed to load resource content';
++				error = '加载资源内容失败';
  			}
  		} catch (e) {
 -			error = e instanceof Error ? e.message : 'Unknown error';
@@ -2192,6 +3105,15 @@ index eb84b2a..309c1bb 100644
  		</div>
  	{:else}
  		<div class="flex items-start justify-between gap-2">
+@@ -95,7 +95,7 @@
+ 
+ 			<div class="flex items-center gap-1">
+ 				<ActionIconCopyToClipboard
+-					ariaLabel="Copy content"
++					ariaLabel="复制内容"
+ 					canCopy={!isLoading && !!getResourceTextContent(content)}
+ 					text={getResourceTextContent(content)}
+ 				/>
 @@ -105,7 +105,7 @@
  					disabled={isLoading || !getResourceTextContent(content)}
  					onclick={handleDownload}
@@ -2356,9 +3278,26 @@ index 0b3d3d0..23e98c2 100644
  	</AlertDialog.Content>
  </AlertDialog.Root>
 diff --git a/tools/ui/src/lib/components/app/mcp/McpServerCard/McpServerCardEditForm.svelte b/tools/ui/src/lib/components/app/mcp/McpServerCard/McpServerCardEditForm.svelte
-index 88cd5e0..cc68570 100644
+index 88cd5e0..b8a3ad5 100644
 --- a/tools/ui/src/lib/components/app/mcp/McpServerCard/McpServerCardEditForm.svelte
 +++ b/tools/ui/src/lib/components/app/mcp/McpServerCard/McpServerCardEditForm.svelte
+@@ -28,14 +28,14 @@
+ 	let editUseProxy = $derived(serverUseProxy);
+ 
+ 	let urlError = $derived.by(() => {
+-		if (!editUrl.trim()) return 'URL is required';
++		if (!editUrl.trim()) return '需要 URL';
+ 
+ 		try {
+ 			new URL(editUrl);
+ 
+ 			return null;
+ 		} catch {
+-			return 'Invalid URL format';
++			return 'URL 格式无效';
+ 		}
+ 	});
+ 
 @@ -69,7 +69,7 @@
  
  <form class="contents" onsubmit={handleSubmit}>
@@ -2378,9 +3317,36 @@ index 88cd5e0..cc68570 100644
  			<Button disabled={!canSave} size="sm" type="submit">
  				{serverUrl.trim() ? 'Update' : 'Add'}
 diff --git a/tools/ui/src/lib/components/app/mcp/McpServerForm.svelte b/tools/ui/src/lib/components/app/mcp/McpServerForm.svelte
-index f9f07ad..2542f02 100644
+index f9f07ad..5d05d35 100644
 --- a/tools/ui/src/lib/components/app/mcp/McpServerForm.svelte
 +++ b/tools/ui/src/lib/components/app/mcp/McpServerForm.svelte
+@@ -25,7 +25,7 @@
+ 		 * "Wants Authorization" is the user's *intent* to add a Bearer token
+ 		 * (separate from `hasAuthorization` which reflects what's already in
+ 		 * the headers). Bindable so a parent - e.g. the recommendation cards
+-		 * on the "Add New Server" dialog - can flip the switch on when the
++		 * on the "添加新服务器" dialog - can flip the switch on when the
+ 		 * picked server ships a `needsAuthorization: true` flag.
+ 		 */
+ 		wantsAuthorization?: boolean;
+@@ -33,7 +33,7 @@
+ 		 * Marks the "Authorization" field as required. Locks the toggle so the
+ 		 * user can't dismiss it, and visually marks the field with a red
+ 		 * asterisk. The parent is expected to gate its submit affordance on
+-		 * the bearer token actually being filled. Used by the "Add New Server"
++		 * the bearer token actually being filled. Used by the "添加新服务器"
+ 		 * dialog for recommendations whose `needsAuthorization` flag is true.
+ 		 */
+ 		required?: boolean;
+@@ -43,7 +43,7 @@
+ 		headers,
+ 		id = 'server',
+ 		name = '',
+-		namePlaceholder = 'Name reported by the server',
++		namePlaceholder = '服务器报告的名字',
+ 		onHeadersChange,
+ 		onNameChange,
+ 		onUrlChange,
 @@ -140,8 +140,7 @@
  
  <div class="grid gap-2">
@@ -2402,7 +3368,7 @@ index f9f07ad..2542f02 100644
  
  		<Input
  			id="server-name-{id}"
-@@ -195,16 +192,14 @@
+@@ -195,33 +192,31 @@
  				class="pl-16"
  				id="bearer-token-{id}"
  				oninput={(e) => updateBearerToken(e.currentTarget.value)}
@@ -2421,6 +3387,28 @@ index f9f07ad..2542f02 100644
  		</div>
  	{/if}
  
+ 	<KeyValuePairs
+-		addButtonLabel="Add"
++		addButtonLabel="添加"
+ 		class="mt-3"
+-		emptyMessage="No custom headers configured."
+-		keyPlaceholder="Header name"
++		emptyMessage="没有配置自定义请求头。"
++		keyPlaceholder="请求头名称"
+ 		onPairsChange={(pairs) => {
+ 			const auth = headerPairs.find(ownedByBearerUi);
+ 
+ 			updateHeaderPairs(auth ? [...pairs, auth] : pairs);
+ 		}}
+ 		pairs={headerPairs.filter((p) => !ownedByBearerUi(p))}
+-		sectionLabel="Custom Headers"
++		sectionLabel="自定义请求头"
+ 		sectionLabelOptional
+-		valuePlaceholder="Value"
++		valuePlaceholder="值"
+ 	/>
+ 
+ 	{#if !isWebSocket && onUseProxyChange}
 @@ -241,7 +236,7 @@
  			/>
  
@@ -2456,10 +3444,41 @@ index fe0a455..ca6446a 100644
  		</Collapsible.Trigger>
  
  		<Collapsible.Content class="mt-2">
+diff --git a/tools/ui/src/lib/components/app/misc/CodeBlockActions.svelte b/tools/ui/src/lib/components/app/misc/CodeBlockActions.svelte
+index f1865b8..23567f7 100644
+--- a/tools/ui/src/lib/components/app/misc/CodeBlockActions.svelte
++++ b/tools/ui/src/lib/components/app/misc/CodeBlockActions.svelte
+@@ -17,7 +17,7 @@
+ 
+ <div class="code-block-actions">
+ 	<ActionIconCopyToClipboard
+-		ariaLabel={disabled ? 'Code incomplete' : 'Copy code'}
++		ariaLabel={disabled ? '代码不完整' : '复制代码'}
+ 		canCopy={!disabled}
+ 		text={code}
+ 	/>
+@@ -27,7 +27,7 @@
+ 			{disabled}
+ 			icon={Eye}
+ 			onclick={() => onPreview!(code, language)}
+-			tooltip={disabled ? 'Code incomplete' : 'Preview code'}
++			tooltip={disabled ? '代码不完整' : '预览代码'}
+ 		/>
+ 	{/if}
+ </div>
 diff --git a/tools/ui/src/lib/components/app/misc/ConversationSelection.svelte b/tools/ui/src/lib/components/app/misc/ConversationSelection.svelte
-index e8f173c..d626bd7 100644
+index e8f173c..95dcce8 100644
 --- a/tools/ui/src/lib/components/app/misc/ConversationSelection.svelte
 +++ b/tools/ui/src/lib/components/app/misc/ConversationSelection.svelte
+@@ -34,7 +34,7 @@
+ 
+ 	let filteredConversations = $derived(
+ 		conversations.filter((conv) => {
+-			const name = conv.name || 'Untitled conversation';
++			const name = conv.name || '未命名会话';
+ 
+ 			return name.toLowerCase().includes(searchQuery.toLowerCase());
+ 		})
 @@ -91,7 +91,7 @@
  </script>
  
@@ -2480,6 +3499,17 @@ index e8f173c..d626bd7 100644
 +						<th class="w-32 p-3 text-left text-sm font-medium">消息</th>
  					</tr>
  				</thead>
+ 
+@@ -155,8 +155,8 @@
+ 								</td>
+ 
+ 								<td class="p-3 text-sm">
+-									<div class="max-w-68 truncate" title={conv.name || 'Untitled conversation'}>
+-										{conv.name || 'Untitled conversation'}
++									<div class="max-w-68 truncate" title={conv.name || '未命名会话'}>
++										{conv.name || '未命名会话'}
+ 									</div>
+ 								</td>
  
 @@ -172,7 +172,7 @@
  	</div>
@@ -2512,10 +3542,41 @@ index 38f4d07..9e24c24 100644
  		onclick={scrollRight}
  	>
  		<ChevronRight class={ICON_CLASS_DEFAULT} />
+diff --git a/tools/ui/src/lib/components/app/models/ModelBadge.svelte b/tools/ui/src/lib/components/app/models/ModelBadge.svelte
+index 53cdcc2..fe3f4aa 100644
+--- a/tools/ui/src/lib/components/app/models/ModelBadge.svelte
++++ b/tools/ui/src/lib/components/app/models/ModelBadge.svelte
+@@ -37,7 +37,7 @@
+ 		{/if}
+ 
+ 		{#if showCopyIcon}
+-			<ActionIconCopyToClipboard ariaLabel="Copy model name" text={model || ''} />
++			<ActionIconCopyToClipboard ariaLabel="复制模型名" text={model || ''} />
+ 		{/if}
+ 	</BadgeInfo>
+ {/snippet}
+@@ -53,7 +53,7 @@
+ 			</Tooltip.Trigger>
+ 
+ 			<Tooltip.Content>
+-				{onclick ? 'Click for model details' : model}
++				{onclick ? '点击查看模型详情' : model}
+ 			</Tooltip.Content>
+ 		</Tooltip.Root>
+ 	{:else}
 diff --git a/tools/ui/src/lib/components/app/models/ModelDraftSubline.svelte b/tools/ui/src/lib/components/app/models/ModelDraftSubline.svelte
-index 101215d..3471c25 100644
+index 101215d..fcf10dc 100644
 --- a/tools/ui/src/lib/components/app/models/ModelDraftSubline.svelte
 +++ b/tools/ui/src/lib/components/app/models/ModelDraftSubline.svelte
+@@ -6,7 +6,7 @@
+ 	interface Props {
+ 		/**
+ 		 * Left inset of the tree connector, tuned per surface so the elbow hangs
+-		 * under the main line's avatar and "Draft model" aligns with its id.
++		 * under the main line's avatar and "草稿模型" aligns with its id.
+ 		 */
+ 		connectorClass?: string;
+ 		/** Draft sidecar kind, e.g. dflash. */
 @@ -31,7 +31,7 @@
  		class="h-2.5 w-3.5 shrink-0 self-center rounded-bl-sm border-b border-l border-border/70 {connectorClass}"
  	></span>
@@ -2534,6 +3595,103 @@ index 101215d..3471c25 100644
  			{/if}
  		</span>
  	{/if}
+diff --git a/tools/ui/src/lib/components/app/models/ModelLoadControl.svelte b/tools/ui/src/lib/components/app/models/ModelLoadControl.svelte
+index 6d1ea5a..f837f62 100644
+--- a/tools/ui/src/lib/components/app/models/ModelLoadControl.svelte
++++ b/tools/ui/src/lib/components/app/models/ModelLoadControl.svelte
+@@ -78,7 +78,7 @@
+ 					iconSize="h-4 w-4"
+ 					onclick={() => modelsStore.status.load(option.model)}
+ 					stopPropagationOnClick
+-					tooltip="Retry loading model"
++					tooltip="重试加载模型"
+ 					tooltipAsTitle
+ 				/>
+ 			{:else if isLoaded || isSleeping}
+@@ -88,7 +88,7 @@
+ 					iconSize="h-4 w-4"
+ 					onclick={() => modelsStore.status.unload(option.model)}
+ 					stopPropagationOnClick
+-					tooltip="Unload model"
++					tooltip="卸载模型"
+ 					tooltipAsTitle
+ 				/>
+ 			{:else}
+@@ -98,7 +98,7 @@
+ 					iconSize="h-4 w-4"
+ 					onclick={() => modelsStore.status.load(option.model)}
+ 					stopPropagationOnClick
+-					tooltip="Load model"
++					tooltip="加载模型"
+ 					tooltipAsTitle
+ 				/>
+ 			{/if}
+diff --git a/tools/ui/src/lib/components/app/models/ModelRowActions.svelte b/tools/ui/src/lib/components/app/models/ModelRowActions.svelte
+index b40f88d..8f2b937 100644
+--- a/tools/ui/src/lib/components/app/models/ModelRowActions.svelte
++++ b/tools/ui/src/lib/components/app/models/ModelRowActions.svelte
+@@ -34,7 +34,7 @@
+ 				deviceStore.isMobile
+ 					? uiStore.openModelInformation(option)
+ 					: uiStore.openModelsManager(option.id)}
+-			tooltip="Manage model"
++			tooltip="管理模型"
+ 			tooltipAsTitle
+ 		/>
+ 	</span>
+@@ -47,7 +47,7 @@
+ 					icon={Heart}
+ 					iconSize="h-4 w-4"
+ 					onclick={() => modelsStore.toggleFavorite(option.model)}
+-					tooltip="Remove from favorites"
++					tooltip="取消收藏"
+ 					tooltipAsTitle
+ 				/>
+ 			</span>
+@@ -58,7 +58,7 @@
+ 					icon={HeartOff}
+ 					iconSize="h-4 w-4"
+ 					onclick={() => modelsStore.toggleFavorite(option.model)}
+-					tooltip="Remove from favorites"
++					tooltip="取消收藏"
+ 					tooltipAsTitle
+ 				/>
+ 			</span>
+@@ -70,7 +70,7 @@
+ 				icon={Heart}
+ 				iconSize="h-4 w-4"
+ 				onclick={() => modelsStore.toggleFavorite(option.model)}
+-				tooltip="Add to favorites"
++				tooltip="加入收藏"
+ 				tooltipAsTitle
+ 			/>
+ 		</span>
+diff --git a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManager.svelte b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManager.svelte
+index 9853baf..2ae44cd 100644
+--- a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManager.svelte
++++ b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManager.svelte
+@@ -266,7 +266,7 @@
+ 		if (serverStore.isRouterMode && !modelsStore.isModelLoaded(option.model)) {
+ 			modelsStore.status
+ 				.load(option.model)
+-				.catch((error) => console.error('Failed to load model:', error));
++				.catch((error) => console.error('加载模型失败：', error));
+ 		}
+ 	}
+ 
+diff --git a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerDownloadControl.svelte b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerDownloadControl.svelte
+index 5e77cae..5ba2886 100644
+--- a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerDownloadControl.svelte
++++ b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerDownloadControl.svelte
+@@ -40,7 +40,7 @@
+ 			iconSize="h-4 w-4"
+ 			onclick={() => void modelsStore.status.toggleDownload(option.model)}
+ 			stopPropagationOnClick
+-			tooltip={isPaused ? 'Resume downloading' : 'Pause downloading'}
++			tooltip={isPaused ? '继续下载' : '暂停下载'}
+ 			tooltipAsTitle
+ 		/>
+ 	</div>
 diff --git a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerFilters.svelte b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerFilters.svelte
 index 8b4c3bf..c7aef82 100644
 --- a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerFilters.svelte
@@ -2567,9 +3725,18 @@ index 8b4c3bf..c7aef82 100644
  			{contextLabel}
  		</Select.Trigger>
 diff --git a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelConfiguration/ModelsManagerModelConfiguration.svelte b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelConfiguration/ModelsManagerModelConfiguration.svelte
-index 40a7565..c9cb516 100644
+index 40a7565..624c78c 100644
 --- a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelConfiguration/ModelsManagerModelConfiguration.svelte
 +++ b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelConfiguration/ModelsManagerModelConfiguration.svelte
+@@ -104,7 +104,7 @@
+ 			<div class="space-y-2 py-1">
+ 				<div class="flex items-baseline justify-between gap-3 text-sm">
+ 					<span class="text-muted-foreground">
+-						{isDownloadPaused ? 'Paused at' : 'Downloaded'}
++						{isDownloadPaused ? '暂停于' : 'Downloaded'}
+ 					</span>
+ 
+ 					<span class="font-mono text-xs tabular-nums text-muted-foreground">
 @@ -136,9 +136,7 @@
  					size="sm"
  					variant="ghost"
@@ -2631,9 +3798,25 @@ index affab34..0c8536c 100644
  		</div>
  	{/if}
 diff --git a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelConfiguration/ModelsManagerModelConfigurationHeader.svelte b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelConfiguration/ModelsManagerModelConfigurationHeader.svelte
-index d2cc2d5..d60798f 100644
+index d2cc2d5..05e897b 100644
 --- a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelConfiguration/ModelsManagerModelConfigurationHeader.svelte
 +++ b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelConfiguration/ModelsManagerModelConfigurationHeader.svelte
+@@ -47,13 +47,13 @@
+ 
+ 		if (status === ServerModelStatus.LOADING) return 'Loading';
+ 
+-		if (status === ServerModelStatus.FAILED) return 'Failed to load';
++		if (status === ServerModelStatus.FAILED) return '加载失败';
+ 
+ 		if (status === ServerModelStatus.SLEEPING) return 'Sleeping';
+ 
+ 		if (isLoaded) return 'Loaded';
+ 
+-		return 'Not loaded';
++		return '未加载';
+ 	});
+ 
+ 	let statusDot = $derived.by(() => {
 @@ -109,7 +109,7 @@
  		</div>
  
@@ -2644,7 +3827,7 @@ index d2cc2d5..d60798f 100644
  			onclick={onClose}
  			size="icon"
 diff --git a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelConfiguration/ModelsManagerModelConfigurationInformation.svelte b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelConfiguration/ModelsManagerModelConfigurationInformation.svelte
-index 7eed085..fef4d06 100644
+index 7eed085..48f71c5 100644
 --- a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelConfiguration/ModelsManagerModelConfigurationInformation.svelte
 +++ b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelConfiguration/ModelsManagerModelConfigurationInformation.svelte
 @@ -38,11 +38,11 @@
@@ -2668,7 +3851,8 @@ index 7eed085..fef4d06 100644
 -		{ label: 'Model Size', value: meta?.size ? formatFileSize(meta.size) : null },
 +		{ label: '模型大小', value: meta?.size ? formatFileSize(meta.size) : null },
  		{
- 			label: 'Parameters',
+-			label: 'Parameters',
++			label: '参数',
  			value: meta?.n_params
  				? formatParameters(meta.n_params)
  				: (option.parsedId?.params ?? (hubParameters ? formatParameters(hubParameters) : null))
@@ -2680,7 +3864,8 @@ index 7eed085..fef4d06 100644
 +			label: '词表大小',
  			value: meta?.n_vocab ? `${formatNumber(meta.n_vocab)} tokens` : null
  		},
- 		{ isBadge: true, label: 'Quantization', value: quant },
+-		{ isBadge: true, label: 'Quantization', value: quant },
++		{ isBadge: true, label: '量化', value: quant },
  		{
  			isBadge: true,
 -			label: 'Architecture',
@@ -2727,6 +3912,24 @@ index 7eed085..fef4d06 100644
  
  		<span class="ml-auto flex min-w-0 flex-1 items-center gap-2">
  			<span class="min-w-0 flex-1 overflow-x-auto font-mono text-xs whitespace-nowrap">
+@@ -118,7 +118,7 @@
+ 			</span>
+ 
+ 			<ActionIconCopyToClipboard
+-				ariaLabel="Copy model name to clipboard"
++				ariaLabel="复制模型名到剪贴板"
+ 				canCopy
+ 				text={option.model}
+ 			/>
+@@ -151,7 +151,7 @@
+ 
+ 					{#if row.isCopyable}
+ 						<ActionIconCopyToClipboard
+-							ariaLabel="Copy value to clipboard"
++							ariaLabel="复制值到剪贴板"
+ 							canCopy
+ 							text={row.value}
+ 						/>
 @@ -162,14 +162,12 @@
  	{/each}
  
@@ -2744,7 +3947,7 @@ index 7eed085..fef4d06 100644
  
  			<span class="ml-auto flex flex-wrap gap-1"><BadgesModality {modalities} /></span>
  		</div>
-@@ -178,15 +176,14 @@
+@@ -178,20 +176,19 @@
  
  {#if !serverProps}
  	<p class="pt-2 text-xs text-muted-foreground">
@@ -2762,8 +3965,27 @@ index 7eed085..fef4d06 100644
  		{/snippet}
  
  		<pre
+ 			class="mt-1 rounded-md bg-muted/50 p-2 text-xs whitespace-pre-wrap">{serverProps?.chat_template ??
+ 				gguf?.chat_template ??
+-				'Shown once the model is loaded.'}</pre>
++				'模型加载后才会显示。'}</pre>
+ 	</CollapsibleSection>
+ </div>
+diff --git a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelRow.svelte b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelRow.svelte
+index 204d746..62fb085 100644
+--- a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelRow.svelte
++++ b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelRow.svelte
+@@ -137,7 +137,7 @@
+ 			actions={modelRowActions(option, favorite, isHidden, onDelete, download)}
+ 			align="end"
+ 			triggerIcon={MoreHorizontal}
+-			triggerTooltip="Model actions"
++			triggerTooltip="模型操作"
+ 		/>
+ 	</div>
+ </div>
 diff --git a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelsTable.svelte b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelsTable.svelte
-index 7883cfa..16b94a8 100644
+index 7883cfa..51edfbc 100644
 --- a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelsTable.svelte
 +++ b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerModelsTable.svelte
 @@ -358,9 +358,9 @@
@@ -2778,6 +4000,28 @@ index 7883cfa..16b94a8 100644
  	</div>
  
  	<div class="min-h-0 flex-1 overflow-y-auto">
+@@ -414,7 +414,7 @@
+ 
+ 		{#if isEmpty}
+ 			<p class="px-4 py-10 text-center text-sm text-muted-foreground">
+-				{hasFilters ? 'No models match these filters.' : 'No models found.'}
++				{hasFilters ? '没有符合这些筛选条件的模型。' : '没有找到模型。'}
+ 			</p>
+ 		{/if}
+ 	</div>
+diff --git a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerQuantRow.svelte b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerQuantRow.svelte
+index 6d76251..a579d05 100644
+--- a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerQuantRow.svelte
++++ b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerQuantRow.svelte
+@@ -65,7 +65,7 @@
+ 			actions={modelRowActions(option, favorite, isHidden, onDelete)}
+ 			align="end"
+ 			triggerIcon={MoreHorizontal}
+-			triggerTooltip="Model actions"
++			triggerTooltip="模型操作"
+ 		/>
+ 	</div>
+ </div>
 diff --git a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerStatusCell.svelte b/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerStatusCell.svelte
 index a56f505..4106f11 100644
 --- a/tools/ui/src/lib/components/app/models/ModelsManager/ModelsManagerStatusCell.svelte
@@ -2817,7 +4061,7 @@ index fef282f..6e221de 100644
  
  	<div class="ml-auto flex items-center gap-2">
 diff --git a/tools/ui/src/lib/components/app/models/ModelsManager/row-actions.ts b/tools/ui/src/lib/components/app/models/ModelsManager/row-actions.ts
-index 3407634..1904e34 100644
+index 3407634..aa151ff 100644
 --- a/tools/ui/src/lib/components/app/models/ModelsManager/row-actions.ts
 +++ b/tools/ui/src/lib/components/app/models/ModelsManager/row-actions.ts
 @@ -15,7 +15,7 @@ export function modelRowActions(
@@ -2829,7 +4073,28 @@ index 3407634..1904e34 100644
  		// the details pane is keyed by repo, not by `<repo>:<quant>`
  		onclick: () => uiStore.openModelsDiscover(repoOf(option.model)),
  		separator: true
-@@ -52,7 +52,7 @@ export function modelRowActions(
+@@ -30,12 +30,12 @@ export function modelRowActions(
+ 		return [
+ 			{
+ 				icon: isPaused ? MODEL_DOWNLOAD_ICONS.resume : MODEL_DOWNLOAD_ICONS.pause,
+-				label: isPaused ? 'Resume downloading' : 'Pause downloading',
++				label: isPaused ? '继续下载' : '暂停下载',
+ 				onclick: () => void modelsStore.status.toggleDownload(option.model)
+ 			},
+ 			{
+ 				icon: Trash2,
+-				label: isPaused ? 'Delete from disk' : 'Cancel download',
++				label: isPaused ? '从磁盘删除' : '取消下载',
+ 				onclick: () => onDelete(option),
+ 				separator: true,
+ 				variant: 'destructive' as const
+@@ -47,19 +47,19 @@ export function modelRowActions(
+ 	return [
+ 		{
+ 			icon: favorite ? HeartOff : Heart,
+-			label: favorite ? 'Remove from favorites' : 'Add to favorites',
++			label: favorite ? '取消收藏' : '加入收藏',
+ 			onclick: () => modelsStore.toggleFavorite(option.model)
  		},
  		{
  			icon: Trash2,
@@ -2838,6 +4103,14 @@ index 3407634..1904e34 100644
  			onclick: () => onDelete(option),
  			separator: true,
  			variant: 'destructive' as const
+ 		},
+ 		{
+ 			icon: isHidden ? Eye : EyeOff,
+-			label: isHidden ? 'Unhide model' : 'Hide model',
++			label: isHidden ? '取消隐藏模型' : '隐藏模型',
+ 			onclick: () => modelsStore.toggleHidden(option.id),
+ 			separator: true
+ 		},
 diff --git a/tools/ui/src/lib/components/app/models/ModelsSection.svelte b/tools/ui/src/lib/components/app/models/ModelsSection.svelte
 index 749dc5b..c2d306d 100644
 --- a/tools/ui/src/lib/components/app/models/ModelsSection.svelte
@@ -2886,9 +4159,18 @@ index 33b3b2f..22ad930 100644
  {:else if ms.isMultiModel}
  	{#if isMobile}
 diff --git a/tools/ui/src/lib/components/app/models/ModelsSelector/ModelsSelectorDownloadItem.svelte b/tools/ui/src/lib/components/app/models/ModelsSelector/ModelsSelectorDownloadItem.svelte
-index 7cc286f..4d2782a 100644
+index 7cc286f..c142588 100644
 --- a/tools/ui/src/lib/components/app/models/ModelsSelector/ModelsSelectorDownloadItem.svelte
 +++ b/tools/ui/src/lib/components/app/models/ModelsSelector/ModelsSelectorDownloadItem.svelte
+@@ -40,7 +40,7 @@
+ 			: null
+ 	);
+ 
+-	let actionText = $derived(entry.isPaused ? 'Resume downloading' : 'Pause downloading');
++	let actionText = $derived(entry.isPaused ? '继续下载' : '暂停下载');
+ 
+ 	// the base model org resolves lazily via HF when unknown
+ 	let orgName = $derived(ModelsService.parseModelId(entry.repoWithTag).orgName);
 @@ -79,7 +79,7 @@
  		class="flex items-center gap-2 p-2 text-left text-sm max-md:gap-2.5 max-md:px-2.5 max-md:py-2.5"
  	>
@@ -2907,11 +4189,34 @@ index 7cc286f..4d2782a 100644
  			{/if}
  		</button>
  
+@@ -148,12 +148,12 @@
+ 				deviceStore.isMobile
+ 					? uiStore.openModelInformation(option)
+ 					: uiStore.openModelsManager(entry.repoWithTag)}
+-			tooltip="Manage model"
++			tooltip="管理模型"
+ 			tooltipAsTitle
+ 		/>
+ 
+ 		<ActionIcon
+-			ariaLabel="Cancel downloading"
++			ariaLabel="取消下载中"
+ 			class="pointer-events-none h-5 w-5 shrink-0 opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 hover:text-destructive [@media(pointer:coarse)]:pointer-events-auto [@media(pointer:coarse)]:opacity-100"
+ 			icon={X}
+ 			iconSize="h-4 w-4"
 diff --git a/tools/ui/src/lib/components/app/models/ModelsSelector/ModelsSelectorDrawer.svelte b/tools/ui/src/lib/components/app/models/ModelsSelector/ModelsSelectorDrawer.svelte
-index 1a2e8d3..45cfca0 100644
+index 1a2e8d3..fb229d0 100644
 --- a/tools/ui/src/lib/components/app/models/ModelsSelector/ModelsSelectorDrawer.svelte
 +++ b/tools/ui/src/lib/components/app/models/ModelsSelector/ModelsSelectorDrawer.svelte
-@@ -26,7 +26,7 @@
+@@ -19,14 +19,14 @@
+ 
+ 	let {
+ 		children,
+-		emptyMessage = 'No items found',
++		emptyMessage = '没有找到项目',
+ 		footer,
+ 		isEmpty = false,
+ 		onOpenChange,
  		onSearchChange,
  		onSearchKeyDown,
  		open = $bindable(false),
@@ -3057,9 +4362,18 @@ index 11240a4..16ef20e 100644
  				type="button"
  			>
 diff --git a/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverDetails/ModelsDiscoverDetailsContainer.svelte b/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverDetails/ModelsDiscoverDetailsContainer.svelte
-index 7d81ea8..dbefa97 100644
+index 7d81ea8..e41cbcb 100644
 --- a/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverDetails/ModelsDiscoverDetailsContainer.svelte
 +++ b/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverDetails/ModelsDiscoverDetailsContainer.svelte
+@@ -37,7 +37,7 @@
+ 				if (cancelled) return;
+ 
+ 				if (!info) {
+-					error = 'Model not found';
++					error = '找不到模型';
+ 
+ 					return;
+ 				}
 @@ -51,7 +51,7 @@
  			} catch (err) {
  				if (cancelled) return;
@@ -3126,9 +4440,21 @@ index eb7f4e5..c91a8ef 100644
  		onclick={copy}
  		type="button"
 diff --git a/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverDetails/ModelsDiscoverDetailsDownloadOptions/ModelsDiscoverDetailsDownloadOptionsQuantDownloadButton.svelte b/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverDetails/ModelsDiscoverDetailsDownloadOptions/ModelsDiscoverDetailsDownloadOptionsQuantDownloadButton.svelte
-index 5ccbd31..2a9a9fa 100644
+index 5ccbd31..3c1cc0f 100644
 --- a/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverDetails/ModelsDiscoverDetailsDownloadOptions/ModelsDiscoverDetailsDownloadOptionsQuantDownloadButton.svelte
 +++ b/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverDetails/ModelsDiscoverDetailsDownloadOptions/ModelsDiscoverDetailsDownloadOptionsQuantDownloadButton.svelte
+@@ -61,9 +61,9 @@
+ 
+ 	let tooltipText = $derived(
+ 		entry.isDownloading
+-			? 'Pause downloading'
++			? '暂停下载'
+ 			: entry.isPaused
+-				? 'Resume downloading'
++				? '继续下载'
+ 				: entry.isDownloaded
+ 					? `Delete ${downloadLabel}`
+ 					: entry.isFailed
 @@ -159,7 +159,7 @@
  		{#if percent !== null}
  			<span class="mr-1 tabular-nums">{percent}%</span>
@@ -3158,6 +4484,15 @@ index 5ccbd31..2a9a9fa 100644
  		{/if}
  
  		{@render chipBody('-my-1 mx-0.75 w-px self-stretch bg-border')}
+@@ -257,7 +255,7 @@
+ 	>
+ 		{@render tooltipTrigger(tooltipText, pauseResumeChip)}
+ 
+-		{@render tooltipTrigger('Cancel downloading', cancelChip)}
++		{@render tooltipTrigger('取消下载中', cancelChip)}
+ 
+ 		{#if percent !== null}
+ 			<ModelDownloadProgressBar
 diff --git a/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverDetails/ModelsDiscoverDetailsHeader.svelte b/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverDetails/ModelsDiscoverDetailsHeader.svelte
 index 8687650..a2e060a 100644
 --- a/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverDetails/ModelsDiscoverDetailsHeader.svelte
@@ -3228,6 +4563,28 @@ index af7a380..6b6741f 100644
  	{/if}
  
  	{#if details.gated === true}
+diff --git a/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverList/ModelsDiscoverListItem.svelte b/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverList/ModelsDiscoverListItem.svelte
+index 1eee85e..606d84d 100644
+--- a/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverList/ModelsDiscoverListItem.svelte
++++ b/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverList/ModelsDiscoverListItem.svelte
+@@ -213,7 +213,7 @@
+ 						iconSize="h-4 w-4"
+ 						onclick={() => void modelsStore.status.toggleDownload(state.repoWithTag)}
+ 						stopPropagationOnClick
+-						tooltip={state.isPaused ? 'Resume downloading' : 'Pause downloading'}
++						tooltip={state.isPaused ? '继续下载' : '暂停下载'}
+ 						tooltipAsTitle
+ 					/>
+ 
+@@ -223,7 +223,7 @@
+ 						iconSize="h-4 w-4"
+ 						onclick={() => state.onRequestCancel?.(state.repoWithTag)}
+ 						stopPropagationOnClick
+-						tooltip="Cancel downloading"
++						tooltip="取消下载中"
+ 						tooltipAsTitle
+ 					/>
+ 				</span>
 diff --git a/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverList/ModelsDiscoverListSearch.svelte b/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverList/ModelsDiscoverListSearch.svelte
 index 458c316..5aea625 100644
 --- a/tools/ui/src/lib/components/app/models/discover/ModelsDiscoverList/ModelsDiscoverListSearch.svelte
@@ -3241,6 +4598,64 @@ index 458c316..5aea625 100644
  		value = $bindable('')
  	}: Props = $props();
  
+diff --git a/tools/ui/src/lib/components/app/navigation/DropdownMenuSearchable.svelte b/tools/ui/src/lib/components/app/navigation/DropdownMenuSearchable.svelte
+index 79336cf..12b5b36 100644
+--- a/tools/ui/src/lib/components/app/navigation/DropdownMenuSearchable.svelte
++++ b/tools/ui/src/lib/components/app/navigation/DropdownMenuSearchable.svelte
+@@ -27,13 +27,13 @@
+ 	let {
+ 		children,
+ 		contentClass = '',
+-		emptyMessage = 'No items found',
++		emptyMessage = '没有找到项目',
+ 		footer,
+ 		headerClass = '',
+ 		isEmpty = false,
+ 		onSearchChange,
+ 		onSearchKeyDown,
+-		placeholder = 'Search...',
++		placeholder = '搜索…',
+ 		searchClass = '',
+ 		searchValue = $bindable('')
+ 	}: Props = $props();
+diff --git a/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigation.svelte b/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigation.svelte
+index 2ce4824..6e555bb 100644
+--- a/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigation.svelte
++++ b/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigation.svelte
+@@ -351,7 +351,7 @@
+ 				tabindex="0"
+ 			>
+ 				<ActionIcon
+-					ariaLabel={uiStore.isSidebarExpanded ? 'Go to start' : 'Expand navigation'}
++					ariaLabel={uiStore.isSidebarExpanded ? '回到开头' : '展开导航'}
+ 					class="{uiStore.isSidebarExpanded
+ 						? 'bg-muted! md:bg-foreground/5!'
+ 						: 'bg-transparent!'} md:h-9 md:w-9 h-10 w-10 rounded-full md:hover:bg-foreground/10! pointer-events-auto"
+@@ -362,7 +362,7 @@
+ 					iconSize="h-4.5 w-4.5 md:h-4 md:w-4"
+ 					onclick={uiStore.isSidebarExpanded ? undefined : toggleExpandedMode}
+ 					size="lg"
+-					tooltip={uiStore.isSidebarExpanded ? undefined : 'Open Sidebar'}
++					tooltip={uiStore.isSidebarExpanded ? undefined : '打开侧边栏'}
+ 					tooltipSide={TooltipSide.RIGHT}
+ 				/>
+ 			</div>
+@@ -377,13 +377,13 @@
+ 						: ''}"
+ 				>
+ 					<ActionIcon
+-						ariaLabel="Collapse navigation"
++						ariaLabel="折叠导航"
+ 						class="backdrop-blur-none md:h-9 md:w-9 h-10 w-10 rounded-full mr-1 max-md:-mr-1 max-md:-mt-1 hover:bg-accent!"
+ 						icon={deviceStore.isMobile ? X : PanelLeftClose}
+ 						iconSize="h-4 w-4"
+ 						onclick={toggleExpandedMode}
+ 						size="lg"
+-						tooltip="Close Sidebar"
++						tooltip="关闭侧边栏"
+ 						tooltipSide={TooltipSide.LEFT}
+ 					/>
+ 				</div>
 diff --git a/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationActions.svelte b/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationActions.svelte
 index 95efa53..da1d017 100644
 --- a/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationActions.svelte
@@ -3255,7 +4670,7 @@ index 95efa53..da1d017 100644
  	</div>
  {:else if isExpandedMode || isOnMobile}
 diff --git a/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationConversationItem.svelte b/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationConversationItem.svelte
-index f89753b..318d44e 100644
+index f89753b..b5b1fa1 100644
 --- a/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationConversationItem.svelte
 +++ b/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationConversationItem.svelte
 @@ -209,7 +209,7 @@
@@ -3285,10 +4700,59 @@ index f89753b..318d44e 100644
  				</Tooltip.Content>
  			</Tooltip.Root>
  		{/if}
+@@ -255,13 +255,13 @@
+ 					},
+ 					{
+ 						icon: Pencil,
+-						label: 'Edit',
++						label: '编辑',
+ 						onclick: handleEdit,
+ 						shortcut: ['shift', 'cmd', 'e']
+ 					},
+ 					{
+ 						icon: Download,
+-						label: 'Export',
++						label: '导出',
+ 						onclick: (e: Event) => {
+ 							e.stopPropagation();
+ 							conversationsStore.downloadConversation(conversation.id);
+@@ -270,12 +270,12 @@
+ 					},
+ 					{
+ 						icon: ListChecks,
+-						label: 'Select',
++						label: '选择',
+ 						onclick: handleEnterSelectionMode
+ 					},
+ 					{
+ 						icon: Trash2,
+-						label: 'Delete',
++						label: '删除',
+ 						onclick: handleDelete,
+ 						separator: true,
+ 						shortcut: ['shift', 'cmd', 'd'],
+@@ -283,7 +283,7 @@
+ 					}
+ 				]}
+ 				triggerIcon={MoreHorizontal}
+-				triggerTooltip="More actions"
++				triggerTooltip="更多操作"
+ 			/>
+ 		</div>
+ 	{/if}
 diff --git a/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationConversationList.svelte b/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationConversationList.svelte
-index bfbaae4..0a2686b 100644
+index bfbaae4..7ce9bfd 100644
 --- a/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationConversationList.svelte
 +++ b/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationConversationList.svelte
+@@ -72,7 +72,7 @@
+ 	);
+ 
+ 	const recentEmptyMessage = $derived(
+-		searchQuery.length > 0 ? 'No results found' : 'No conversations yet'
++		searchQuery.length > 0 ? '没有找到结果' : '还没有会话'
+ 	);
+ </script>
+ 
 @@ -102,7 +102,7 @@
  				>
  					<Pin class="h-3.5 w-3.5" />
@@ -3323,10 +4787,18 @@ index 0e2767c..d71786f 100644
  	}: Props = $props();
  </script>
 diff --git a/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationSearchResults.svelte b/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationSearchResults.svelte
-index cc8f10b..e5adf62 100644
+index cc8f10b..19f7f7d 100644
 --- a/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationSearchResults.svelte
 +++ b/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationSearchResults.svelte
-@@ -48,9 +48,7 @@
+@@ -41,16 +41,14 @@
+ 	const hasQuery = $derived(searchQuery.trim().length > 0);
+ 	const showHeader = $derived(hasQuery && filteredConversations.length > 0);
+ 
+-	const emptyMessage = $derived(hasQuery ? 'No results found' : 'Start typing to see results');
++	const emptyMessage = $derived(hasQuery ? '没有找到结果' : '开始输入以查看结果');
+ </script>
+ 
+ <div class="flex min-h-0 flex-1 flex-col gap-2 whitespace-nowrap {className}">
  	{#if showHeader}
  		<div
  			class="text-muted-foreground flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium"
@@ -3338,10 +4810,28 @@ index cc8f10b..e5adf62 100644
  
  	<div class="min-h-0 flex-1 overflow-y-auto">
 diff --git a/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationSelectionBar.svelte b/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationSelectionBar.svelte
-index e0e547d..04f428d 100644
+index e0e547d..202cfdd 100644
 --- a/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationSelectionBar.svelte
 +++ b/tools/ui/src/lib/components/app/navigation/SidebarNavigation/SidebarNavigationSelectionBar.svelte
-@@ -71,7 +71,7 @@
+@@ -56,14 +56,14 @@
+ 	const pinTooltip = $derived(
+ 		hasSelection
+ 			? pinStateIsMixed
+-				? 'Unavailable for mixed state selection'
++				? '混合选择状态下不可用'
+ 				: someSelectedPinned
+ 					? selectedCount === 1
+ 						? 'Unpin'
+-						: 'Unpin all'
++						: '全部取消置顶'
+ 					: selectedCount === 1
+ 						? 'Pin'
+-						: 'Pin all'
++						: '全部置顶'
+ 			: 'Pin'
+ 	);
+ 
+@@ -71,13 +71,13 @@
  </script>
  
  <div
@@ -3350,13 +4840,83 @@ index e0e547d..04f428d 100644
  	class="flex items-center gap-1.5 rounded-xl border border-border/50 bg-background/50 px-2 py-1.5 shadow-sm backdrop-blur-xl {className}"
  	role="toolbar"
  >
+ 	<label class="flex min-w-0 cursor-pointer items-center gap-2">
+ 		<Checkbox
+-			aria-label={isMasterChecked ? 'Deselect all' : 'Select all'}
++			aria-label={isMasterChecked ? '取消全选' : '全选'}
+ 			checked={isMasterChecked}
+ 			indeterminate={isMasterIndeterminate}
+ 			onCheckedChange={onSelectAllToggle}
+@@ -104,7 +104,7 @@
+ 		/>
+ 
+ 		<ActionIcon
+-			ariaLabel="Export selected"
++			ariaLabel="导出选中项"
+ 			class="h-7 w-7 rounded-md bg-transparent backdrop-blur-none hover:bg-accent! {hasSelection
+ 				? 'opacity-100'
+ 				: 'opacity-40'}"
+@@ -118,7 +118,7 @@
+ 		/>
+ 
+ 		<ActionIcon
+-			ariaLabel="Delete selected"
++			ariaLabel="删除选中项"
+ 			class="h-7 w-7 rounded-md bg-transparent backdrop-blur-none hover:bg-destructive/10! dark:hover:bg-destructive/20! disabled:hover:bg-transparent {hasSelection
+ 				? 'opacity-100'
+ 				: 'opacity-40'}"
+@@ -127,20 +127,20 @@
+ 			iconSize="h-3.5 w-3.5 text-destructive"
+ 			onclick={handleDeleteClick}
+ 			size="sm"
+-			tooltip="Delete selected"
++			tooltip="删除选中项"
+ 			tooltipSide={TooltipSide.TOP}
+ 		/>
+ 
+ 		<div aria-hidden="true" class="mx-1 h-4 w-px bg-border"></div>
+ 
+ 		<ActionIcon
+-			ariaLabel="Exit bulk selection mode"
++			ariaLabel="退出批量选择"
+ 			class="h-7 w-7 rounded-md bg-transparent backdrop-blur-none hover:bg-accent!"
+ 			icon={X}
+ 			iconSize="h-3.5 w-3.5"
+ 			onclick={onClose}
+ 			size="sm"
+-			tooltip="Exit bulk selection mode"
++			tooltip="退出批量选择"
+ 			tooltipSide={TooltipSide.TOP}
+ 		/>
+ 	</div>
+@@ -148,7 +148,7 @@
+ 
+ <DialogConfirmation
+ 	bind:open={showDeleteDialog}
+-	cancelText="Cancel"
++	cancelText="取消"
+ 	confirmText={selectedCount === 1 ? 'Delete' : `Delete ${selectedCount}`}
+ 	description="This action cannot be undone. The selected conversation{selectedCount === 1
+ 		? ''
 diff --git a/tools/ui/src/lib/components/app/navigation/index.ts b/tools/ui/src/lib/components/app/navigation/index.ts
-index ea5ad17..e995b6b 100644
+index ea5ad17..2028460 100644
 --- a/tools/ui/src/lib/components/app/navigation/index.ts
 +++ b/tools/ui/src/lib/components/app/navigation/index.ts
-@@ -56,8 +56,8 @@ export { default as DropdownMenuSearchable } from './DropdownMenuSearchable.svel
+@@ -26,7 +26,7 @@
+  *   <DropdownMenu.Content class="pt-0">
+  *     <DropdownMenuSearchable
+  *       bind:searchValue
+- *       placeholder="Search..."
++ *       placeholder="搜索…"
+  *       isEmpty={filteredItems.length === 0}
+  *     >
+  *       {#each items as item}<Item {item} />{/each}
+@@ -54,10 +54,10 @@ export { default as DropdownMenuSearchable } from './DropdownMenuSearchable.svel
+  * ```svelte
+  * <DropdownMenuActions
   *   triggerIcon={MoreHorizontal}
-  *   triggerTooltip="More actions"
+- *   triggerTooltip="More actions"
++ *   triggerTooltip="更多操作"
   *   actions={[
 - *     { icon: Edit, label: 'Edit', onclick: handleEdit },
 - *     { icon: Trash, label: 'Delete', onclick: handleDelete, variant: 'destructive' }
@@ -3365,10 +4925,43 @@ index ea5ad17..e995b6b 100644
   *   ]}
   * />
   * ```
+@@ -172,7 +172,7 @@ export { default as SidebarNavigationActions } from './SidebarNavigation/Sidebar
+ /**
+  * **SidebarNavigationSearchResults** - Filtered conversation list for search.
+  *
+- * Pure-presentational rendering of the search-mode subtree: "Search results"
++ * Pure-presentational rendering of the search-mode subtree: "搜索结果"
+  * header, the matching items rendered through {@link SidebarNavigationConversationItem},
+  * and contextual empty-state messages. Used both inline inside
+  * {@link SidebarNavigationConversationList} (when search mode is active in the
 diff --git a/tools/ui/src/lib/components/app/server/ServerErrorSplash.svelte b/tools/ui/src/lib/components/app/server/ServerErrorSplash.svelte
-index e8154e5..68a8eab 100644
+index e8154e5..0495cac 100644
 --- a/tools/ui/src/lib/components/app/server/ServerErrorSplash.svelte
 +++ b/tools/ui/src/lib/components/app/server/ServerErrorSplash.svelte
+@@ -87,7 +87,7 @@
+ 				apiKeyState = 'error';
+ 
+ 				if (response.status === 401 || response.status === 403) {
+-					apiKeyError = 'Invalid API key - please check and try again';
++					apiKeyError = 'API 密钥无效，请检查后重试';
+ 				} else {
+ 					apiKeyError = `Authentication failed (${response.status})`;
+ 				}
+@@ -103,12 +103,12 @@
+ 
+ 			if (error instanceof Error) {
+ 				if (error.message.includes('fetch')) {
+-					apiKeyError = 'Cannot connect to server - check if server is running';
++					apiKeyError = '连不上服务器，检查一下它是不是在运行';
+ 				} else {
+ 					apiKeyError = error.message;
+ 				}
+ 			} else {
+-				apiKeyError = 'Connection error - please try again';
++				apiKeyError = '连接出错，请再试一次';
+ 			}
+ 
+ 			// Reset to idle state after showing error (don't reload UI)
 @@ -134,7 +134,7 @@
  				<AlertTriangle class="h-8 w-8 text-destructive" />
  			</div>
@@ -3481,10 +5074,54 @@ index f01d69a..9d8e39c 100644
  
  			<p class="text-sm text-muted-foreground">
  				{message}
+diff --git a/tools/ui/src/lib/components/app/server/ServerStatus.svelte b/tools/ui/src/lib/components/app/server/ServerStatus.svelte
+index e06baf2..4426c57 100644
+--- a/tools/ui/src/lib/components/app/server/ServerStatus.svelte
++++ b/tools/ui/src/lib/components/app/server/ServerStatus.svelte
+@@ -30,7 +30,7 @@
+ 	function getStatusText() {
+ 		if (loading) return 'Connecting...';
+ 
+-		if (error) return 'Connection Error';
++		if (error) return '连接错误';
+ 
+ 		if (serverData) return 'Connected';
+ 
+@@ -49,7 +49,7 @@
+ 		<Badge class="text-xs" variant="outline">
+ 			<Server class="mr-1 h-3 w-3" />
+ 
+-			{model || 'Unknown Model'}
++			{model || '未知模型'}
+ 		</Badge>
+ 
+ 		{#if serverData?.default_generation_settings?.n_ctx}
+diff --git a/tools/ui/src/lib/components/app/server/index.ts b/tools/ui/src/lib/components/app/server/index.ts
+index 39ac5b4..fecc191 100644
+--- a/tools/ui/src/lib/components/app/server/index.ts
++++ b/tools/ui/src/lib/components/app/server/index.ts
+@@ -74,7 +74,7 @@ export { default as ServerErrorSplash } from './ServerErrorSplash.svelte';
+  *
+  * @example
+  * ```svelte
+- * <ServerLoadingSplash message="Connecting to server..." />
++ * <ServerLoadingSplash message="正在连接服务器…" />
+  * ```
+  */
+ export { default as ServerLoadingSplash } from './ServerLoadingSplash.svelte';
 diff --git a/tools/ui/src/lib/components/app/settings/SettingsChat/SettingsChat.svelte b/tools/ui/src/lib/components/app/settings/SettingsChat/SettingsChat.svelte
-index aebf372..b25507e 100644
+index aebf372..32b5430 100644
 --- a/tools/ui/src/lib/components/app/settings/SettingsChat/SettingsChat.svelte
 +++ b/tools/ui/src/lib/components/app/settings/SettingsChat/SettingsChat.svelte
+@@ -94,7 +94,7 @@
+ 			try {
+ 				JSON.parse(localConfig.customJson);
+ 			} catch (error) {
+-				alert('Invalid JSON in custom parameters. Please check the format and try again.');
++				alert('自定义参数里的 JSON 无效，请检查格式后重试。');
+ 				console.error(error);
+ 
+ 				return;
 @@ -170,9 +170,7 @@
  							{#if currentSection.slug === SETTINGS_SECTION_SLUGS.GENERAL}
  								<div class="flex justify-end">
@@ -3552,20 +5189,171 @@ index 5dfba6b..00d2d44 100644
  								type="button"
  							>
  								<RotateCcw class="h-3 w-3" />
+diff --git a/tools/ui/src/lib/components/app/settings/SettingsChat/SettingsChatImportExportSection.svelte b/tools/ui/src/lib/components/app/settings/SettingsChat/SettingsChatImportExportSection.svelte
+index 798cb70..0d0f04b 100644
+--- a/tools/ui/src/lib/components/app/settings/SettingsChat/SettingsChatImportExportSection.svelte
++++ b/tools/ui/src/lib/components/app/settings/SettingsChat/SettingsChatImportExportSection.svelte
+@@ -51,7 +51,7 @@
+ 
+ 			<ul class="space-y-1 text-sm text-muted-foreground">
+ 				{#each summary.items.slice(0, 10) as conv (conv.id)}
+-					<li class="truncate">• {conv.name || 'Untitled conversation'}</li>
++					<li class="truncate">• {conv.name || '未命名会话'}</li>
+ 				{/each}
+ 
+ 				{#if summary.items.length > 10}
 diff --git a/tools/ui/src/lib/components/app/settings/SettingsChat/SettingsChatImportExportTab.svelte b/tools/ui/src/lib/components/app/settings/SettingsChat/SettingsChatImportExportTab.svelte
-index 33f796a..fec71f1 100644
+index 33f796a..588bdae 100644
 --- a/tools/ui/src/lib/components/app/settings/SettingsChat/SettingsChatImportExportTab.svelte
 +++ b/tools/ui/src/lib/components/app/settings/SettingsChat/SettingsChatImportExportTab.svelte
-@@ -185,7 +185,7 @@
+@@ -59,10 +59,10 @@
+ 
+ 			showSettingsExportSummary = true;
+ 			showSettingsImportSummary = false;
+-			toast.success('Settings exported');
++			toast.success('设置已导出');
+ 		} catch (err) {
+-			console.error('Failed to export settings:', err);
+-			toast.error('Failed to export settings');
++			console.error('导出设置失败：', err);
++			toast.error('导出设置失败');
+ 		}
+ 	}
+ 
+@@ -87,7 +87,7 @@
+ 					const data = JSON.parse(text);
+ 
+ 					if (!data || typeof data !== 'object' || !data.config) {
+-						toast.error('Invalid settings file: missing config');
++						toast.error('设置文件无效：缺少 config');
+ 
+ 						return;
+ 					}
+@@ -96,17 +96,17 @@
+ 
+ 					showSettingsImportSummary = true;
+ 					showSettingsExportSummary = false;
+-					toast.success('Settings imported successfully');
++					toast.success('设置导入成功');
+ 				} catch (err) {
+-					console.error('Failed to import settings:', err);
+-					toast.error('Failed to import settings');
++					console.error('导入设置失败：', err);
++					toast.error('导入设置失败');
+ 				}
+ 			};
+ 
+ 			input.click();
+ 		} catch (err) {
+-			console.error('Failed to open file picker:', err);
+-			toast.error('Failed to open file picker');
++			console.error('打开文件选择器失败：', err);
++			toast.error('打开文件选择器失败');
+ 		}
+ 	}
+ 
+@@ -115,7 +115,7 @@
+ 			const allConversations = conversationsStore.conversations;
+ 
+ 			if (allConversations.length === 0) {
+-				toast.info('No conversations to export');
++				toast.info('没有可导出的会话');
+ 
+ 				return;
+ 			}
+@@ -132,8 +132,8 @@
+ 			availableConversations = allConversations;
+ 			showExportDialog = true;
+ 		} catch (err) {
+-			console.error('Failed to load conversations:', err);
+-			alert('Failed to load conversations');
++			console.error('加载会话失败：', err);
++			alert('加载会话失败');
+ 		}
+ 	}
+ 
+@@ -154,8 +154,8 @@
+ 			showImportSummary = false;
+ 			showExportDialog = false;
+ 		} catch (err) {
+-			console.error('Export failed:', err);
+-			alert('Failed to export conversations');
++			console.error('导出失败：', err);
++			alert('导出会话失败');
+ 		}
+ 	}
+ 
+@@ -177,7 +177,7 @@
+ 					const importedData = await ConversationTransferService.parseImportFile(file);
+ 
+ 					if (importedData.length === 0) {
+-						throw new Error('No conversations found in file');
++						throw new Error('文件里没有会话');
+ 					}
+ 
+ 					fullImportData = importedData;
+@@ -185,17 +185,17 @@
  					messageCountMap = createMessageCountMap(importedData);
  					showImportDialog = true;
  				} catch (err: unknown) {
 -					const message = err instanceof Error ? err.message : 'Unknown error';
 +					const message = err instanceof Error ? err.message : '未知错误';
  
- 					console.error('Failed to parse file:', err);
+-					console.error('Failed to parse file:', err);
++					console.error('解析文件失败：', err);
  					alert(`Failed to parse file: ${message}`);
-@@ -258,14 +258,14 @@
+ 				}
+ 			};
+ 
+ 			input.click();
+ 		} catch (err) {
+-			console.error('Import failed:', err);
+-			alert('Failed to import conversations');
++			console.error('导入失败：', err);
++			alert('导入会话失败');
+ 		}
+ 	}
+ 
+@@ -220,8 +220,8 @@
+ 			showExportSummary = false;
+ 			showImportDialog = false;
+ 		} catch (err) {
+-			console.error('Import failed:', err);
+-			alert('Failed to import conversations. Please check the file format.');
++			console.error('导入失败：', err);
++			alert('导入会话失败，请检查文件格式。');
+ 		}
+ 	}
+ 
+@@ -230,15 +230,15 @@
+ 			const allConversations = conversationsStore.conversations;
+ 
+ 			if (allConversations.length === 0) {
+-				toast.info('No conversations to delete');
++				toast.info('没有可删除的会话');
+ 
+ 				return;
+ 			}
+ 
+ 			showDeleteDialog = true;
+ 		} catch (err) {
+-			console.error('Failed to load conversations for deletion:', err);
+-			toast.error('Failed to load conversations');
++			console.error('加载要删除的会话失败：', err);
++			toast.error('加载会话失败');
+ 		}
+ 	}
+ 
+@@ -248,7 +248,7 @@
+ 
+ 			showDeleteDialog = false;
+ 		} catch (err) {
+-			console.error('Failed to delete conversations:', err);
++			console.error('删除会话失败：', err);
+ 		}
+ 	}
+ 
+@@ -258,54 +258,54 @@
  </script>
  
  <div in:fade={{ duration: 150 }} class="space-y-12">
@@ -3573,27 +5361,38 @@ index 33f796a..fec71f1 100644
 +	<SettingsGroup title="会话">
  		<SettingsChatImportExportSection
  			IconComponent={Download}
- 			buttonText="Export conversations"
- 			description="Download your conversations as a ZIP of JSONL files. This includes all messages, attachments, and conversation history."
+-			buttonText="Export conversations"
+-			description="Download your conversations as a ZIP of JSONL files. This includes all messages, attachments, and conversation history."
++			buttonText="导出会话"
++			description="把会话导出成一个 ZIP，里面的 JSONL 文件包含全部消息、附件和会话历史。"
  			onclick={handleExportClick}
- 			summary={{ items: exportedConversations, show: showExportSummary, verb: 'Exported' }}
+-			summary={{ items: exportedConversations, show: showExportSummary, verb: 'Exported' }}
 -			title="Export"
++			summary={{ items: exportedConversations, show: showExportSummary, verb: '已导出' }}
 +			title="导出"
  		/>
  
  		<SettingsChatImportExportSection
-@@ -274,7 +274,7 @@
- 			description="Import one or more conversations from a previously exported ZIP or JSONL file. This will merge with your existing conversations."
+ 			IconComponent={Upload}
+-			buttonText="Import conversations"
+-			description="Import one or more conversations from a previously exported ZIP or JSONL file. This will merge with your existing conversations."
++			buttonText="导入会话"
++			description="从之前导出的 ZIP 或 JSONL 文件导入一个或多个会话，会和你现有的会话合并。"
  			onclick={handleImportClick}
- 			summary={{ items: importedConversations, show: showImportSummary, verb: 'Imported' }}
+-			summary={{ items: importedConversations, show: showImportSummary, verb: 'Imported' }}
 -			title="Import"
++			summary={{ items: importedConversations, show: showImportSummary, verb: '已导入' }}
 +			title="导入"
  		/>
  
  		<SettingsChatImportExportSection
-@@ -284,19 +284,19 @@
+ 			IconComponent={Trash2}
+ 			buttonClass="text-destructive-foreground justify-start justify-self-start bg-destructive hover:bg-destructive/80 md:w-auto"
+-			buttonText="Delete all conversations"
++			buttonText="删除所有会话"
  			buttonVariant="destructive"
- 			description="Permanently delete all conversations and their messages. This action cannot be undone. Consider exporting your conversations first if you want to keep a backup."
+-			description="Permanently delete all conversations and their messages. This action cannot be undone. Consider exporting your conversations first if you want to keep a backup."
++			description="永久删除所有会话及其消息。这个操作无法撤销，想留备份请先导出会话。"
  			onclick={handleDeleteAllClick}
 -			title="Delete All"
 +			title="全部删除"
@@ -3605,25 +5404,41 @@ index 33f796a..fec71f1 100644
 +	<SettingsGroup title="设置">
  		<SettingsChatImportExportSection
  			IconComponent={Download}
- 			buttonText="Export settings"
- 			description="Export your chat settings and preferences as a JSON file."
+-			buttonText="Export settings"
+-			description="Export your chat settings and preferences as a JSON file."
++			buttonText="导出设置"
++			description="把你的聊天设置和偏好导出成一个 JSON 文件。"
  			onclick={handleSettingsExport}
- 			summary={{ items: [], show: showSettingsExportSummary, verb: 'Exported' }}
+-			summary={{ items: [], show: showSettingsExportSummary, verb: 'Exported' }}
 -			title="Export"
++			summary={{ items: [], show: showSettingsExportSummary, verb: '已导出' }}
 +			title="导出"
  		/>
  
  		<SettingsChatImportExportSection
-@@ -305,7 +305,7 @@
- 			description="Import chat settings from a previously exported JSON file. This will merge with your existing settings."
+ 			IconComponent={Upload}
+-			buttonText="Import settings"
+-			description="Import chat settings from a previously exported JSON file. This will merge with your existing settings."
++			buttonText="导入设置"
++			description="从之前导出的 JSON 文件导入聊天设置，会和你现有的设置合并。"
  			onclick={handleSettingsImport}
- 			summary={{ items: [], show: showSettingsImportSummary, verb: 'Imported' }}
+-			summary={{ items: [], show: showSettingsImportSummary, verb: 'Imported' }}
 -			title="Import"
++			summary={{ items: [], show: showSettingsImportSummary, verb: '已导入' }}
 +			title="导入"
  		/>
  	</SettingsGroup>
  </div>
-@@ -343,6 +343,6 @@
+@@ -337,12 +337,12 @@
+ 
+ <DialogConfirmation
+ 	bind:open={showDeleteDialog}
+-	cancelText="Cancel"
+-	confirmText="Delete All"
+-	description="Are you sure you want to delete all conversations? This action cannot be undone and will permanently remove all your conversations and messages."
++	cancelText="取消"
++	confirmText="全部删除"
++	description="确定要删除所有会话吗？这个操作无法撤销，会永久删掉你的全部会话和消息。"
  	icon={Trash2}
  	onCancel={handleDeleteAllCancel}
  	onConfirm={handleDeleteAllConfirm}
@@ -3822,10 +5637,26 @@ index 40c3f2f..27621a7 100644
  	{/if}
  </div>
 diff --git a/tools/ui/src/lib/constants/attachment-menu.constants.ts b/tools/ui/src/lib/constants/attachment-menu.constants.ts
-index dc9db74..59e7e75 100644
+index dc9db74..c323452 100644
 --- a/tools/ui/src/lib/constants/attachment-menu.constants.ts
 +++ b/tools/ui/src/lib/constants/attachment-menu.constants.ts
-@@ -23,7 +23,7 @@ export const ATTACHMENT_FILE_ITEMS: AttachmentMenuItem[] = [
+@@ -10,57 +10,57 @@ export const ATTACHMENT_FILE_ITEMS: AttachmentMenuItem[] = [
+ 	{
+ 		action: AttachmentAction.FILE_UPLOAD,
+ 		class: 'images-button',
+-		disabledTooltip: 'Image processing requires a vision model',
++		disabledTooltip: '图片需要支持视觉的模型',
+ 		enabledWhen: AttachmentItemEnabledWhen.HAS_VISION_MODALITY,
+ 		icon: FILE_TYPE_ICONS.image,
+ 		id: AttachmentMenuItemId.IMAGES,
+-		label: 'Images'
++		label: '图片'
+ 	},
+ 	{
+ 		action: AttachmentAction.FILE_UPLOAD,
+ 		class: 'audio-button',
+-		disabledTooltip: 'Audio files processing requires an audio model',
++		disabledTooltip: '音频文件需要支持音频的模型',
  		enabledWhen: AttachmentItemEnabledWhen.HAS_AUDIO_MODALITY,
  		icon: FILE_TYPE_ICONS.audio,
  		id: AttachmentMenuItemId.AUDIO,
@@ -3834,7 +5665,9 @@ index dc9db74..59e7e75 100644
  	},
  	{
  		action: AttachmentAction.FILE_UPLOAD,
-@@ -32,14 +32,14 @@ export const ATTACHMENT_FILE_ITEMS: AttachmentMenuItem[] = [
+ 		class: 'video-button',
+-		disabledTooltip: 'Video files processing requires a video model',
++		disabledTooltip: '视频文件需要支持视频的模型',
  		enabledWhen: AttachmentItemEnabledWhen.HAS_VIDEO_MODALITY,
  		icon: FILE_TYPE_ICONS.video,
  		id: AttachmentMenuItemId.VIDEO,
@@ -3851,7 +5684,9 @@ index dc9db74..59e7e75 100644
  	},
  	{
  		action: AttachmentAction.FILE_UPLOAD,
-@@ -48,19 +48,19 @@ export const ATTACHMENT_FILE_ITEMS: AttachmentMenuItem[] = [
+-		disabledTooltip: 'PDFs will be converted to text. Image-based PDFs may not work properly.',
++		disabledTooltip: 'PDF 会转成文本，扫描版 PDF 可能不正常。',
+ 		enabledWhen: AttachmentItemEnabledWhen.ALWAYS,
  		hasEnabledTooltip: true,
  		icon: FILE_TYPE_ICONS.pdf,
  		id: AttachmentMenuItemId.PDF,
@@ -3967,18 +5802,33 @@ index d477fc8..0598572 100644
  	CONTENT_TYPE: 'Content-Type',
  	/** Partial-redaction rules for MCP headers: header name -> visible trailing chars */
 diff --git a/tools/ui/src/lib/constants/huggingface.constants.ts b/tools/ui/src/lib/constants/huggingface.constants.ts
-index 47b6a89..839a8ff 100644
+index 47b6a89..ce822e0 100644
 --- a/tools/ui/src/lib/constants/huggingface.constants.ts
 +++ b/tools/ui/src/lib/constants/huggingface.constants.ts
-@@ -206,7 +206,7 @@ export const DAYS_PER_WEEK = 7;
+@@ -206,8 +206,8 @@ export const DAYS_PER_WEEK = 7;
  export const DAYS_PER_MONTH = 30;
  export const DAYS_PER_YEAR = 365;
  
 -export const TODAY_LABEL = 'Today';
+-export const YESTERDAY_LABEL = 'Yesterday';
 +export const TODAY_LABEL = '今天';
- export const YESTERDAY_LABEL = 'Yesterday';
++export const YESTERDAY_LABEL = '昨天';
  export const DAYS_AGO_LABEL = 'days ago';
  export const WEEKS_AGO_LABEL = 'weeks ago';
+ export const MONTHS_AGO_LABEL = 'months ago';
+diff --git a/tools/ui/src/lib/constants/icons.constants.ts b/tools/ui/src/lib/constants/icons.constants.ts
+index 8ac041c..230f137 100644
+--- a/tools/ui/src/lib/constants/icons.constants.ts
++++ b/tools/ui/src/lib/constants/icons.constants.ts
+@@ -93,7 +93,7 @@ export const CAPABILITY_ICONS: Record<ModelCapability, Component> = {
+ 
+ export const CAPABILITY_LABELS: Record<ModelCapability, string> = {
+ 	[ModelCapability.REASONING]: 'Reasoning',
+-	[ModelCapability.TOOL_USE]: 'Tool use'
++	[ModelCapability.TOOL_USE]: '工具使用'
+ } as const;
+ 
+ /** Maps a ModelCapability to the boolean flag it drives on the ModelCapabilities type */
 diff --git a/tools/ui/src/lib/constants/mcp-resource.constants.ts b/tools/ui/src/lib/constants/mcp-resource.constants.ts
 index c2639da..c88216f 100644
 --- a/tools/ui/src/lib/constants/mcp-resource.constants.ts
@@ -3992,6 +5842,23 @@ index c2639da..c88216f 100644
  
  /**
   * Mapping from image MIME types to file extensions.
+diff --git a/tools/ui/src/lib/constants/model-loading.constants.ts b/tools/ui/src/lib/constants/model-loading.constants.ts
+index 13f69a7..cacc600 100644
+--- a/tools/ui/src/lib/constants/model-loading.constants.ts
++++ b/tools/ui/src/lib/constants/model-loading.constants.ts
+@@ -2,9 +2,9 @@
+  * Labels shown while a model loads, keyed by the stage reported on /models/sse.
+  */
+ export const MODEL_LOAD_STAGE_LABELS: Record<ApiModelLoadStage, string> = {
+-	mmproj_model: 'Loading projector',
+-	spec_model: 'Loading draft',
+-	text_model: 'Loading weights'
++	mmproj_model: '正在加载投影器',
++	spec_model: '正在加载草稿',
++	text_model: '正在加载权重'
+ };
+ 
+ /**
 diff --git a/tools/ui/src/lib/constants/models-discover-download.constants.ts b/tools/ui/src/lib/constants/models-discover-download.constants.ts
 index 721d46d..41009fd 100644
 --- a/tools/ui/src/lib/constants/models-discover-download.constants.ts
@@ -4005,6 +5872,23 @@ index 721d46d..41009fd 100644
  
  /** Suffix appended after a bit-depth number to label a row, e.g. `4-bit`. */
  export const BIT_DEPTH_LABEL_SUFFIX = '-bit';
+diff --git a/tools/ui/src/lib/constants/models-manager.constants.ts b/tools/ui/src/lib/constants/models-manager.constants.ts
+index bbcf912..f9f5e5c 100644
+--- a/tools/ui/src/lib/constants/models-manager.constants.ts
++++ b/tools/ui/src/lib/constants/models-manager.constants.ts
+@@ -5,9 +5,9 @@ import { ModelsTableGroupKind } from '$lib/enums';
+ export const MODELS_TABLE_GROUP_LABELS: Record<ModelsTableGroupKind, string> = {
+ 	[ModelsTableGroupKind.DOWNLOADING]: 'Downloading',
+ 	[ModelsTableGroupKind.FAVORITES]: 'Favorites',
+-	[ModelsTableGroupKind.HIDDEN]: 'Hidden models',
+-	[ModelsTableGroupKind.LOADED]: 'Loaded models',
+-	[ModelsTableGroupKind.LOCAL]: 'Local models'
++	[ModelsTableGroupKind.HIDDEN]: '隐藏的模型',
++	[ModelsTableGroupKind.LOADED]: '已加载的模型',
++	[ModelsTableGroupKind.LOCAL]: '本地模型'
+ };
+ 
+ /**
 diff --git a/tools/ui/src/lib/constants/path-display.constants.ts b/tools/ui/src/lib/constants/path-display.constants.ts
 index fd10017..d4117a4 100644
 --- a/tools/ui/src/lib/constants/path-display.constants.ts
@@ -4034,20 +5918,22 @@ index e807f4a..6d31121 100644
  	icons: [
  		{ sizes: '64x64', src: 'pwa-64x64.png', type: 'image/png' },
 diff --git a/tools/ui/src/lib/constants/read-media.ts b/tools/ui/src/lib/constants/read-media.ts
-index f9ac228..c5cb9cf 100644
+index f9ac228..cae22f6 100644
 --- a/tools/ui/src/lib/constants/read-media.ts
 +++ b/tools/ui/src/lib/constants/read-media.ts
-@@ -10,8 +10,8 @@ import type { OpenAIToolDefinition } from '$lib/types';
+@@ -10,9 +10,9 @@ import type { OpenAIToolDefinition } from '$lib/types';
  export const READ_MEDIA_TOOL_NAME = BuiltInTool.BROWSER_READ_MEDIA;
  
  // header lines of the tool result, parsed back by the read_media renderer
 -export const PREFIX_FILE = 'File: ';
 -export const PREFIX_SIZE = 'Size: ';
+-export const PREFIX_MIME = 'MIME: ';
 +export const PREFIX_FILE = '文件：';
 +export const PREFIX_SIZE = '大小：';
- export const PREFIX_MIME = 'MIME: ';
++export const PREFIX_MIME = 'MIME：';
  
  /** Byte count of the `Size: ` header line, e.g. `Size: 12345 bytes` -> capture group 1 is `12345`. */
+ export const READ_MEDIA_SIZE_REGEX = new RegExp(`^${PREFIX_SIZE}\\s*(\\d+)\\s*bytes`);
 @@ -53,7 +53,7 @@ export function buildReadMediaToolDefinition(
  			parameters: {
  				properties: {
@@ -4057,11 +5943,40 @@ index f9ac228..c5cb9cf 100644
  						type: JsonSchemaType.STRING
  					}
  				},
+diff --git a/tools/ui/src/lib/constants/reasoning-effort.constants.ts b/tools/ui/src/lib/constants/reasoning-effort.constants.ts
+index e8ec5f0..728cc8d 100644
+--- a/tools/ui/src/lib/constants/reasoning-effort.constants.ts
++++ b/tools/ui/src/lib/constants/reasoning-effort.constants.ts
+@@ -15,12 +15,12 @@ export const REASONING_EFFORT_LABELS: Record<string, string> = {
+ };
+ 
+ export const REASONING_EFFORT_LEVELS: ReasoningEffortLevel[] = [
+-	{ label: 'Default', value: ReasoningEffort.DEFAULT },
+-	{ label: 'Off', value: ReasoningEffort.OFF },
+-	{ label: 'Low', value: ReasoningEffort.LOW },
+-	{ label: 'Medium', value: ReasoningEffort.MEDIUM },
+-	{ label: 'High', value: ReasoningEffort.HIGH },
+-	{ hasInfo: true, label: 'Max', value: ReasoningEffort.MAX }
++	{ label: '默认', value: ReasoningEffort.DEFAULT },
++	{ label: '关', value: ReasoningEffort.OFF },
++	{ label: '低', value: ReasoningEffort.LOW },
++	{ label: '中', value: ReasoningEffort.MEDIUM },
++	{ label: '高', value: ReasoningEffort.HIGH },
++	{ hasInfo: true, label: '最大', value: ReasoningEffort.MAX }
+ ];
+ 
+ /**
 diff --git a/tools/ui/src/lib/constants/recommended-mcp-servers.constants.ts b/tools/ui/src/lib/constants/recommended-mcp-servers.constants.ts
-index 6a550ee..ad85445 100644
+index 6a550ee..401c75a 100644
 --- a/tools/ui/src/lib/constants/recommended-mcp-servers.constants.ts
 +++ b/tools/ui/src/lib/constants/recommended-mcp-servers.constants.ts
-@@ -6,21 +6,21 @@ import type { RecommendedMCPServer } from '$lib/types';
+@@ -1,26 +1,26 @@
+ import type { RecommendedMCPServer } from '$lib/types';
+ 
+-// Suggested MCP servers shown as opt-in cards in the "Add New Server" dialog.
++// Suggested MCP servers shown as opt-in cards in the "添加新服务器" dialog.
+ // Rendering these cards never reaches the upstream domain - favicons come
+ // from local bundles in static/recommended-mcp/ and the URL is only used
  // after the user clicks Add.
  export const RECOMMENDED_MCP_SERVERS: RecommendedMCPServer[] = [
  	{
@@ -4096,29 +6011,49 @@ index 6a550ee..ad85445 100644
  		id: 'context7',
  		name: 'Context7',
 diff --git a/tools/ui/src/lib/constants/settings.constants.ts b/tools/ui/src/lib/constants/settings.constants.ts
-index 4c0d759..6c20a3e 100644
+index 4c0d759..ee2c7e5 100644
 --- a/tools/ui/src/lib/constants/settings.constants.ts
 +++ b/tools/ui/src/lib/constants/settings.constants.ts
-@@ -33,8 +33,8 @@ export const SETTINGS_SECTIONS = {
- 	DISPLAY: { slug: 'display', title: 'Display' },
- 	GENERAL: { slug: 'general', title: 'General' },
- 	IMPORT_EXPORT: { slug: 'import-export', title: 'Import/Export' },
+@@ -28,13 +28,13 @@ import type {
+ 
+ /** Settings sections — slug is the routing identity, title is the display label. */
+ export const SETTINGS_SECTIONS = {
+-	AGENTIC: { slug: 'agentic', title: 'Agentic' },
+-	DEVELOPER: { slug: 'developer', title: 'Developer' },
+-	DISPLAY: { slug: 'display', title: 'Display' },
+-	GENERAL: { slug: 'general', title: 'General' },
+-	IMPORT_EXPORT: { slug: 'import-export', title: 'Import/Export' },
 -	SAMPLING_PENALTIES: { slug: 'sampling-penalties', title: 'Sampling & Penalties' },
 -	TOOLS: { slug: 'tools', title: 'Tools' }
++	AGENTIC: { slug: 'agentic', title: '代理式' },
++	DEVELOPER: { slug: 'developer', title: '开发者' },
++	DISPLAY: { slug: 'display', title: '显示' },
++	GENERAL: { slug: 'general', title: '常规' },
++	IMPORT_EXPORT: { slug: 'import-export', title: '导入/导出' },
 +	SAMPLING_PENALTIES: { slug: 'sampling-penalties', title: '采样与惩罚' },
 +	TOOLS: { slug: 'tools', title: '工具' }
  } as const;
  
  export const SETTINGS_SECTION_SLUGS = {
-@@ -64,7 +64,7 @@ export const SETTINGS_REGISTRY: SettingsSectionEntry[] = [
+@@ -64,13 +64,13 @@ export const SETTINGS_REGISTRY: SettingsSectionEntry[] = [
  		settings: [
  			{
  				defaultValue: ColorMode.SYSTEM,
 -				help: 'Choose the color theme for the interface. You can choose between System (follows your device settings), Light, or Dark.',
 +				help: '选择界面配色。可以选「跟随系统」（按设备设置）、浅色或深色。',
  				key: SETTINGS_KEYS.THEME,
- 				label: 'Theme',
+-				label: 'Theme',
++				label: '主题',
  				options: [
+-					{ icon: Monitor, label: 'System', value: ColorMode.SYSTEM },
+-					{ icon: Sun, label: 'Light', value: ColorMode.LIGHT },
+-					{ icon: Moon, label: 'Dark', value: ColorMode.DARK }
++					{ icon: Monitor, label: '系统', value: ColorMode.SYSTEM },
++					{ icon: Sun, label: '浅色', value: ColorMode.LIGHT },
++					{ icon: Moon, label: '深色', value: ColorMode.DARK }
+ 				],
+ 				type: SettingsFieldType.SELECT
+ 			},
 @@ -79,82 +79,82 @@ export const SETTINGS_REGISTRY: SettingsSectionEntry[] = [
  				help: `Set the API Key if you are using <code> ${CLI_FLAGS.API_KEY} </code> option for the server.`,
  				isPrivate: true,
@@ -4492,15 +6427,18 @@ index 4c0d759..6c20a3e 100644
  				max: FILE_GLOB_SEARCH_PICKERS.MAX_SEARCH_DEPTH,
  				min: 1,
  				placeholder: `${FILE_GLOB_SEARCH_PICKERS.DEFAULT_SEARCH_DEPTH}`,
-@@ -407,7 +407,7 @@ export const SETTINGS_REGISTRY: SettingsSectionEntry[] = [
+@@ -407,9 +407,9 @@ export const SETTINGS_REGISTRY: SettingsSectionEntry[] = [
  		settings: [
  			{
  				defaultValue: undefined,
 -				help: 'Controls the randomness of the generated text by affecting the probability distribution of the output tokens. Higher = more random, lower = more focused.',
 +				help: '控制生成文本的随机程度，影响输出 token 的概率分布；越高越随机，越低越集中。',
  				key: SETTINGS_KEYS.TEMPERATURE,
- 				label: 'Temperature',
+-				label: 'Temperature',
++				label: '温度',
  				sync: {
+ 					paramType: SyncableParameterType.NUMBER,
+ 					serverKey: SETTINGS_KEYS.TEMPERATURE
 @@ -418,9 +418,9 @@ export const SETTINGS_REGISTRY: SettingsSectionEntry[] = [
  			},
  			{
@@ -4597,16 +6535,17 @@ index 4c0d759..6c20a3e 100644
  				sync: {
  					paramType: SyncableParameterType.NUMBER,
  					serverKey: SETTINGS_KEYS.MAX_TOKENS
-@@ -505,7 +505,7 @@ export const SETTINGS_REGISTRY: SettingsSectionEntry[] = [
+@@ -505,24 +505,24 @@ export const SETTINGS_REGISTRY: SettingsSectionEntry[] = [
  			},
  			{
  				defaultValue: '',
 -				help: 'The order at which samplers are applied, in simplified way. Default is "top_k;typ_p;top_p;min_p;temperature": top_k->typ_p->top_p->min_p->temperature',
 +				help: '采样器的应用顺序（简化写法）。默认是 top_k;typ_p;top_p;min_p;temperature，也就是 top_k→typ_p→top_p→min_p→temperature',
  				key: SETTINGS_KEYS.SAMPLERS,
- 				label: 'Samplers',
+-				label: 'Samplers',
++				label: '采样器',
  				sync: { paramType: SyncableParameterType.STRING, serverKey: SETTINGS_KEYS.SAMPLERS },
-@@ -513,16 +513,16 @@ export const SETTINGS_REGISTRY: SettingsSectionEntry[] = [
+ 				type: SettingsFieldType.INPUT
  			},
  			{
  				defaultValue: false,
@@ -4850,7 +6789,7 @@ index b5c09a6..d3e5324 100644
  	}
  } as const;
 diff --git a/tools/ui/src/lib/constants/ui.constants.ts b/tools/ui/src/lib/constants/ui.constants.ts
-index 9467939..d2a1839 100644
+index 9467939..2bcd7e0 100644
 --- a/tools/ui/src/lib/constants/ui.constants.ts
 +++ b/tools/ui/src/lib/constants/ui.constants.ts
 @@ -11,7 +11,7 @@ export const COPY_FEEDBACK_RESET_MS = 1500;
@@ -4862,7 +6801,20 @@ index 9467939..d2a1839 100644
  
  /** Data attributes for app-level DOM contracts. */
  export const UI_DATA_ATTRS = {
-@@ -78,7 +78,7 @@ export const SIDEBAR_ACTIONS_ITEMS: DesktopIconStripItem[] = [
+@@ -31,9 +31,9 @@ export const TOOL_GROUP_LABELS = {
+ } as const;
+ 
+ export const TOOL_SERVER_LABELS = {
+-	[ToolSource.BROWSER]: 'Browser Tools',
+-	[ToolSource.CUSTOM]: 'Custom Tools',
+-	[ToolSource.SERVER]: 'Server Tools'
++	[ToolSource.BROWSER]: '浏览器工具',
++	[ToolSource.CUSTOM]: '自定义工具',
++	[ToolSource.SERVER]: '服务器工具'
+ } as const;
+ 
+ export const TOOLTIP_DELAY_DURATION = 500;
+@@ -78,13 +78,13 @@ export const SIDEBAR_ACTIONS_ITEMS: DesktopIconStripItem[] = [
  		action: SidebarAction.NEW_CHAT,
  		icon: SquarePen,
  		keys: ['shift', 'cmd', 'o'],
@@ -4871,6 +6823,13 @@ index 9467939..d2a1839 100644
  	},
  	{ icon: Search, keys: ['cmd', 'k'], tooltip: 'Search' },
  	{
+ 		action: SidebarAction.MANAGE_MODELS,
+ 		icon: MODEL_ICON,
+-		tooltip: 'Models'
++		tooltip: '模型'
+ 	},
+ 	{
+ 		action: SidebarAction.MCP,
 @@ -94,6 +94,6 @@ export const SIDEBAR_ACTIONS_ITEMS: DesktopIconStripItem[] = [
  	{
  		action: SidebarAction.SETTINGS,
@@ -4892,10 +6851,637 @@ index cb63e92..65f2b7a 100644
  
  export const GLOB = {
  	/** `C:`, the drive part of a Windows absolute path. */
+diff --git a/tools/ui/src/lib/enums/attachment.enums.ts b/tools/ui/src/lib/enums/attachment.enums.ts
+index 5f096b9..b305085 100644
+--- a/tools/ui/src/lib/enums/attachment.enums.ts
++++ b/tools/ui/src/lib/enums/attachment.enums.ts
+@@ -48,7 +48,7 @@ export enum AttachmentAction {
+  */
+ export enum AttachmentLabel {
+ 	FILE = 'File',
+-	MCP_PROMPT = 'MCP Prompt',
+-	MCP_RESOURCE = 'MCP Resource',
+-	PDF_FILE = 'PDF File'
++	MCP_PROMPT = 'MCP 提示词',
++	MCP_RESOURCE = 'MCP 资源',
++	PDF_FILE = 'PDF 文件'
+ }
+diff --git a/tools/ui/src/lib/hooks/use-attachment-menu.svelte.ts b/tools/ui/src/lib/hooks/use-attachment-menu.svelte.ts
+index d3f3ec1..f0c7a12 100644
+--- a/tools/ui/src/lib/hooks/use-attachment-menu.svelte.ts
++++ b/tools/ui/src/lib/hooks/use-attachment-menu.svelte.ts
+@@ -56,8 +56,8 @@ export function useAttachmentMenu(
+ 
+ 	function getSystemMessageTooltip(): string {
+ 		return !page.params.id
+-			? 'Add custom system message for a new conversation'
+-			: 'Inject custom system message at the beginning of the conversation';
++			? '为这个会话添加自定义系统消息'
++			: '在会话开头注入自定义系统消息';
+ 	}
+ 
+ 	return {
+diff --git a/tools/ui/src/lib/hooks/use-models-selector.svelte.ts b/tools/ui/src/lib/hooks/use-models-selector.svelte.ts
+index 35a85dc..6bc8300 100644
+--- a/tools/ui/src/lib/hooks/use-models-selector.svelte.ts
++++ b/tools/ui/src/lib/hooks/use-models-selector.svelte.ts
+@@ -112,7 +112,7 @@ export function useModelsSelector(opts: UseModelsSelectorOptions): UseModelsSele
+ 	const isEmpty = $derived(
+ 		filteredOptions.length === 0 && favoriteItems.length === 0 && loadedItems.length === 0
+ 	);
+-	const emptyMessage = $derived(searchTerm ? 'No models found.' : 'No models yet.');
++	const emptyMessage = $derived(searchTerm ? '没有找到模型。' : '还没有模型。');
+ 
+ 	// the manager takes the focus, so the selector closes instead of sitting behind it
+ 	$effect(() => {
+@@ -123,7 +123,7 @@ export function useModelsSelector(opts: UseModelsSelectorOptions): UseModelsSele
+ 
+ 	onMount(() => {
+ 		modelsStore.fetch().catch((error) => {
+-			console.error('Unable to load models:', error);
++			console.error('无法加载模型：', error);
+ 		});
+ 	});
+ 
+@@ -180,7 +180,7 @@ export function useModelsSelector(opts: UseModelsSelectorOptions): UseModelsSele
+ 
+ 			modelsStore.status
+ 				.load(option.model)
+-				.catch((error) => console.error('Failed to load model:', error))
++				.catch((error) => console.error('加载模型失败：', error))
+ 				.finally(() => (isLoadingModel = false));
+ 		}
+ 	}
+diff --git a/tools/ui/src/lib/hooks/use-processing-state.svelte.ts b/tools/ui/src/lib/hooks/use-processing-state.svelte.ts
+index 8a6f332..f7d7010 100644
+--- a/tools/ui/src/lib/hooks/use-processing-state.svelte.ts
++++ b/tools/ui/src/lib/hooks/use-processing-state.svelte.ts
+@@ -107,7 +107,7 @@ export function useProcessingState(): UseProcessingStateReturn {
+ 					return `Processing (${processingState.progressPercent}%)`;
+ 				}
+ 
+-				return 'Preparing response...';
++				return '正在准备回答…';
+ 			case 'generating':
+ 				return '';
+ 			default:
+@@ -178,7 +178,7 @@ export function useProcessingState(): UseProcessingStateReturn {
+ 		}
+ 
+ 		if (stateToUse.speculative) {
+-			details.push('Speculative decoding enabled');
++			details.push('已启用推测解码');
+ 		}
+ 
+ 		return details;
+@@ -229,7 +229,7 @@ export function useProcessingState(): UseProcessingStateReturn {
+ 		}
+ 
+ 		if (stateToUse.speculative) {
+-			details.push('Speculative decoding enabled');
++			details.push('已启用推测解码');
+ 		}
+ 
+ 		return details;
+diff --git a/tools/ui/src/lib/hooks/use-reasoning-menu.svelte.ts b/tools/ui/src/lib/hooks/use-reasoning-menu.svelte.ts
+index ad3a63d..22dcca3 100644
+--- a/tools/ui/src/lib/hooks/use-reasoning-menu.svelte.ts
++++ b/tools/ui/src/lib/hooks/use-reasoning-menu.svelte.ts
+@@ -91,7 +91,7 @@ export function useReasoningMenu(): UseReasoningMenuReturn {
+ 			return thinkingEnabled;
+ 		},
+ 		tokenLabel(level: ReasoningEffortLevel): string | null {
+-			if (level.value === ReasoningEffort.DEFAULT) return 'Model default';
++			if (level.value === ReasoningEffort.DEFAULT) return '模型默认值';
+ 
+ 			const tokens = REASONING_EFFORT_TOKENS[level.value];
+ 
+diff --git a/tools/ui/src/lib/hooks/use-tools-panel.svelte.ts b/tools/ui/src/lib/hooks/use-tools-panel.svelte.ts
+index 21ab693..9a2d4bb 100644
+--- a/tools/ui/src/lib/hooks/use-tools-panel.svelte.ts
++++ b/tools/ui/src/lib/hooks/use-tools-panel.svelte.ts
+@@ -52,7 +52,7 @@ export function useToolsPanel(): UseToolsPanelReturn {
+ 			return `To enable Server Tools you need to run llama-server with ${CLI_FLAGS.TOOLS} all or ${CLI_FLAGS.TOOLS} <name> flag. To see MCP Tools you need to add / enable MCP Server(s).`;
+ 		}
+ 
+-		// Other errors — return null so UI shows "Failed to load tools"
++		// Other errors — return null so UI shows "工具加载失败"
+ 		if (toolsStore.error) return null;
+ 
+ 		return `To enable Server Tools you need to run llama-server with ${CLI_FLAGS.TOOLS} all or ${CLI_FLAGS.TOOLS} <name> flag. To see MCP Tools you need to add / enable MCP Server(s).`;
+diff --git a/tools/ui/src/lib/services/chat.service.ts b/tools/ui/src/lib/services/chat.service.ts
+index b008b16..7b7053f 100644
+--- a/tools/ui/src/lib/services/chat.service.ts
++++ b/tools/ui/src/lib/services/chat.service.ts
+@@ -448,7 +448,7 @@ export class ChatService {
+ 		let reader = response.body?.getReader();
+ 
+ 		if (!reader) {
+-			throw new Error('No response body');
++			throw new Error('响应没有正文');
+ 		}
+ 
+ 		// bytesParsed is the absolute server side buffer offset of the next byte to parse
+@@ -671,7 +671,7 @@ export class ChatService {
+ 
+ 								processToolCallDelta(toolCalls);
+ 							} catch (e) {
+-								console.error('Error parsing JSON chunk:', e);
++								console.error('解析 JSON 块出错：', e);
+ 							}
+ 						}
+ 					}
+@@ -715,7 +715,7 @@ export class ChatService {
+ 
+ 				if (!resumeResp || resumeResp.status !== 200) {
+ 					onConnectionState?.(StreamConnectionState.LOST);
+-					onError?.(new Error('Stream connection lost and could not be resumed'));
++					onError?.(new Error('流连接断了而且没能恢复'));
+ 
+ 					break;
+ 				}
+@@ -757,7 +757,7 @@ export class ChatService {
+ 				);
+ 			}
+ 		} catch (error) {
+-			const err = error instanceof Error ? error : new Error('Stream error');
++			const err = error instanceof Error ? error : new Error('流出错');
+ 
+ 			onError?.(err);
+ 
+@@ -794,7 +794,7 @@ export class ChatService {
+ 		const body = (await resp.json()) as unknown;
+ 
+ 		if (!Array.isArray(body)) {
+-			throw new Error('Stream lookup returned a non-array response');
++			throw new Error('流查询返回的不是数组');
+ 		}
+ 
+ 		return body as ApiStreamSession[];
+@@ -1213,7 +1213,7 @@ export class ChatService {
+ 
+ 				Object.assign(requestBody, customParams);
+ 			} catch (error) {
+-				console.warn('Failed to parse custom parameters:', error);
++				console.warn('解析自定义参数失败：', error);
+ 			}
+ 		}
+ 
+@@ -1282,7 +1282,7 @@ export class ChatService {
+ 			}
+ 		} catch (error) {
+ 			if (isAbortError(error)) {
+-				console.log('Chat completion request was aborted');
++				console.log('聊天请求已中止');
+ 
+ 				return;
+ 			}
+@@ -1292,23 +1292,23 @@ export class ChatService {
+ 			if (error instanceof Error) {
+ 				if (error.name === 'TypeError' && error.message.includes('fetch')) {
+ 					userFriendlyError = new Error(
+-						'Unable to connect to server - please check if the server is running'
++						'连不上服务器，请检查它是不是在运行'
+ 					);
+ 					userFriendlyError.name = 'NetworkError';
+ 				} else if (error.message.includes('ECONNREFUSED')) {
+-					userFriendlyError = new Error('Connection refused - server may be offline');
++					userFriendlyError = new Error('连接被拒绝，服务器可能没开');
+ 					userFriendlyError.name = 'NetworkError';
+ 				} else if (error.message.includes('ETIMEDOUT')) {
+-					userFriendlyError = new Error('Request timed out - the server took too long to respond');
++					userFriendlyError = new Error('请求超时：服务器响应太久');
+ 					userFriendlyError.name = 'TimeoutError';
+ 				} else {
+ 					userFriendlyError = error;
+ 				}
+ 			} else {
+-				userFriendlyError = new Error('Unknown error occurred while sending message');
++				userFriendlyError = new Error('发送消息时发生未知错误');
+ 			}
+ 
+-			console.error('Error in sendMessage:', error);
++			console.error('发送消息出错：', error);
+ 
+ 			if (onError) {
+ 				onError(userFriendlyError);
+@@ -1457,7 +1457,7 @@ export class ChatService {
+ 			const responseText = await response.text();
+ 
+ 			if (!responseText.trim()) {
+-				const noResponseError = new Error('No response received from server. Please try again.');
++				const noResponseError = new Error('服务器没有返回响应，请再试一次。');
+ 
+ 				throw noResponseError;
+ 			}
+@@ -1488,7 +1488,7 @@ export class ChatService {
+ 			}
+ 
+ 			if (!content.trim() && !serializedToolCalls) {
+-				const noResponseError = new Error('No response received from server. Please try again.');
++				const noResponseError = new Error('服务器没有返回响应，请再试一次。');
+ 
+ 				throw noResponseError;
+ 			}
+@@ -1497,7 +1497,7 @@ export class ChatService {
+ 
+ 			return content;
+ 		} catch (error) {
+-			const err = error instanceof Error ? error : new Error('Parse error');
++			const err = error instanceof Error ? error : new Error('解析出错');
+ 
+ 			onError?.(err);
+ 
+@@ -1593,7 +1593,7 @@ export class ChatService {
+ 		try {
+ 			const errorText = await response.text();
+ 			const errorData: ApiErrorResponse = JSON.parse(errorText);
+-			const message = errorData.error?.message || 'Unknown server error';
++			const message = errorData.error?.message || '服务器未知错误';
+ 			const error = new Error(message) as Error & {
+ 				contextInfo?: { n_prompt_tokens: number; n_ctx: number };
+ 			};
+diff --git a/tools/ui/src/lib/services/conversation-transfer.service.ts b/tools/ui/src/lib/services/conversation-transfer.service.ts
+index 40a0947..b6d826f 100644
+--- a/tools/ui/src/lib/services/conversation-transfer.service.ts
++++ b/tools/ui/src/lib/services/conversation-transfer.service.ts
+@@ -25,7 +25,7 @@ export class ConversationTransferService {
+ 		const { conv: conversation, messages: msgs } = data;
+ 
+ 		if (!conversation) {
+-			console.error('Invalid data: missing conversation');
++			console.error('数据无效：缺少会话');
+ 
+ 			return;
+ 		}
+@@ -45,7 +45,7 @@ export class ConversationTransferService {
+ 	 */
+ 	static downloadConversationsArchive(data: ExportedConversation[]): void {
+ 		if (data.length === 0) {
+-			console.error('Invalid data: no conversations to export');
++			console.error('数据无效：没有可导出的会话');
+ 
+ 			return;
+ 		}
+@@ -150,7 +150,7 @@ export class ConversationTransferService {
+ 		}
+ 
+ 		throw new Error(
+-			'Invalid file format: expected array of conversations or single conversation object'
++			'文件格式无效：应该是会话数组或单个会话对象'
+ 		);
+ 	}
+ 
+@@ -184,7 +184,7 @@ export class ConversationTransferService {
+ 				sessions.push(current);
+ 			} else if (record.type === SessionRecordType.MESSAGE) {
+ 				if (!current) {
+-					throw new Error('Invalid JSONL: message record before any session record');
++					throw new Error('JSONL 无效：消息记录出现在了会话记录之前');
+ 				}
+ 
+ 				const message = record.message as DatabaseMessage;
+diff --git a/tools/ui/src/lib/services/database.service.ts b/tools/ui/src/lib/services/database.service.ts
+index a466f84..34a81f8 100644
+--- a/tools/ui/src/lib/services/database.service.ts
++++ b/tools/ui/src/lib/services/database.service.ts
+@@ -237,7 +237,7 @@ export class DatabaseService {
+ 		const trimmedPrompt = systemPrompt.trim();
+ 
+ 		if (!trimmedPrompt) {
+-			throw new Error('Cannot create system message with empty content');
++			throw new Error('系统消息内容不能为空');
+ 		}
+ 
+ 		return await db.transaction('rw', db[IDXDB_TABLES.messages], async () => {
+diff --git a/tools/ui/src/lib/services/huggingface.service.ts b/tools/ui/src/lib/services/huggingface.service.ts
+index 4cea6eb..f6b2a29 100644
+--- a/tools/ui/src/lib/services/huggingface.service.ts
++++ b/tools/ui/src/lib/services/huggingface.service.ts
+@@ -821,7 +821,7 @@ export class HuggingFaceService {
+ 				return data.data as HfModelInfo[];
+ 			}
+ 
+-			throw new Error('Unexpected API response format');
++			throw new Error('API 响应格式不对');
+ 		} catch (error) {
+ 			const transient =
+ 				error instanceof TypeError ||
+diff --git a/tools/ui/src/lib/services/mcp.service.ts b/tools/ui/src/lib/services/mcp.service.ts
+index 7b857fd..8ec9b28 100644
+--- a/tools/ui/src/lib/services/mcp.service.ts
++++ b/tools/ui/src/lib/services/mcp.service.ts
+@@ -228,7 +228,7 @@ export class MCPService {
+ 				console.log(`[MCPService][${serverName}] WebSocket closed, notifying for reconnection`);
+ 				onPhase?.(
+ 					MCPConnectionPhase.DISCONNECTED,
+-					this.createLog(MCPConnectionPhase.DISCONNECTED, 'WebSocket connection closed')
++					this.createLog(MCPConnectionPhase.DISCONNECTED, 'WebSocket 连接已关闭')
+ 				);
+ 			};
+ 		}
+@@ -291,7 +291,7 @@ export class MCPService {
+ 		// Phase: Initializing
+ 		onPhase?.(
+ 			MCPConnectionPhase.INITIALIZING,
+-			this.createLog(MCPConnectionPhase.INITIALIZING, 'Sending initialize request...')
++			this.createLog(MCPConnectionPhase.INITIALIZING, '正在发送 initialize 请求…')
+ 		);
+ 
+ 		// The SDK timeout only covers the initialize request, not transport.start(),
+@@ -372,7 +372,7 @@ export class MCPService {
+ 			MCPConnectionPhase.CAPABILITIES_EXCHANGED,
+ 			this.createLog(
+ 				MCPConnectionPhase.CAPABILITIES_EXCHANGED,
+-				'Capabilities exchanged successfully',
++				'能力已交换成功',
+ 				MCPLogLevel.INFO,
+ 				{
+ 					serverCapabilities,
+@@ -390,7 +390,7 @@ export class MCPService {
+ 		// Phase: Listing tools
+ 		onPhase?.(
+ 			MCPConnectionPhase.LISTING_TOOLS,
+-			this.createLog(MCPConnectionPhase.LISTING_TOOLS, 'Listing available tools...')
++			this.createLog(MCPConnectionPhase.LISTING_TOOLS, '正在列出可用工具…')
+ 		);
+ 
+ 		if (import.meta.env.DEV && import.meta.env.VITE_DEBUG) {
+@@ -465,7 +465,7 @@ export class MCPService {
+ 		stopPhaseLogging: () => void;
+ 	} {
+ 		if (!config.url) {
+-			throw new Error('MCP server configuration is missing url');
++			throw new Error('MCP 服务器配置缺少 url');
+ 		}
+ 
+ 		const useProxy = config.useProxy ?? false;
+@@ -489,7 +489,7 @@ export class MCPService {
+ 		if (config.transport === MCPTransportType.WEBSOCKET) {
+ 			if (useProxy) {
+ 				throw new Error(
+-					'WebSocket transport is not supported when using CORS proxy. Use HTTP transport instead.'
++					'用 CORS 代理时不支持 WebSocket 传输，请改用 HTTP 传输。'
+ 				);
+ 			}
+ 
+@@ -1238,13 +1238,13 @@ export class MCPService {
+ 
+ 		if (config.credentials && config.credentials !== 'omit') {
+ 			hints.push(
+-				'Credentials are enabled for this connection. Cross-origin credentialed requests need Access-Control-Allow-Credentials: true and cannot use a wildcard Access-Control-Allow-Origin.'
++				'这个连接启用了凭据。跨源带凭据的请求需要 Access-Control-Allow-Credentials: true，而且不能用通配的 Access-Control-Allow-Origin。'
+ 			);
+ 		}
+ 
+-		if (message.includes('Failed to fetch')) {
++		if (message.includes('获取失败')) {
+ 			hints.push(
+-				'"Failed to fetch" is a browser-level network failure. Common causes are CORS rejection, mixed-content blocking, certificate/TLS errors, DNS failures, or nothing listening on the target port.'
++				'"获取失败" is a browser-level network failure. Common causes are CORS rejection, mixed-content blocking, certificate/TLS errors, DNS failures, or nothing listening on the target port.'
+ 			);
+ 		}
+ 
+diff --git a/tools/ui/src/lib/services/sandbox-harness.ts b/tools/ui/src/lib/services/sandbox-harness.ts
+index 29f9ad2..712a979 100644
+--- a/tools/ui/src/lib/services/sandbox-harness.ts
++++ b/tools/ui/src/lib/services/sandbox-harness.ts
+@@ -33,7 +33,7 @@ addEventListener('message', (event) => {
+ 	try {
+ 		worker = new Worker(URL.createObjectURL(new Blob([SHIM], { type: 'text/javascript' })));
+ 	} catch (err) {
+-		respond({ logs: [], result: null, error: 'Worker creation failed: ' + err });
++		respond({ logs: [], result: null, error: 'Worker 创建失败：' + err });
+ 		return;
+ 	}
+ 	worker.onmessage = (msg) => respond(msg.data);
+diff --git a/tools/ui/src/lib/services/sandbox.service.ts b/tools/ui/src/lib/services/sandbox.service.ts
+index bdc63e4..5a3f882 100644
+--- a/tools/ui/src/lib/services/sandbox.service.ts
++++ b/tools/ui/src/lib/services/sandbox.service.ts
+@@ -93,7 +93,7 @@ export class SandboxService {
+ 		const code = typeof params.code === 'string' ? params.code : '';
+ 
+ 		if (!code) {
+-			return { content: 'Missing required parameter: code', isError: true };
++			return { content: '缺少必需参数：code', isError: true };
+ 		}
+ 
+ 		const harness = await getHarness();
+@@ -129,7 +129,7 @@ export class SandboxService {
+ 				if (settled) return;
+ 
+ 				cleanup();
+-				reject(new DOMException('Sandbox execution aborted', 'AbortError'));
++				reject(new DOMException('沙箱执行已中止', 'AbortError'));
+ 			};
+ 			const onMessage = (event: MessageEvent) => {
+ 				if (event.source !== iframe.contentWindow) return;
+diff --git a/tools/ui/src/lib/services/settings.service.ts b/tools/ui/src/lib/services/settings.service.ts
+index 639fb06..72dcc11 100644
+--- a/tools/ui/src/lib/services/settings.service.ts
++++ b/tools/ui/src/lib/services/settings.service.ts
+@@ -70,7 +70,7 @@ export class SettingsService {
+ 			localStorage.setItem(CONFIG_LOCALSTORAGE_KEY, JSON.stringify(config));
+ 			localStorage.setItem(USER_OVERRIDES_LOCALSTORAGE_KEY, JSON.stringify(userOverrides));
+ 		} catch (error) {
+-			console.error('Failed to save config to localStorage:', error);
++			console.error('把配置存进 localStorage 失败：', error);
+ 		}
+ 	}
+ }
+diff --git a/tools/ui/src/lib/stores/agentic/index.svelte.ts b/tools/ui/src/lib/stores/agentic/index.svelte.ts
+index 121ee77..c347fa0 100644
+--- a/tools/ui/src/lib/stores/agentic/index.svelte.ts
++++ b/tools/ui/src/lib/stores/agentic/index.svelte.ts
+@@ -616,7 +616,7 @@ class AgenticStore {
+ 					return;
+ 				}
+ 
+-				const normalizedError = error instanceof Error ? error : new Error('LLM stream error');
++				const normalizedError = error instanceof Error ? error : new Error('LLM 流出错');
+ 
+ 				// preserve partial output as is, the outer error dialog informs the user separately
+ 				await onAssistantTurnComplete?.(
+@@ -732,7 +732,7 @@ class AgenticStore {
+ 					);
+ 					for (let j = i; j < normalizedCalls.length; j++) {
+ 						const remainingCall = normalizedCalls[j];
+-						const interruptedContent = 'Tool execution was interrupted by a new user message.';
++						const interruptedContent = '工具执行被新的用户消息打断。';
+ 
+ 						if (createToolResultMessage) {
+ 							await createToolResultMessage(remainingCall.id, interruptedContent);
+@@ -780,7 +780,7 @@ class AgenticStore {
+ 				this.updateSession(conversationId, { executingToolCallId: toolCall.id });
+ 
+ 				if (permission === ToolPermissionDecision.DENY) {
+-					result = 'Tool execution was denied by the user.';
++					result = '工具执行被用户拒绝。';
+ 					toolSuccess = false;
+ 				} else {
+ 					try {
+diff --git a/tools/ui/src/lib/stores/chat/flows.svelte.ts b/tools/ui/src/lib/stores/chat/flows.svelte.ts
+index 16c377b..ac62cdc 100644
+--- a/tools/ui/src/lib/stores/chat/flows.svelte.ts
++++ b/tools/ui/src/lib/stores/chat/flows.svelte.ts
+@@ -212,7 +212,7 @@ export class ChatMessageFlows {
+ 							return;
+ 						}
+ 
+-						console.error('Continue generation error:', error);
++						console.error('继续生成出错：', error);
+ 						// keep whatever was appended so far, the message stays in memory and in DB
+ 						await DatabaseService.updateMessage(msg.id, {
+ 							content: originalContent + appendedContent,
+@@ -250,7 +250,7 @@ export class ChatMessageFlows {
+ 				abortController.signal
+ 			);
+ 		} catch (error) {
+-			if (!isAbortError(error)) console.error('Failed to continue message:', error);
++			if (!isAbortError(error)) console.error('继续消息失败：', error);
+ 
+ 			if (activeConv) this.host.setChatLoading(activeConv.id, false);
+ 		}
+@@ -293,7 +293,7 @@ export class ChatMessageFlows {
+ 
+ 			conversationsStore.updateConversationTimestamp();
+ 		} catch (error) {
+-			console.error('Failed to delete message:', error);
++			console.error('删除消息失败：', error);
+ 		}
+ 	}
+ 
+@@ -338,7 +338,7 @@ export class ChatMessageFlows {
+ 
+ 			await conversationsStore.refreshActiveMessages();
+ 		} catch (error) {
+-			console.error('Failed to edit assistant message:', error);
++			console.error('编辑助手消息失败：', error);
+ 		}
+ 	}
+ 
+@@ -422,7 +422,7 @@ export class ChatMessageFlows {
+ 			if (msg.role === MessageRole.USER)
+ 				await this.generateResponseForMessage(messageIdForResponse);
+ 		} catch (error) {
+-			console.error('Failed to edit message with branching:', error);
++			console.error('带分支地编辑消息失败：', error);
+ 		}
+ 	}
+ 
+@@ -459,7 +459,7 @@ export class ChatMessageFlows {
+ 
+ 			conversationsStore.updateConversationTimestamp();
+ 		} catch (error) {
+-			console.error('Failed to edit user message:', error);
++			console.error('编辑用户消息失败：', error);
+ 		}
+ 	}
+ 
+@@ -557,7 +557,7 @@ export class ChatMessageFlows {
+ 				assistantMessage
+ 			);
+ 		} catch (error) {
+-			if (!isAbortError(error)) console.error('Failed to regenerate message:', error);
++			if (!isAbortError(error)) console.error('重新生成消息失败：', error);
+ 
+ 			this.host.setChatLoading(activeConv?.id || '', false);
+ 		}
+@@ -618,7 +618,7 @@ export class ChatMessageFlows {
+ 			);
+ 		} catch (error) {
+ 			if (!isAbortError(error))
+-				console.error('Failed to regenerate message with branching:', error);
++				console.error('带分支地重新生成消息失败：', error);
+ 
+ 			this.host.setChatLoading(activeConv?.id || '', false);
+ 		}
+@@ -673,7 +673,7 @@ export class ChatMessageFlows {
+ 				}
+ 			);
+ 		} catch (error) {
+-			if (!isAbortError(error)) console.error('Failed to update message:', error);
++			if (!isAbortError(error)) console.error('更新消息失败：', error);
+ 		}
+ 	}
+ 
+@@ -732,7 +732,7 @@ export class ChatMessageFlows {
+ 
+ 			await this.host.streamChatCompletion(conversationPath, newAssistantMessage);
+ 		} catch (error) {
+-			if (!isAbortError(error)) console.error('Failed to continue agentic turn:', error);
++			if (!isAbortError(error)) console.error('继续代理式轮次失败：', error);
+ 
+ 			this.host.setChatLoading(activeConv.id, false);
+ 		}
+@@ -772,7 +772,7 @@ export class ChatMessageFlows {
+ 
+ 			await this.host.streamChatCompletion(conversationPath, assistantMessage);
+ 		} catch (error) {
+-			console.error('Failed to generate response:', error);
++			console.error('生成回答失败：', error);
+ 			this.host.setChatLoading(activeConv.id, false);
+ 		}
+ 	}
 diff --git a/tools/ui/src/lib/stores/chat/index.svelte.ts b/tools/ui/src/lib/stores/chat/index.svelte.ts
-index 4bdcc68..a90cc29 100644
+index 4bdcc68..7a2b0b3 100644
 --- a/tools/ui/src/lib/stores/chat/index.svelte.ts
 +++ b/tools/ui/src/lib/stores/chat/index.svelte.ts
+@@ -95,7 +95,7 @@ class ChatStore implements ChatStreamHost, ChatFlowsHost {
+ 
+ 	/**
+ 	 * Abort the current agentic flow signal without clearing loading state.
+-	 * Used by "Send immediately" to force the agentic loop to exit so that
++	 * Used by "立即发送" to force the agentic loop to exit so that
+ 	 * the pending steering message can be re-sent.
+ 	 *
+ 	 * Any tool calls captured mid-stream are dropped before the abort so the
+@@ -123,7 +123,7 @@ class ChatStore implements ChatStreamHost, ChatFlowsHost {
+ 	): Promise<DatabaseMessage> {
+ 		const activeConv = conversationsStore.activeConversation;
+ 
+-		if (!activeConv) throw new Error('No active conversation');
++		if (!activeConv) throw new Error('没有活动会话');
+ 
+ 		let parentId: string | null = null;
+ 
+@@ -226,7 +226,7 @@ class ChatStore implements ChatStreamHost, ChatFlowsHost {
+ 			this.pendingEditMessageId = systemMessage.id;
+ 			conversationsStore.updateConversationTimestamp();
+ 		} catch (error) {
+-			console.error('Failed to add system prompt:', error);
++			console.error('添加系统提示词失败：', error);
+ 		}
+ 	}
+ 	cancelPreEncode(): void {
+@@ -299,7 +299,7 @@ class ChatStore implements ChatStreamHost, ChatFlowsHost {
+ 	async createAssistantMessage(parentId?: string): Promise<DatabaseMessage> {
+ 		const activeConv = conversationsStore.activeConversation;
+ 
+-		if (!activeConv) throw new Error('No active conversation');
++		if (!activeConv) throw new Error('没有活动会话');
+ 
+ 		return await DatabaseService.createMessageBranch(
+ 			{
+@@ -595,7 +595,7 @@ class ChatStore implements ChatStreamHost, ChatFlowsHost {
+ 
+ 			return false;
+ 		} catch (error) {
+-			console.error('Failed to remove system prompt placeholder:', error);
++			console.error('移除系统提示词占位符失败：', error);
+ 
+ 			return false;
+ 		}
+@@ -715,7 +715,7 @@ class ChatStore implements ChatStreamHost, ChatFlowsHost {
+ 				return;
+ 			}
+ 
+-			console.error('Failed to send message:', error);
++			console.error('发送消息失败：', error);
+ 			this.setChatLoading(currentConv.id, false);
+ 			const dialogType =
+ 				error instanceof Error && error.name === 'TimeoutError'
 @@ -727,7 +727,7 @@ class ChatStore implements ChatStreamHost, ChatFlowsHost {
  
  			this.showErrorDialog({
@@ -4905,6 +7491,180 @@ index 4bdcc68..a90cc29 100644
  				type: dialogType
  			});
  		}
+@@ -1011,7 +1011,7 @@ class ChatStore implements ChatStreamHost, ChatFlowsHost {
+ 			onError: async (error: Error) => {
+ 				if (isAbortError(error)) {
+ 					cleanupStreamingState();
+-					// If aborted with a pending message (e.g. "Send immediately"), re-send it
++					// If aborted with a pending message (e.g. "立即发送"), re-send it
+ 					const pending = this.consumePendingMessage(convId);
+ 
+ 					if (pending) {
+@@ -1021,7 +1021,7 @@ class ChatStore implements ChatStreamHost, ChatFlowsHost {
+ 					return;
+ 				}
+ 
+-				console.error('Streaming error:', error);
++				console.error('流出错：', error);
+ 				// keep whatever was streamed so far, the message stays in memory and in DB
+ 				await this.savePartialResponseIfNeeded(convId);
+ 				cleanupStreamingState();
+@@ -1395,7 +1395,7 @@ class ChatStore implements ChatStreamHost, ChatFlowsHost {
+ 		} catch (error) {
+ 			lastMessage.content = partialContent;
+ 			lastMessage.toolCalls = '';
+-			console.error('Failed to save partial response:', error);
++			console.error('保存部分回答失败：', error);
+ 		}
+ 	}
+ 
+diff --git a/tools/ui/src/lib/stores/conversations/index.svelte.ts b/tools/ui/src/lib/stores/conversations/index.svelte.ts
+index c4fea2e..2774ae7 100644
+--- a/tools/ui/src/lib/stores/conversations/index.svelte.ts
++++ b/tools/ui/src/lib/stores/conversations/index.svelte.ts
+@@ -163,12 +163,12 @@ class ConversationsStore implements ConversationsPreferencesHost {
+ 
+ 			toast.success(
+ 				idsToRemove.size === 1
+-					? 'Conversation deleted'
++					? '会话已删除'
+ 					: `${idsToRemove.size} conversations deleted`
+ 			);
+ 		} catch (error) {
+-			console.error('Failed to bulk delete conversations:', error);
+-			toast.error('Failed to delete conversations');
++			console.error('批量删除会话失败：', error);
++			toast.error('删除会话失败');
+ 		}
+ 	}
+ 
+@@ -184,7 +184,7 @@ class ConversationsStore implements ConversationsPreferencesHost {
+ 			const exported = await this.getConversationsForExport(convIds);
+ 
+ 			if (exported.length === 0) {
+-				toast.error('No conversations to export');
++				toast.error('没有可导出的会话');
+ 
+ 				return;
+ 			}
+@@ -193,12 +193,12 @@ class ConversationsStore implements ConversationsPreferencesHost {
+ 
+ 			toast.success(
+ 				exported.length === 1
+-					? 'Conversation exported'
++					? '会话已导出'
+ 					: `${exported.length} conversations exported`
+ 			);
+ 		} catch (error) {
+-			console.error('Failed to bulk export conversations:', error);
+-			toast.error('Failed to export conversations');
++			console.error('批量导出会话失败：', error);
++			toast.error('导出会话失败');
+ 		}
+ 	}
+ 
+@@ -227,12 +227,12 @@ class ConversationsStore implements ConversationsPreferencesHost {
+ 
+ 			toast.success(
+ 				convIds.length === 1
+-					? 'Conversation pin toggled'
++					? '会话置顶状态已切换'
+ 					: `Updated pin state for ${convIds.length} conversations`
+ 			);
+ 		} catch (error) {
+-			console.error('Failed to bulk toggle pin:', error);
+-			toast.error('Failed to update pin state');
++			console.error('批量切换置顶失败：', error);
++			toast.error('更新置顶状态失败');
+ 		}
+ 	}
+ 
+@@ -301,12 +301,12 @@ class ConversationsStore implements ConversationsPreferencesHost {
+ 			tabsStore.clear();
+ 			this.notifyConversationsDeleted(allIds);
+ 
+-			toast.success('All conversations deleted');
++			toast.success('所有会话已删除');
+ 
+ 			await goto(ROUTES.START);
+ 		} catch (error) {
+-			console.error('Failed to delete all conversations:', error);
+-			toast.error('Failed to delete conversations');
++			console.error('删除所有会话失败：', error);
++			toast.error('删除会话失败');
+ 		}
+ 	}
+ 
+@@ -369,7 +369,7 @@ class ConversationsStore implements ConversationsPreferencesHost {
+ 				this.notifyConversationsDeleted([convId]);
+ 			}
+ 		} catch (error) {
+-			console.error('Failed to delete conversation:', error);
++			console.error('删除会话失败：', error);
+ 		}
+ 	}
+ 
+@@ -441,12 +441,12 @@ class ConversationsStore implements ConversationsPreferencesHost {
+ 
+ 			await goto(RouterService.chat(newConv.id));
+ 
+-			toast.success('Conversation forked');
++			toast.success('会话已分支');
+ 
+ 			return newConv.id;
+ 		} catch (error) {
+-			console.error('Failed to fork conversation:', error);
+-			toast.error('Failed to fork conversation');
++			console.error('分支会话失败：', error);
++			toast.error('分支会话失败');
+ 
+ 			return null;
+ 		}
+@@ -505,7 +505,7 @@ class ConversationsStore implements ConversationsPreferencesHost {
+ 				await this.loadConversations();
+ 				this.isInitialized = true;
+ 			} catch (error) {
+-				console.error('Failed to initialize conversations:', error);
++				console.error('初始化会话失败：', error);
+ 				this.initPromise = null;
+ 			}
+ 		})();
+@@ -542,7 +542,7 @@ class ConversationsStore implements ConversationsPreferencesHost {
+ 
+ 			return true;
+ 		} catch (error) {
+-			console.error('Failed to load conversation:', error);
++			console.error('加载会话失败：', error);
+ 
+ 			return false;
+ 		}
+@@ -664,7 +664,7 @@ class ConversationsStore implements ConversationsPreferencesHost {
+ 
+ 			return newPinnedState;
+ 		} catch (error) {
+-			console.error('Failed to toggle conversation pin:', error);
++			console.error('切换会话置顶状态失败：', error);
+ 
+ 			return false;
+ 		}
+@@ -681,7 +681,7 @@ class ConversationsStore implements ConversationsPreferencesHost {
+ 
+ 			this.applyConversationUpdate(convId, { name });
+ 		} catch (error) {
+-			console.error('Failed to update conversation name:', error);
++			console.error('更新会话名失败：', error);
+ 		}
+ 	}
+ 
+@@ -712,7 +712,7 @@ class ConversationsStore implements ConversationsPreferencesHost {
+ 		}
+ 
+ 		DatabaseService.updateConversation(targetId, { lastModified: now }).catch((error) =>
+-			console.error('Failed to update conversation timestamp:', error)
++			console.error('更新会话时间戳失败：', error)
+ 		);
+ 	}
+ 
 diff --git a/tools/ui/src/lib/stores/mcp/health.svelte.ts b/tools/ui/src/lib/stores/mcp/health.svelte.ts
 index fffa6ea..e6442ab 100644
 --- a/tools/ui/src/lib/stores/mcp/health.svelte.ts
@@ -4927,6 +7687,28 @@ index fffa6ea..e6442ab 100644
  
  			if (logs.at(-1)?.phase !== MCPConnectionPhase.ERROR) {
  				logs.push(createConnectionErrorLog(message));
+diff --git a/tools/ui/src/lib/stores/mcp/index.svelte.ts b/tools/ui/src/lib/stores/mcp/index.svelte.ts
+index 967288c..895e393 100644
+--- a/tools/ui/src/lib/stores/mcp/index.svelte.ts
++++ b/tools/ui/src/lib/stores/mcp/index.svelte.ts
+@@ -160,7 +160,7 @@ class MCPStore implements McpHealthHost {
+ 			if (content) {
+ 				mcpResourceStore.updateAttachmentContent(attachment.id, content);
+ 			} else {
+-				mcpResourceStore.updateAttachmentError(attachment.id, 'Failed to read resource');
++				mcpResourceStore.updateAttachmentError(attachment.id, '读取资源失败');
+ 			}
+ 		} catch (error) {
+ 			const message = error instanceof Error ? error.message : String(error);
+@@ -1229,7 +1229,7 @@ class MCPStore implements McpHealthHost {
+ 		if (successCount === 0 && serverEntries.length > 0) {
+ 			this.updateState({
+ 				connectedServers: [],
+-				error: 'All MCP server connections failed',
++				error: '所有 MCP 服务器连接都失败了',
+ 				isInitializing: false,
+ 				toolCount: 0
+ 			});
 diff --git a/tools/ui/src/lib/stores/models-discover/index.svelte.ts b/tools/ui/src/lib/stores/models-discover/index.svelte.ts
 index c465848..1fe8d0e 100644
 --- a/tools/ui/src/lib/stores/models-discover/index.svelte.ts
@@ -4950,9 +7732,63 @@ index c465848..1fe8d0e 100644
  			if (requestId === this.searchRequestId) this.searching = false;
  		}
 diff --git a/tools/ui/src/lib/stores/models/index.svelte.ts b/tools/ui/src/lib/stores/models/index.svelte.ts
-index 3008eb5..dfd5ab4 100644
+index 3008eb5..4fbe82a 100644
 --- a/tools/ui/src/lib/stores/models/index.svelte.ts
 +++ b/tools/ui/src/lib/stores/models/index.svelte.ts
+@@ -303,7 +303,7 @@ class ModelsStore implements ModelPropsHost, ModelStatusHost {
+ 				this.selectModelById(visible[0].id);
+ 			}
+ 		} catch (error) {
+-			console.warn('Failed to fetch router models:', error);
++			console.warn('获取路由器模型失败：', error);
+ 			this.routerModels = [];
+ 		}
+ 	}
+@@ -386,7 +386,7 @@ class ModelsStore implements ModelPropsHost, ModelStatusHost {
+ 
+ 		const option = this.models.find((model) => model.id === modelId);
+ 
+-		if (!option) throw new Error('Selected model is not available');
++		if (!option) throw new Error('所选模型不可用');
+ 
+ 		this.updating = true;
+ 		this.error = null;
+@@ -456,7 +456,7 @@ class ModelsStore implements ModelPropsHost, ModelStatusHost {
+ 		try {
+ 			localStorage.setItem(FAVORITE_MODELS_LOCALSTORAGE_KEY, JSON.stringify([...next]));
+ 		} catch {
+-			toast.error('Failed to save favorite models to local storage');
++			toast.error('把收藏模型存进本地存储失败');
+ 		}
+ 	}
+ 
+@@ -488,7 +488,7 @@ class ModelsStore implements ModelPropsHost, ModelStatusHost {
+ 				JSON.stringify(Object.fromEntries(next))
+ 			);
+ 		} catch {
+-			toast.error('Failed to save the model list state to local storage');
++			toast.error('把模型列表状态存进本地存储失败');
+ 		}
+ 	}
+ 
+@@ -518,7 +518,7 @@ class ModelsStore implements ModelPropsHost, ModelStatusHost {
+ 		try {
+ 			localStorage.setItem(HIDDEN_MODELS_LOCALSTORAGE_KEY, JSON.stringify([...next]));
+ 		} catch {
+-			toast.error('Failed to save hidden models to local storage');
++			toast.error('把隐藏模型存进本地存储失败');
+ 		}
+ 	}
+ 
+@@ -625,7 +625,7 @@ class ModelsStore implements ModelPropsHost, ModelStatusHost {
+ 
+ 			return raw ? new Set(JSON.parse(raw) as string[]) : new Set();
+ 		} catch {
+-			toast.error('Failed to load favorite models from local storage');
++			toast.error('从本地存储加载收藏模型失败');
+ 
+ 			return new Set();
+ 		}
 @@ -676,7 +676,7 @@ class ModelsStore implements ModelPropsHost, ModelStatusHost {
  			}
  		} catch (error) {
@@ -4962,10 +7798,32 @@ index 3008eb5..dfd5ab4 100644
  
  			throw error;
  		} finally {
+diff --git a/tools/ui/src/lib/stores/models/props.svelte.ts b/tools/ui/src/lib/stores/models/props.svelte.ts
+index 9d2d817..6cd5ff1 100644
+--- a/tools/ui/src/lib/stores/models/props.svelte.ts
++++ b/tools/ui/src/lib/stores/models/props.svelte.ts
+@@ -137,7 +137,7 @@ export class ModelPropsManager {
+ 
+ 			this.cacheVersion++;
+ 		} catch (error) {
+-			console.warn('Failed to fetch modalities for loaded models:', error);
++			console.warn('获取已加载模型的模态失败：', error);
+ 		}
+ 	}
+ 
 diff --git a/tools/ui/src/lib/stores/models/status.svelte.ts b/tools/ui/src/lib/stores/models/status.svelte.ts
-index a2e3b27..17fa674 100644
+index a2e3b27..aae6707 100644
 --- a/tools/ui/src/lib/stores/models/status.svelte.ts
 +++ b/tools/ui/src/lib/stores/models/status.svelte.ts
+@@ -213,7 +213,7 @@ export class ModelStatusManager {
+ 	 */
+ 	async cancelDownload(repoWithTag: string): Promise<boolean> {
+ 		if (!serverStore.isRouterMode) {
+-			toast.error('Model downloads are only available in router mode');
++			toast.error('只有路由器模式才能下载模型');
+ 
+ 			return false;
+ 		}
 @@ -253,7 +253,7 @@ export class ModelStatusManager {
  
  			return ok;
@@ -4975,6 +7833,24 @@ index a2e3b27..17fa674 100644
  
  			return false;
  		}
+@@ -292,7 +292,7 @@ export class ModelStatusManager {
+ 	 */
+ 	async downloadModel(repoWithTag: string, extraSidecars: ModelSidecar[] = []): Promise<void> {
+ 		if (!serverStore.isRouterMode) {
+-			toast.error('Model downloads are only available in router mode');
++			toast.error('只有路由器模式才能下载模型');
+ 
+ 			return;
+ 		}
+@@ -339,7 +339,7 @@ export class ModelStatusManager {
+ 			const res = await ModelsService.downloadModel(model, sidecars);
+ 
+ 			if (!res.success) {
+-				throw new Error(res.error?.message ?? 'Server rejected the download request');
++				throw new Error(res.error?.message ?? '服务器拒绝了下载请求');
+ 			}
+ 
+ 			// the marker gives way to the live entry, seeded with the last reported
 @@ -359,7 +359,7 @@ export class ModelStatusManager {
  				this.setPausedDownload(model, snapshot);
  			}
@@ -4993,6 +7869,15 @@ index a2e3b27..17fa674 100644
  			toast.error(`Failed to load model: ${this.host.toDisplayName(modelId)}`);
  
  			throw error;
+@@ -521,7 +521,7 @@ export class ModelStatusManager {
+ 	 */
+ 	async pauseDownload(repoWithTag: string): Promise<void> {
+ 		if (!serverStore.isRouterMode) {
+-			toast.error('Model downloads are only available in router mode');
++			toast.error('只有路由器模式才能下载模型');
+ 
+ 			return;
+ 		}
 @@ -616,7 +616,7 @@ export class ModelStatusManager {
  			toast.info(`Model unloaded: ${this.host.toDisplayName(modelId)}`);
  		} catch (error) {
@@ -5002,6 +7887,221 @@ index a2e3b27..17fa674 100644
  			toast.error(`Failed to unload model: ${this.host.toDisplayName(modelId)}`);
  
  			throw error;
+diff --git a/tools/ui/src/lib/stores/server.svelte.ts b/tools/ui/src/lib/stores/server.svelte.ts
+index e145e28..469ac80 100644
+--- a/tools/ui/src/lib/stores/server.svelte.ts
++++ b/tools/ui/src/lib/stores/server.svelte.ts
+@@ -84,7 +84,7 @@ class ServerStore {
+ 			} catch (error: unknown) {
+ 				this.error = error instanceof Error ? error.message : String(error);
+ 				this.status = error instanceof ApiError ? error.status : null;
+-				console.error('Error fetching server properties:', error);
++				console.error('获取服务器属性出错：', error);
+ 
+ 				if (this.status === 503) {
+ 					this.scheduleRetry();
+diff --git a/tools/ui/src/lib/stores/settings/index.svelte.ts b/tools/ui/src/lib/stores/settings/index.svelte.ts
+index d9ed790..ee622b0 100644
+--- a/tools/ui/src/lib/stores/settings/index.svelte.ts
++++ b/tools/ui/src/lib/stores/settings/index.svelte.ts
+@@ -42,7 +42,7 @@ class SettingsStore {
+ 	clearAllUserOverrides(): void {
+ 		this.userOverrides.clear();
+ 		this.saveConfig();
+-		console.log('Cleared all user overrides');
++		console.log('已清掉你所有的覆盖设置');
+ 	}
+ 
+ 	/**
+@@ -87,7 +87,7 @@ class SettingsStore {
+ 
+ 	/**
+ 	 * Reset all parameters to their default values (from props)
+-	 * This is used by the "Reset to Default" functionality
++	 * This is used by the "恢复默认" functionality
+ 	 * Prioritizes Server defaults from /props, falls back to UI defaults
+ 	 */
+ 	forceSyncWithServerDefaults(): void {
+@@ -189,7 +189,7 @@ class SettingsStore {
+ 		if (!browser) return;
+ 
+ 		if (!data || !data.config) {
+-			throw new Error('Invalid settings data: missing config');
++			throw new Error('设置数据无效：缺少 config');
+ 		}
+ 
+ 		// Restore config (theme is included in config)
+@@ -209,7 +209,7 @@ class SettingsStore {
+ 		// Apply theme for immediate visual feedback
+ 		setMode(this.config[SETTINGS_KEYS.THEME] as ColorMode);
+ 
+-		console.log('Settings imported successfully');
++		console.log('设置导入成功');
+ 	}
+ 
+ 	/**
+@@ -227,7 +227,7 @@ class SettingsStore {
+ 			setMode(this.config[SETTINGS_KEYS.THEME] as ColorMode);
+ 			this.isInitialized = true;
+ 		} catch (error) {
+-			console.error('Failed to initialize settings store:', error);
++			console.error('初始化设置存储失败：', error);
+ 		}
+ 	}
+ 
+@@ -312,7 +312,7 @@ class SettingsStore {
+ 
+ 		// UI settings are the admin's defaults for new users: applied once on
+ 		// the first visit, never on later loads, so the user's config can
+-		// diverge. "Reset to Default" is the explicit way back to the baseline.
++		// diverge. "恢复默认" is the explicit way back to the baseline.
+ 		// A first visit config carries factory values only, so a key that
+ 		// already diverges here was set by the user before the baseline could
+ 		// be reached, through the API key splash, and stays theirs.
+@@ -336,7 +336,7 @@ class SettingsStore {
+ 		}
+ 
+ 		this.saveConfig();
+-		console.log('User overrides after sync:', Array.from(this.userOverrides));
++		console.log('同步后的用户覆盖项：', Array.from(this.userOverrides));
+ 	}
+ 
+ 	/**
+diff --git a/tools/ui/src/lib/utils/abort.ts b/tools/ui/src/lib/utils/abort.ts
+index 9626de7..95b3f94 100644
+--- a/tools/ui/src/lib/utils/abort.ts
++++ b/tools/ui/src/lib/utils/abort.ts
+@@ -33,7 +33,7 @@ const ABORT_LIKE_MESSAGE_PATTERNS = [
+  */
+ export function throwIfAborted(signal?: AbortSignal): void {
+ 	if (signal?.aborted) {
+-		throw new DOMException('Operation was aborted', ABORT_ERROR_NAME);
++		throw new DOMException('操作已中止', ABORT_ERROR_NAME);
+ 	}
+ }
+ 
+@@ -155,7 +155,7 @@ export async function withAbortSignal<T>(promise: Promise<T>, signal?: AbortSign
+ 
+ 	return new Promise<T>((resolve, reject) => {
+ 		const abortHandler = () => {
+-			reject(new DOMException('Operation was aborted', ABORT_ERROR_NAME));
++			reject(new DOMException('操作已中止', ABORT_ERROR_NAME));
+ 		};
+ 
+ 		signal.addEventListener('abort', abortHandler, { once: true });
+diff --git a/tools/ui/src/lib/utils/api-key-validation.ts b/tools/ui/src/lib/utils/api-key-validation.ts
+index 187199a..1c6b25a 100644
+--- a/tools/ui/src/lib/utils/api-key-validation.ts
++++ b/tools/ui/src/lib/utils/api-key-validation.ts
+@@ -32,7 +32,7 @@ export async function validateApiKey(fetch: typeof globalThis.fetch): Promise<vo
+ 
+ 		if (!response.ok) {
+ 			if (response.status === 401 || response.status === 403) {
+-				throw error(401, 'Access denied');
++				throw error(401, '拒绝访问');
+ 			}
+ 
+ 			console.warn(`Server responded with status ${response.status} during API key validation`);
+@@ -46,6 +46,6 @@ export async function validateApiKey(fetch: typeof globalThis.fetch): Promise<vo
+ 		}
+ 
+ 		// Network or other errors
+-		console.warn('Cannot connect to server for API key validation:', err);
++		console.warn('无法连接服务器校验 API 密钥：', err);
+ 	}
+ }
+diff --git a/tools/ui/src/lib/utils/audio-recording.ts b/tools/ui/src/lib/utils/audio-recording.ts
+index 4cfe173..3f5287b 100644
+--- a/tools/ui/src/lib/utils/audio-recording.ts
++++ b/tools/ui/src/lib/utils/audio-recording.ts
+@@ -63,9 +63,9 @@ export class AudioRecorder {
+ 			this.mediaRecorder!.start(100);
+ 			this.recordingState = true;
+ 		} catch (error) {
+-			console.error('Failed to start recording:', error);
++			console.error('开始录音失败：', error);
+ 
+-			throw new Error('Failed to access microphone. Please check permissions.');
++			throw new Error('无法访问麦克风，请检查权限。');
+ 		}
+ 	}
+ 
+@@ -76,7 +76,7 @@ export class AudioRecorder {
+ 			const stream = this.stream;
+ 
+ 			if (!recorder || recorder.state === 'inactive') {
+-				reject(new Error('No active recording to stop'));
++				reject(new Error('没有正在进行的录音'));
+ 
+ 				return;
+ 			}
+@@ -102,7 +102,7 @@ export class AudioRecorder {
+ 			};
+ 
+ 			recorder.onerror = (event) => {
+-				console.error('Recording error:', event);
++				console.error('录音出错：', event);
+ 
+ 				if (stream) {
+ 					for (const track of stream.getTracks()) {
+@@ -110,7 +110,7 @@ export class AudioRecorder {
+ 					}
+ 				}
+ 
+-				reject(new Error('Recording failed'));
++				reject(new Error('录音失败'));
+ 			};
+ 
+ 			recorder.stop();
+@@ -145,7 +145,7 @@ export class AudioRecorder {
+ 		};
+ 
+ 		this.mediaRecorder.onerror = (event) => {
+-			console.error('MediaRecorder error:', event);
++			console.error('MediaRecorder 出错：', event);
+ 			this.recordingState = false;
+ 		};
+ 	}
+@@ -169,7 +169,7 @@ export async function convertToWav(audioBlob: Blob): Promise<Blob> {
+ 			audioContext.close();
+ 		}
+ 	} catch (error) {
+-		console.error('Failed to convert audio to WAV:', error);
++		console.error('把音频转成 WAV 失败：', error);
+ 
+ 		return audioBlob;
+ 	}
+diff --git a/tools/ui/src/lib/utils/cap-img-size.ts b/tools/ui/src/lib/utils/cap-img-size.ts
+index 6878bc1..2e2c130 100644
+--- a/tools/ui/src/lib/utils/cap-img-size.ts
++++ b/tools/ui/src/lib/utils/cap-img-size.ts
+@@ -24,7 +24,7 @@ export function capImageDataURLSize(
+ 			const mimeMatch = base64UrlImage.match(BASE64_IMAGE_URI_REGEX);
+ 
+ 			if (!mimeMatch) {
+-				return reject(new Error('Invalid data URL format.'));
++				return reject(new Error('data URL 格式无效。'));
+ 			}
+ 
+ 			const mimeType = mimeMatch[1] as MimeTypeImage;
+@@ -44,7 +44,7 @@ export function capImageDataURLSize(
+ 					const ctx = canvas.getContext('2d');
+ 
+ 					if (!ctx) {
+-						throw new Error('Failed to get 2D canvas context.');
++						throw new Error('获取 2D 画布上下文失败。');
+ 					}
+ 
+ 					const targetWidth = img.naturalWidth;
+@@ -73,7 +73,7 @@ export function capImageDataURLSize(
+ 			};
+ 
+ 			img.onerror = () => {
+-				reject(new Error('Failed to load image.'));
++				reject(new Error('加载图片失败。'));
+ 			};
+ 
+ 			img.src = base64UrlImage;
 diff --git a/tools/ui/src/lib/utils/chat-commands.ts b/tools/ui/src/lib/utils/chat-commands.ts
 index 9345f0a..62eb825 100644
 --- a/tools/ui/src/lib/utils/chat-commands.ts
@@ -5024,12 +8124,176 @@ index 9345f0a..62eb825 100644
  			disabled: !options.showModelSelector,
  			name: 'model'
  		}
+diff --git a/tools/ui/src/lib/utils/chat-template-thinking-detector.ts b/tools/ui/src/lib/utils/chat-template-thinking-detector.ts
+index 33e9b4f..f1893d2 100644
+--- a/tools/ui/src/lib/utils/chat-template-thinking-detector.ts
++++ b/tools/ui/src/lib/utils/chat-template-thinking-detector.ts
+@@ -65,7 +65,7 @@ export function detectThinkingSupport(t: string): boolean {
+ }
+ 
+ export function detectThinkingSupportWithReason(t: string): { supported: boolean; reason: string } {
+-	if (!t) return { reason: 'No chat template available', supported: false };
++	if (!t) return { reason: '没有可用的聊天模板', supported: false };
+ 
+ 	for (const kwarg of THINKING_KWARG_VARS) {
+ 		const regex = new RegExp(
+@@ -78,7 +78,7 @@ export function detectThinkingSupportWithReason(t: string): { supported: boolean
+ 		}
+ 	}
+ 	for (const p of JINJA_THINKING_CONDITIONALS) {
+-		if (p.test(t)) return { reason: 'Found: thinking conditional', supported: true };
++		if (p.test(t)) return { reason: '找到：思考条件', supported: true };
+ 	}
+ 	for (const [s, e] of THINKING_TAG_PATTERNS) {
+ 		if (t.includes(s) && (!e || t.includes(e))) {
+@@ -86,5 +86,5 @@ export function detectThinkingSupportWithReason(t: string): { supported: boolean
+ 		}
+ 	}
+ 
+-	return { reason: 'No thinking patterns found', supported: false };
++	return { reason: '没有找到思考模式', supported: false };
+ }
+diff --git a/tools/ui/src/lib/utils/clipboard.ts b/tools/ui/src/lib/utils/clipboard.ts
+index 96a2085..daeeb1d 100644
+--- a/tools/ui/src/lib/utils/clipboard.ts
++++ b/tools/ui/src/lib/utils/clipboard.ts
+@@ -22,8 +22,8 @@ import { toast } from 'svelte-sonner';
+  */
+ export async function copyToClipboard(
+ 	text: string,
+-	successMessage = 'Copied to clipboard',
+-	errorMessage = 'Failed to copy to clipboard'
++	successMessage = '已复制到剪贴板',
++	errorMessage = '复制到剪贴板失败'
+ ): Promise<boolean> {
+ 	try {
+ 		// Try modern clipboard API first (secure contexts only)
+@@ -57,7 +57,7 @@ export async function copyToClipboard(
+ 			throw new Error('execCommand failed');
+ 		}
+ 	} catch (error) {
+-		console.error('Failed to copy to clipboard:', error);
++		console.error('复制到剪贴板失败：', error);
+ 		toast.error(errorMessage);
+ 
+ 		return false;
+@@ -73,8 +73,8 @@ export async function copyToClipboard(
+  */
+ export async function copyCodeToClipboard(
+ 	rawCode: string,
+-	successMessage = 'Code copied to clipboard',
+-	errorMessage = 'Failed to copy code'
++	successMessage = '代码已复制到剪贴板',
++	errorMessage = '复制代码失败'
+ ): Promise<boolean> {
+ 	return copyToClipboard(rawCode, successMessage, errorMessage);
+ }
+diff --git a/tools/ui/src/lib/utils/convert-files-to-extra.ts b/tools/ui/src/lib/utils/convert-files-to-extra.ts
+index 735e91c..1ec22c6 100644
+--- a/tools/ui/src/lib/utils/convert-files-to-extra.ts
++++ b/tools/ui/src/lib/utils/convert-files-to-extra.ts
+@@ -58,13 +58,13 @@ export async function parseFilesToMessageExtras(
+ 					try {
+ 						base64Url = await svgBase64UrlToPngDataURL(base64Url);
+ 					} catch (error) {
+-						console.error('Failed to convert SVG to PNG for database storage:', error);
++						console.error('为存进数据库转换 SVG 到 PNG 失败：', error);
+ 					}
+ 				} else if (isWebpMimeType(file.type)) {
+ 					try {
+ 						base64Url = await webpBase64UrlToPngDataURL(base64Url);
+ 					} catch (error) {
+-						console.error('Failed to convert WebP to PNG for database storage:', error);
++						console.error('为存进数据库转换 WebP 到 PNG 失败：', error);
+ 					}
+ 				}
+ 
+@@ -120,7 +120,7 @@ export async function parseFilesToMessageExtras(
+ 
+ 				// If user had pdfAsImage enabled but model doesn't support vision, update setting and notify
+ 				if (currentConfig.pdfAsImage && !hasVisionSupport) {
+-					console.log('Non-vision model detected: forcing PDF-to-text mode and updating settings');
++					console.log('检测到非视觉模型：强制改为 PDF 转文本，并更新设置');
+ 
+ 					// Update the setting in localStorage
+ 					settingsStore.updateConfig(SETTINGS_KEYS.PDF_AS_IMAGE, false);
+diff --git a/tools/ui/src/lib/utils/formatters.ts b/tools/ui/src/lib/utils/formatters.ts
+index 20abde5..ec1d696 100644
+--- a/tools/ui/src/lib/utils/formatters.ts
++++ b/tools/ui/src/lib/utils/formatters.ts
+@@ -161,7 +161,7 @@ export function formatPerformanceTime(ms: number): string {
+  * Formats attachment content for API requests with consistent header style.
+  * Used when converting message attachments to text content parts.
+  *
+- * @param label - Type label (e.g., 'File', 'PDF File', 'MCP Prompt')
++ * @param label - Type label (e.g., 'File', 'PDF 文件', 'MCP 提示词')
+  * @param name - File or attachment name
+  * @param content - The actual content to include
+  * @param extra - Optional extra info to append to name (e.g., server name for MCP)
+diff --git a/tools/ui/src/lib/utils/modality-file-validation.ts b/tools/ui/src/lib/utils/modality-file-validation.ts
+index ca7fb3d..76318b4 100644
+--- a/tools/ui/src/lib/utils/modality-file-validation.ts
++++ b/tools/ui/src/lib/utils/modality-file-validation.ts
+@@ -84,7 +84,7 @@ export function filterFilesByModalities(
+ 			case FileTypeCategory.IMAGE:
+ 				if (!hasVision) {
+ 					isSupported = false;
+-					reason = 'Images require a vision-capable model';
++					reason = '图片需要支持视觉的模型';
+ 				}
+ 
+ 				break;
+@@ -92,7 +92,7 @@ export function filterFilesByModalities(
+ 			case FileTypeCategory.AUDIO:
+ 				if (!hasAudio) {
+ 					isSupported = false;
+-					reason = 'Audio files require an audio-capable model';
++					reason = '音频文件需要支持音频的模型';
+ 				}
+ 
+ 				break;
+@@ -100,7 +100,7 @@ export function filterFilesByModalities(
+ 			case FileTypeCategory.VIDEO:
+ 				if (!hasVideo) {
+ 					isSupported = false;
+-					reason = 'Video files require a video-capable model';
++					reason = '视频文件需要支持视频的模型';
+ 				}
+ 
+ 				break;
 diff --git a/tools/ui/src/lib/utils/pdf-processing.ts b/tools/ui/src/lib/utils/pdf-processing.ts
-index b79f8d7..17e9433 100644
+index b79f8d7..88ab48b 100644
 --- a/tools/ui/src/lib/utils/pdf-processing.ts
 +++ b/tools/ui/src/lib/utils/pdf-processing.ts
-@@ -78,7 +78,7 @@ export async function convertPDFToText(file: File): Promise<string> {
- 		console.error('Error converting PDF to text:', error);
+@@ -37,11 +37,11 @@ async function getFileAsBuffer(file: File): Promise<ArrayBuffer> {
+ 			if (event.target?.result) {
+ 				resolve(event.target.result as ArrayBuffer);
+ 			} else {
+-				reject(new Error('Failed to read file.'));
++				reject(new Error('读取文件失败。'));
+ 			}
+ 		};
+ 		reader.onerror = () => {
+-			reject(new Error('Failed to read file.'));
++			reject(new Error('读取文件失败。'));
+ 		};
+ 		reader.readAsArrayBuffer(file);
+ 	});
+@@ -54,7 +54,7 @@ async function getFileAsBuffer(file: File): Promise<ArrayBuffer> {
+  */
+ export async function convertPDFToText(file: File): Promise<string> {
+ 	if (!browser) {
+-		throw new Error('PDF processing is only available in the browser');
++		throw new Error('PDF 处理只能在浏览器里做');
+ 	}
+ 
+ 	try {
+@@ -75,10 +75,10 @@ export async function convertPDFToText(file: File): Promise<string> {
+ 
+ 		return textItems.join('\n');
+ 	} catch (error) {
+-		console.error('Error converting PDF to text:', error);
++		console.error('把 PDF 转成文本出错：', error);
  
  		throw new Error(
 -			`Failed to convert PDF to text: ${error instanceof Error ? error.message : 'Unknown error'}`
@@ -5037,8 +8301,30 @@ index b79f8d7..17e9433 100644
  		);
  	}
  }
-@@ -130,7 +130,7 @@ export async function convertPDFToImage(file: File, scale: number = 1.5): Promis
- 		console.error('Error converting PDF to images:', error);
+@@ -91,7 +91,7 @@ export async function convertPDFToText(file: File): Promise<string> {
+  */
+ export async function convertPDFToImage(file: File, scale: number = 1.5): Promise<string[]> {
+ 	if (!browser) {
+-		throw new Error('PDF processing is only available in the browser');
++		throw new Error('PDF 处理只能在浏览器里做');
+ 	}
+ 
+ 	try {
+@@ -109,7 +109,7 @@ export async function convertPDFToImage(file: File, scale: number = 1.5): Promis
+ 			canvas.height = viewport.height;
+ 
+ 			if (!ctx) {
+-				throw new Error('Failed to get 2D context from canvas');
++				throw new Error('从画布取 2D 上下文失败');
+ 			}
+ 
+ 			const task = page.render({
+@@ -127,10 +127,10 @@ export async function convertPDFToImage(file: File, scale: number = 1.5): Promis
+ 
+ 		return await Promise.all(pages);
+ 	} catch (error) {
+-		console.error('Error converting PDF to images:', error);
++		console.error('把 PDF 转成图片出错：', error);
  
  		throw new Error(
 -			`Failed to convert PDF to images: ${error instanceof Error ? error.message : 'Unknown error'}`
@@ -5047,18 +8333,70 @@ index b79f8d7..17e9433 100644
  	}
  }
 diff --git a/tools/ui/src/lib/utils/process-uploaded-files.ts b/tools/ui/src/lib/utils/process-uploaded-files.ts
-index e713713..a83dcc0 100644
+index e713713..37e2e56 100644
 --- a/tools/ui/src/lib/utils/process-uploaded-files.ts
 +++ b/tools/ui/src/lib/utils/process-uploaded-files.ts
-@@ -115,7 +115,7 @@ export async function processFilesToChatUploaded(
+@@ -76,19 +76,19 @@ export async function processFilesToChatUploaded(
+ 					try {
+ 						preview = await svgBase64UrlToPngDataURL(preview);
+ 					} catch (err) {
+-						console.error('Failed to convert SVG to PNG:', err);
++						console.error('转换 SVG 到 PNG 失败：', err);
+ 					}
+ 				} else if (isWebpMimeType(file.type)) {
+ 					try {
+ 						preview = await webpBase64UrlToPngDataURL(preview);
+ 					} catch (err) {
+-						console.error('Failed to convert WebP to PNG:', err);
++						console.error('转换 WebP 到 PNG 失败：', err);
+ 					}
+ 				} else if (isHeicMimeType(file.type)) {
+ 					try {
+ 						preview = await heicFileToJpegDataURL(file);
+ 					} catch (err) {
+-						console.error('Failed to convert HEIC to PNG:', err);
++						console.error('把 HEIC 转成 PNG 失败：', err);
+ 
+ 						continue;
+ 					}
+@@ -113,12 +113,12 @@ export async function processFilesToChatUploaded(
+ 				const currentConfig = settingsStore.config;
+ 
  				if (hasVisionSupport && !currentConfig.pdfAsImage) {
- 					toast.info(`You can enable parsing PDF as images with vision models.`, {
+-					toast.info(`You can enable parsing PDF as images with vision models.`, {
++					toast.info(`视觉模型可以启用 PDF 按图片解析。`, {
  						action: {
 -							label: 'Enable PDF as Images',
 +							label: '把 PDF 当图片处理',
  							onClick: () => {
  								settingsStore.updateConfig(SETTINGS_KEYS.PDF_AS_IMAGE, true);
- 								toast.success('PDF parsing as images enabled!', {
+-								toast.success('PDF parsing as images enabled!', {
++								toast.success('已启用 PDF 按图片解析！', {
+ 									duration: 3000
+ 								});
+ 							}
+@@ -148,7 +148,7 @@ export async function processFilesToChatUploaded(
+ 				}
+ 			}
+ 		} catch (error) {
+-			console.error('Error processing file', file.name, error);
++			console.error('处理文件出错', file.name, error);
+ 			results.push(base);
+ 		}
+ 	}
+diff --git a/tools/ui/src/lib/utils/request-helpers.ts b/tools/ui/src/lib/utils/request-helpers.ts
+index 8a11b8f..a811e17 100644
+--- a/tools/ui/src/lib/utils/request-helpers.ts
++++ b/tools/ui/src/lib/utils/request-helpers.ts
+@@ -87,7 +87,7 @@ export function summarizeRequestBody(body: BodyInit | null | undefined): Request
+ export function formatDiagnosticErrorMessage(error: unknown): string {
+ 	const message = error instanceof Error ? error.message : String(error);
+ 
+-	return message.includes('Failed to fetch') ? `${message} (check CORS?)` : message;
++	return message.includes('获取失败') ? `${message} (check CORS?)` : message;
+ }
+ 
+ export function extractJsonRpcMethods(body: BodyInit | null | undefined): string[] | undefined {
 diff --git a/tools/ui/src/lib/utils/sandbox-tool.ts b/tools/ui/src/lib/utils/sandbox-tool.ts
 index bc057e4..ae28354 100644
 --- a/tools/ui/src/lib/utils/sandbox-tool.ts
@@ -5091,11 +8429,120 @@ index 0fe861d..aee50fa 100644
  // Field name conventionally used by web-search tools (Exa etc.) as the
  // user-supplied query parameter. Extracted so future tool schemas that
  // adopt the same convention stay grep-compatible with this parser.
+diff --git a/tools/ui/src/lib/utils/svg-to-png.ts b/tools/ui/src/lib/utils/svg-to-png.ts
+index 07b84b3..b147d4f 100644
+--- a/tools/ui/src/lib/utils/svg-to-png.ts
++++ b/tools/ui/src/lib/utils/svg-to-png.ts
+@@ -19,7 +19,7 @@ export function svgBase64UrlToPngDataURL(
+ 				const ctx = canvas.getContext('2d');
+ 
+ 				if (!ctx) {
+-					reject(new Error('Failed to get 2D canvas context.'));
++					reject(new Error('获取 2D 画布上下文失败。'));
+ 
+ 					return;
+ 				}
+@@ -41,7 +41,7 @@ export function svgBase64UrlToPngDataURL(
+ 			};
+ 
+ 			img.onerror = () => {
+-				reject(new Error('Failed to load SVG image. Ensure the SVG data is valid.'));
++				reject(new Error('加载 SVG 图片失败，请确认 SVG 数据有效。'));
+ 			};
+ 
+ 			img.src = base64UrlSvg;
+diff --git a/tools/ui/src/lib/utils/text-files.ts b/tools/ui/src/lib/utils/text-files.ts
+index f770940..7af0131 100644
+--- a/tools/ui/src/lib/utils/text-files.ts
++++ b/tools/ui/src/lib/utils/text-files.ts
+@@ -31,11 +31,11 @@ export async function readFileAsText(file: File): Promise<string> {
+ 			if (event.target?.result !== null && event.target?.result !== undefined) {
+ 				resolve(event.target.result as string);
+ 			} else {
+-				reject(new Error('Failed to read file'));
++				reject(new Error('读取文件失败'));
+ 			}
+ 		};
+ 
+-		reader.onerror = () => reject(new Error('File reading error'));
++		reader.onerror = () => reject(new Error('读文件出错'));
+ 
+ 		reader.readAsText(file);
+ 	});
+diff --git a/tools/ui/src/lib/utils/webp-to-png.ts b/tools/ui/src/lib/utils/webp-to-png.ts
+index 8c61ecf..56fa4f2 100644
+--- a/tools/ui/src/lib/utils/webp-to-png.ts
++++ b/tools/ui/src/lib/utils/webp-to-png.ts
+@@ -19,7 +19,7 @@ export function webpBase64UrlToPngDataURL(
+ 				const ctx = canvas.getContext('2d');
+ 
+ 				if (!ctx) {
+-					reject(new Error('Failed to get 2D canvas context.'));
++					reject(new Error('获取 2D 画布上下文失败。'));
+ 
+ 					return;
+ 				}
+@@ -41,7 +41,7 @@ export function webpBase64UrlToPngDataURL(
+ 			};
+ 
+ 			img.onerror = () => {
+-				reject(new Error('Failed to load WebP image. Ensure the WebP data is valid.'));
++				reject(new Error('加载 WebP 图片失败，请确认 WebP 数据有效。'));
+ 			};
+ 
+ 			img.src = base64UrlWebp;
+diff --git a/tools/ui/src/routes/(chat)/+page.svelte b/tools/ui/src/routes/(chat)/+page.svelte
+index 53975d7..a91a7d6 100644
+--- a/tools/ui/src/routes/(chat)/+page.svelte
++++ b/tools/ui/src/routes/(chat)/+page.svelte
+@@ -44,10 +44,10 @@
+ 					) {
+ 						modelsStore.status
+ 							.load(model.id)
+-							.catch((error) => console.error('Failed to load model:', error));
++							.catch((error) => console.error('加载模型失败：', error));
+ 					}
+ 				} catch (error) {
+-					console.error('Failed to select model:', error);
++					console.error('选择模型失败：', error);
+ 					requestedModelName = modelParam;
+ 					showModelNotAvailable = true;
+ 
+diff --git a/tools/ui/src/routes/(chat)/chat/[id]/+page.svelte b/tools/ui/src/routes/(chat)/chat/[id]/+page.svelte
+index c4a9eca..5853a2e 100644
+--- a/tools/ui/src/routes/(chat)/chat/[id]/+page.svelte
++++ b/tools/ui/src/routes/(chat)/chat/[id]/+page.svelte
+@@ -44,7 +44,7 @@
+ 				try {
+ 					await modelsStore.selectModelById(model.id);
+ 				} catch (error) {
+-					console.error('Failed to select model:', error);
++					console.error('选择模型失败：', error);
+ 					requestedModelName = modelParam;
+ 					showModelNotAvailable = true;
+ 
 diff --git a/tools/ui/src/routes/+error.svelte b/tools/ui/src/routes/+error.svelte
-index 6ba527f..0e2fb3c 100644
+index 6ba527f..ec7d879 100644
 --- a/tools/ui/src/routes/+error.svelte
 +++ b/tools/ui/src/routes/+error.svelte
-@@ -66,9 +66,7 @@
+@@ -28,7 +28,7 @@
+ 
+ {#if isApiKeyError}
+ 	<ServerErrorSplash
+-		error={error?.message || 'Access denied - check server permissions'}
++		error={error?.message || '拒绝访问，请检查服务器权限'}
+ 		onRetry={handleRetry}
+ 		showRetry={false}
+ 		showTroubleshooting={false}
+@@ -59,16 +59,14 @@
+ 				<h1 class="mb-2 text-2xl font-bold">Error {status}</h1>
+ 
+ 				<p class="text-muted-foreground">
+-					{error?.message || 'Something went wrong'}
++					{error?.message || '出问题了'}
+ 				</p>
+ 			</div>
+ 
  			<button
  				class="rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
  				onclick={() => goto(ROUTES.START)}
@@ -5106,10 +8553,32 @@ index 6ba527f..0e2fb3c 100644
  		</div>
  	</div>
  {/if}
+diff --git a/tools/ui/src/routes/+layout.svelte b/tools/ui/src/routes/+layout.svelte
+index 5de4f82..bd31e62 100644
+--- a/tools/ui/src/routes/+layout.svelte
++++ b/tools/ui/src/routes/+layout.svelte
+@@ -174,7 +174,7 @@
+ 						}
+ 					})
+ 					.catch((e) => {
+-						console.error('Error checking API key:', e);
++						console.error('检查 API 密钥出错：', e);
+ 					});
+ 			}
+ 		});
 diff --git a/tools/ui/src/routes/search/+page.svelte b/tools/ui/src/routes/search/+page.svelte
-index 5b68d26..a07ed20 100644
+index 5b68d26..ee1c58d 100644
 --- a/tools/ui/src/routes/search/+page.svelte
 +++ b/tools/ui/src/routes/search/+page.svelte
+@@ -37,7 +37,7 @@
+ 
+ 		if (!conversation) return;
+ 
+-		const newName = window.prompt('Rename conversation', conversation.name);
++		const newName = window.prompt('重命名会话', conversation.name);
+ 
+ 		if (newName && newName.trim()) {
+ 			await conversationsStore.updateConversationName(id, newName.trim());
 @@ -72,7 +72,7 @@
  </script>
  

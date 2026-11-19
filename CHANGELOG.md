@@ -96,7 +96,7 @@ v0.1.x are the upstream payload releases by cobanov.
   `manifest.webmanifest`, `sw.js` and `build.json` are all in there), so replacing
   it with a hand-written page was not a translation but a different program: no
   conversation list, settings, model library, MCP or attachment preview.
-  `patches/0014-webui-chinese.patch` translates what the UI shows — 491 strings
+  `patches/0014-webui-chinese.patch` translates what the UI shows — 882 strings
   in `tools/ui/src` (template text, `placeholder`/`title`/`aria-label`/`alt`, and
   the `label`/`title`/`description` fields, the settings page's `help`
   text, and the UPPER_SNAKE label constants), plus `lang="zh-CN"` — and
