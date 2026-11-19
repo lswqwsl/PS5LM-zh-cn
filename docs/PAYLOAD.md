@@ -7,7 +7,7 @@ README covers the native app.
 
 ## The payload (upstream v0.1)
 
-The original PS5LM is a payload that needs no install: one `ps5lm.elf` opens a model library in the PS5's browser, for small models (up to 1.6 GB, Qwen3.5 0.8B and 2B). See [docs/ROADMAP.md](ROADMAP.md) and [docs/CONSOLE.md](CONSOLE.md).
+The original PS5LM is a payload that needs no install: one `ps5lm.elf` opens a model library in the PS5's browser, for small models (up to 1.6 GB, Qwen3.5 0.8B and 2B). See [docs/CONSOLE.md](CONSOLE.md).
 
 <p align="center">
   <a href="https://ps5lm.cobanov.dev"><img src="media/ps5lm-demo.gif" width="640" alt="Qwen3.5 0.8B answering in the PS5's browser, typed with a DualSense"></a>
