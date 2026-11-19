@@ -66,8 +66,10 @@ scripts/bake-fonts.sh                     # = python3 scripts/bake-fonts-cn.py
 
 6763 个汉字在 36px 下约 15.6M 像素，正好塞满 4096²；换成 64px 就放不下了。
 
-想确认字形真的烘进去了：`python3 scripts/render-font-sample.py` 会把 `manrope-500.huifont`
-的图集按字形矩形和 advance 拼成一张 PNG，能读出来就是成功了。
+下面这张图不是截图，是把 `manrope-500.huifont` 的图集直接按字形矩形和 advance 拼出来的
+（`scripts/render-font-sample.py` 做的事）：能读出来，就说明这些字真的烘进字体里了。
+
+![汉化字体样本](media/localization-font.png)
 
 ### 必须记住的坑：`read_file` 的 4 MiB 上限
 
@@ -141,6 +143,7 @@ scripts/bake-fonts-cn.py           烘焙三个字重（跨平台，Python）
 scripts/check-zh.py                编码/换行/引号/词条表自查
 scripts/fitcheck-zh.py             译文排版宽度对比
 scripts/render-font-sample.py      把 .huifont 里的字拼成 PNG（验证字形）
+docs/media/localization-font.png   上面那个脚本对 manrope-500 的输出
 .github/workflows/release-zh.yml   在 GitHub Actions 上交叉编译并打包成 zip
 scripts/font-baker/bake_font.cpp   改了上游那个烘焙器：支持 @字符集文件
 scripts/font-baker/font_format.hpp .huifont 的二进制布局
@@ -170,6 +173,7 @@ fleet/control.html                 集群控制页（中文）
 * **主机上的键盘只打得出拉丁字母。** 手柄键盘（`ui::KeyboardLayout::letters()`）没有拼音输入，
   所以「△ 键发自己的话」只能打英文/数字；要看中文，用「□ 键发示例」或者浏览器里那个聊天页
   （那边是你自己的手机/电脑键盘）。这是上游界面的限制，不是汉化造成的。
+* **截图和 GIF 还是英文的。** `docs/media/` 里是上游截的图；要在中文界面上重截，得在 Linux 上跑
   `scripts/preview-app-ui.sh`（需要 Mesa 的 surfaceless EGL）。
 * **日志面板的中文字体是 DejaVu Sans Mono**（来自 ps5-homebrew-ui），里面没有汉字。所以日志行、
   API 页的 curl 示例、`llama-server` 参数都保持英文——它们本来就该是英文。
