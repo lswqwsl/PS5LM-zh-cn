@@ -641,59 +641,6 @@ void write_report(ReportJob job) {
 std::atomic<int> g_server_rc{ -1 };   // llama-server's exit code once it returns; -1 while it runs
 std::atomic<bool> g_page_checked{ false };  // the one look at "/" (see page_answer)
 std::vector<std::string> g_server_args;
-// PS5LM_WEBUI=llama: serve llama.cpp's own page at the server's root instead
-// of the app's translated one, PS5LM_WEBUI=off: serve no page at all.
-bool g_builtin_webui = false;
-bool g_webui_off = false;
-
-// The chat page llama-server serves. It is copied out of the app's assets into
-// the data folder first: llama.cpp mounts --path with httplib's
-// set_mount_point(), which stats the directory and then resolves it with
-// realpath(3), and on the console that second step fails even for a directory
-// stat() accepts. patches/0013 turns that failure into plain stdio routes
-// instead of an exit; the data folder is where a real path is certain anyway
-// (the models are read from it), and the copy is checked here too, so a page
-// that is missing cannot cost the server its model.
-bool install_chat_page(std::string * out) {
-    const std::string from = sandbox_path(kAssets) + "/www";
-    const std::string to   = data_path("www");
-    std::error_code ec;
-    std::filesystem::create_directories(to, ec);
-    for (const char * name : { "index.html", "app.json" }) {
-        std::ifstream in(from + "/" + name, std::ios::binary);
-        if (!in) {
-            ps5lm::log_line("chat page: %s/%s is not readable\n", from.c_str(), name);
-            return false;
-        }
-        std::ofstream file(to + "/" + name, std::ios::binary | std::ios::trunc);
-        if (!file) {
-            ps5lm::log_line("chat page: cannot write %s/%s\n", to.c_str(), name);
-            return false;
-        }
-        file << in.rdbuf();
-        if (!file.flush()) {
-            ps5lm::log_line("chat page: writing %s/%s failed\n", to.c_str(), name);
-            return false;
-        }
-    }
-    struct stat st = {};
-    if (stat(to.c_str(), &st) != 0 || !S_ISDIR(st.st_mode)) {
-        ps5lm::log_line("chat page: %s is not a directory (errno %d)\n", to.c_str(), errno);
-        return false;
-    }
-    if (stat((to + "/index.html").c_str(), &st) != 0 || !S_ISREG(st.st_mode) || st.st_size <= 0) {
-        ps5lm::log_line("chat page: %s/index.html is not a file (errno %d)\n", to.c_str(), errno);
-        return false;
-    }
-    DIR * d = opendir(to.c_str());
-    if (!d) {
-        ps5lm::log_line("chat page: %s cannot be opened (errno %d)\n", to.c_str(), errno);
-        return false;
-    }
-    closedir(d);
-    *out = to;
-    return true;
-}
 
 void * run_server(void *) {
     std::vector<char *> argv;
@@ -858,19 +805,9 @@ struct Models {
             chdir(g_files.scratch.c_str());
             args.insert(args.end(), { "--tools", kTools });
         }
-        // What a browser gets at the server's root: the app's own translated
-        // chat page, copied into the data folder (see install_chat_page). A
-        // --path in app-args.txt wins; PS5LM_WEBUI=llama keeps llama.cpp's own
-        // UI, PS5LM_WEBUI=off serves no page.
-        if (!g_builtin_webui && !g_webui_off && std::find(args.begin(), args.end(), "--path") == args.end()) {
-            std::string dir;
-            if (install_chat_page(&dir)) {
-                args.insert(args.end(), { "--path", dir });
-                ps5lm::log_line("the chat page is the app's own (%s)\n", dir.c_str());
-            } else {
-                ps5lm::log_line("no chat page; llama-server starts without --path\n");
-            }
-        }
+        // What a browser gets at the server's root is llama.cpp's own UI,
+        // translated and embedded at build time (tools/ui, patches/0014), so
+        // nothing here has to serve it. A --path in app-args.txt still wins.
         for (const auto & a : args) {
             ps5lm::log_line("arg %s\n", a.c_str());
         }
@@ -980,23 +917,16 @@ int main(int, char **) {
     setenv("HOME", data_root().c_str(), 0);
     setenv("LLAMA_CACHE", data_path("cache").c_str(), 0);
     // Driver and backend switches to measure with, one NAME=value a line in
-    // env.txt, set before the GPU opens; only the driver's, ggml's and llama's,
-    // and the app's own: PS5LM_WEBUI=llama serves llama.cpp's own chat page,
-    // PS5LM_WEBUI=off serves no page at all.
+    // env.txt, set before the GPU opens; only the driver's, ggml's and llama's.
     for (const auto & line : read_lines(g_files.env)) {
         const size_t eq = line.find('=');
         const std::string name = line.substr(0, eq == std::string::npos ? 0 : eq);
-        const std::string value = eq == std::string::npos ? std::string() : line.substr(eq + 1);
         bool known = false;
-        for (const char * prefix : { "RADV_", "MESA_", "ACO_", "GGML_", "LLAMA_", "PS5LM_" }) {
+        for (const char * prefix : { "RADV_", "MESA_", "ACO_", "GGML_", "LLAMA_" }) {
             known = known || name.rfind(prefix, 0) == 0;
         }
-        if (known && !value.empty()) {
-            setenv(name.c_str(), value.c_str(), 1);
-            if (name == "PS5LM_WEBUI") {
-                g_builtin_webui = value == "llama";
-                g_webui_off = value == "off" || value == "none" || value == "0";
-            }
+        if (known && eq != std::string::npos) {
+            setenv(name.c_str(), line.c_str() + eq + 1, 1);
         }
         ps5lm::log_line("env %s%s\n", line.c_str(), known ? "" : " (ignored)");
     }
@@ -1228,6 +1158,17 @@ int main(int, char **) {
         }
         stats.set_phase("");
     };
+    // Input before the boot work, not after it: boot() reads every model's
+    // header to plan it, which took twelve seconds on a console with three
+    // models, and until now nothing polled the pad or the dashboard until it was
+    // done — the controller was dead for that whole time (reported on a console,
+    // and upstream behaves the same way). The startup screen now answers the
+    // controller from the first frame; actions start once the rows are in.
+    hui::ps5::Pad pad;
+    pad.open();
+    hui::InputTracker tracker;
+    hui::PadSample samples[64];
+
     std::atomic<bool> booted{ false };
     std::function<void()> boot_then = [&] {
         boot();
@@ -1240,23 +1181,24 @@ int main(int, char **) {
         int64_t at = start;
         while (ui_ok && !booted) {
             const int64_t now = hui::sys::monotonic_us();
+            const float dt = std::min(0.05f, (float) (now - at) / 1e6f);
+            at = now;
             if (now - start > 1200000) {
                 dash.set_busy("");
             }
             dash.set_live(stats.snapshot());
+            const size_t count = pad.read(samples);
+            const hui::InputFrame input =
+                tracker.update(std::span<const hui::PadSample>(samples, count), (uint64_t) now);
             quiet.clear();
-            dash.update(hui::InputFrame{}, std::min(0.05f, (float) (now - at) / 1e6f), quiet);
-            at = now;
+            dash.update(input, dt, quiet);
             render();
             display.swap();
         }
     }
     pthread_join(booting, nullptr);
 
-    // Input and sound, as ps5-homebrew-ui's own app does.
-    hui::ps5::Pad pad;
-    pad.open();
-    hui::InputTracker tracker;
+    // Sound, as ps5-homebrew-ui's own app does.
     hui::audio::Mixer mixer;
     hui::ps5::AudioOut audio_out;
     audio_out.start(mixer);
@@ -1281,7 +1223,6 @@ int main(int, char **) {
         }
     }
     hui::ui::Feedback feedback;
-    hui::PadSample samples[64];
     int64_t last = hui::sys::monotonic_us();
     bool was_serving = false;
     bool rescanning = false;

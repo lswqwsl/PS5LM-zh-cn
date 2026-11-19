@@ -18,7 +18,8 @@
 | 「推荐」列表里的模型介绍 | ✅ 全中文 | `ps5/app/suggested.hpp` |
 | 请求面板里的「3 个问题」「是 0.87」「错误：…」 | ✅ 全中文 | `ps5/app/activity.cpp` |
 | 硬盘名（内置存储 / 应用存储 / M.2 硬盘 / USB 硬盘） | ✅ 全中文 | `stats.cpp`、`storage.cpp`，dashboard 里的比较也一起改了 |
-| 浏览器聊天页、模型库页 | ✅ 全中文 | `ps5/webui/index.html`、`ps5/ps5lm/library.html`；app 现在把它打进包、用 `--path assets/www` 直接提供（[WEBUI.md](WEBUI.md)） |
+| 浏览器聊天页（llama.cpp 自己的 UI） | ✅ 全中文 | `patches/0014-webui-chinese.patch` 改 `tools/ui/src` 的 395 条文字，构建时编进 `llama-server`（[WEBUI.md](WEBUI.md)） |
+| 模型库页（payload 那条路） | ✅ 全中文 | `ps5/ps5lm/library.html` |
 | 集群控制页（`python3 -m fleet control`） | ✅ 全中文 | `fleet/control.html`；页面里那些运行时状态文字来自 Python 控制服务器，仍是英文 |
 | README、`docs/LOCALIZATION.md`、`docs/WEBUI.md` | ✅ 全中文 | 其余 `docs/*.md`、`site/` 保留英文（面向构建与上游对照） |
 | 版本号 | ✅ 和上游一致（`0.11.0`） | `ps5/app/version.hpp` 与 `param.json` 的 `contentVersion`（`01.011.000`），发布 tag 也是 `v0.11.0` |
@@ -148,7 +149,7 @@ scripts/font-baker/bake_font.cpp   改了上游那个烘焙器：支持 @字符�
 scripts/font-baker/font_format.hpp .huifont 的二进制布局
 docs/LOCALIZATION.md               本文件
 docs/WEBUI.md                      :8081 那一页是怎么接上的
-ps5/webui/app.json                 告诉聊天页「native app 没有 8082 模型库页」
+patches/0014-webui-chinese.patch   llama.cpp 的网页 UI 换成中文（tools/ui/src）
 ps5/app/assets/fonts/noto-sans-sc-LICENSE.txt
 ```
 
@@ -156,15 +157,14 @@ ps5/app/assets/fonts/noto-sans-sc-LICENSE.txt
 
 ```
 scripts/bake-fonts.sh              变成 bake-fonts-cn.py 的壳（上游那份 Manrope 做法留在注释里）
-scripts/build-app.sh               打包 assets/www，并带 Noto 的许可
+scripts/build-app.sh               用 npm 构建并内嵌已汉化的网页 UI，并带 Noto 的许可
 README.md                          中文
 ps5/app/*.cpp, *.hpp               见上表
 ps5/app/assets/fonts/*.huifont     重新烘焙（Noto Sans SC）
-ps5/webui/index.html               浏览器聊天页
-ps5/webui/app.json                 （同上）
+patches/0014-webui-chinese.patch   网页 UI 的中文文案（395 条）
 ps5/ps5lm/library.html             模型库页
 fleet/control.html                 集群控制页（中文）
-.github/workflows/release-zh.yml   打中文包；并检查包里字体、聊天页、字体图集
+.github/workflows/release-zh.yml   打中文包；并检查包里字体、字体图集、eboot 里的中文网页 UI
 .gitignore                         *.en.bak、.deps/fonts/
 ```
 

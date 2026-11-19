@@ -9,7 +9,7 @@
 # tools/build-radv.sh release and `make app` (for the host tool and libc.prx).
 #
 #   scripts/build-app.sh            configure, build and package
-#   PS5LM_PREBUILT_UI=OFF ...       omit the optional downloaded browser UI
+#   PS5LM_BUILD_UI=OFF ...          skip building the browser UI (needs node/npm)
 # CMAKE_BUILD_PARALLEL_LEVEL also bounds the native dashboard compilers.
 set -euo pipefail
 
@@ -83,6 +83,14 @@ make -C "$ftpsrv" -f Makefile.ps5 PS5_PAYLOAD_SDK="$sdk" ELF="$out/ftpsrv/ps5lm-
     { tail -30 "$out/ftpsrv.build.log" >&2; exit 1; }
 
 # CI may omit the optional browser UI download; the console dashboard is unaffected.
+# 浏览器打开 :8081 的那一页就是 llama.cpp 自己的 UI（tools/ui），由
+# patches/0014-webui-chinese.patch 换成中文，LLAMA_BUILD_UI=ON 让 CMake 跑 npm
+# 构建并把它编进 llama-server。没有 node/npm 时它只会安静地产出一个没有页面的
+# server，所以这里先停下来说清楚。
+if [ "${PS5LM_BUILD_UI:-ON}" != OFF ] && ! command -v npm >/dev/null 2>&1; then
+    echo "build-app: the browser UI needs npm (LLAMA_BUILD_UI=ON); install nodejs+npm, or set PS5LM_BUILD_UI=OFF" >&2
+    exit 1
+fi
 flags="-DSUBPROCESS_HAVE_CWD=0 -I$headers/include"
 # llama.cpp throws, catches and uses dynamic_cast; the PS5 target turns
 # exceptions and RTTI off by default.
@@ -101,7 +109,7 @@ cmake -S "$llama" -B "$out/llama" -G Ninja \
     -DLLAMA_OPENSSL=OFF -DLLAMA_BUILD_COMMON=ON -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF \
     -DLLAMA_BUILD_TOOLS=ON -DLLAMA_BUILD_SERVER=ON \
     -ULLAMA_BUILD_WEBUI -ULLAMA_USE_PREBUILT_WEBUI \
-    -DLLAMA_BUILD_UI=OFF -DLLAMA_USE_PREBUILT_UI="${PS5LM_PREBUILT_UI:-ON}" > "$out.configure.log" 2>&1 ||
+    -DLLAMA_BUILD_UI="${PS5LM_BUILD_UI:-ON}" -DLLAMA_USE_PREBUILT_UI=OFF > "$out.configure.log" 2>&1 ||
     { tail -30 "$out.configure.log" >&2; exit 1; }
 cmake --build "$out/llama" --target llama-server-impl
 
@@ -269,11 +277,8 @@ cp "$root/third_party/ps5-homebrew-ui/assets/fonts/"{dejavu-sans-mono.huifont,De
 # them; give them a set of their own if the kit ever lets an app add one.
 mkdir -p "$app/assets/audio/sfx/glass"
 cp "$root/ps5/app/assets/audio/sfx/"* "$app/assets/audio/sfx/glass/"
-# 浏览器打开 :8081 看到的那一页：app 自带、已汉化的 ps5/webui/index.html，
-# main.cpp 用 --path 指到这里（assets/www），llama.cpp 自带的 UI 是英文且
-# 在主机浏览器上是空白页。
-mkdir -p "$app/assets/www"
-cp "$root/ps5/webui/index.html" "$root/ps5/webui/app.json" "$app/assets/www/"
+# 浏览器打开 :8081 看到的那一页不再往包里放文件：它是 llama.cpp 自带的 UI
+# （tools/ui，已汉化），上面 LLAMA_BUILD_UI=ON 已经把它编进 llama-server 里了。
 # ps5-exporter (Marice, GPL-3.0): a title may not read the temperature, fan or
 # SoC power sensors, a payload may. The app sends it to elfldr when it is not
 # running. Pinned by version and hash, downloaded once into .deps.

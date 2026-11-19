@@ -22,10 +22,13 @@ the fleet's own files or the llama.cpp patches change.
 
 The second job downloads build tools, source dependencies and checksum-verified
 public SDK archives. It does **not** download a trained model or proprietary
-console firmware. Only the optional browser UI is omitted: its upstream fallback
-fetches a floating `latest` release. The native console dashboard is built.
-Normal `scripts/build-app.sh` builds keep the prebuilt browser UI enabled;
-`PS5LM_PREBUILT_UI=OFF` explicitly opts out and clears legacy CMake aliases.
+console firmware, and it does not fetch assets from the network at configure
+time: `LLAMA_USE_PREBUILT_UI=OFF` is always set, so llama.cpp's UI comes only from
+`patches/0014-webui-chinese.patch` and its own `npm` build.
+
+The release workflow builds that UI (`LLAMA_BUILD_UI=ON`, node/npm installed in
+the container); `scripts/test-native-build.sh`, which validates the title and the
+console dashboard, skips it with `PS5LM_BUILD_UI=OFF`.
 
 ## Reproduce the checks
 

@@ -119,13 +119,13 @@ if [[ ! -f "$glcache/ps5-opengl-sdk-1.0.0/sdk/manifest.sha256" ]]; then
 fi
 glsdk=$(bash "$ui/tools/fetch-opengl-sdk.sh")
 export PS5_OPENGL_SDK="$glsdk"
-# Cross-build validation omits llama.cpp's optional browser UI (which otherwise
-# falls back to a floating Hugging Face "latest" download). Keep the console UI.
+# Cross-build validation omits llama.cpp's browser UI: this job checks the title
+# and the console dashboard, and has no node/npm. The release build does build it.
 [[ ! -e "$root/third_party/llama.cpp/tools/ui/dist/index.html" ]] || {
     echo 'title-check: remove custom source-tree browser assets or use a clean checkout' >&2; exit 2;
 }
 rm -rf -- "$root/build/app-ps5/llama/tools/ui/dist"
-export PS5LM_PREBUILT_UI=OFF
+export PS5LM_BUILD_UI=OFF
 timeout 1800 bash scripts/build-app.sh
 bash "$vk/tools/inspect.sh" "$root/build/app-ps5/eboot.elf"
 title_id=$(python3 -c 'import json; print(json.load(open("ps5/app/sce_sys/param.json"))["titleId"])')

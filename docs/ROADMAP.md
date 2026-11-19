@@ -43,7 +43,7 @@ Decoding is bound by memory bandwidth: tokens per second ≈ effective bandwidth
 - [x] `llama-cli`, `llama-server` and `llama-bench` link ([PORTING.md](PORTING.md) lists the three build fixes)
 - [x] Smoke test: Qwen3.5 0.8B generates text on the PS5 CPU, 14.2 tok/s on two threads
 - [x] Safe CPU defaults for the PS5 (`patches/0001`): threads = allowed CPUs minus two, no busy-waiting
-- [x] `llama-server` on the console with a chat page in the PS5's own browser (`scripts/ps5-chat.sh`, `ps5/webui`); phones and laptops use the same page on port 8081
+- [x] `llama-server` on the console with a chat page in the PS5's own browser (`scripts/ps5-chat.sh`, llama.cpp's own UI); phones and laptops use the same page on port 8081
 - [ ] `llama-bench` numbers for the small model
 - [x] **First light: Qwen3.8-27B generates text on the PS5** (2026-10-09). UD-IQ1_S (5.77 GiB) in a payload, mapped from `/data` and paged in from the SSD, so about one token a minute (`-fit off`: llama.cpp's fit step asks for one 525 MB block a payload cannot get). The GPU app below is the real result.
 - [ ] A video of it, posted with the repo.

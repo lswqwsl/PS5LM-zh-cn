@@ -13,25 +13,22 @@ port=${PS5LM_PORT:-8081}
 logdir="$root/build/console"
 mkdir -p "$logdir"
 
-# Upload the current build and the chat page. shsrv needs absolute paths and
-# short command lines (keep model file names short).
+# Upload the current build. shsrv needs absolute paths and short command lines
+# (keep model file names short). The chat page needs no upload: llama-server
+# carries llama.cpp's own UI, translated at build time.
 curl -sS --disable-epsv --ftp-create-dirs -T "$root/build/llama-ps5/bin/llama-server" \
     "ftp://$host:2121/data/PS5LM/bin/llama-server"
-curl -sS --disable-epsv --ftp-create-dirs -T "$root/ps5/webui/index.html" \
-    "ftp://$host:2121/data/PS5LM/www/index.html"
 
 # Keep the shell session that runs the server open in the background; its output
 # goes to build/console/server.log. The context is capped: the model's own
 # default (131K for Granite) would not fit in a payload's ~6 GiB. The model is
 # read into memory (-lm none): mapped from the file, its pages get evicted once
 # the browser opens, and generation drops to a fraction of a token a second.
-# --path www serves ps5/webui instead of llama.cpp's UI, which the PS5 browser
-# renders blank.
 nohup bash -c "
     { sleep 1
       printf 'chmod 755 /data/PS5LM/bin/llama-server\n'; sleep 1
       printf 'cd /data/PS5LM\n'; sleep 1
-      printf '/data/PS5LM/bin/llama-server -m models/$model -c 4096 -np 1 -lm none --path www --host 0.0.0.0 --port $port\n'
+      printf '/data/PS5LM/bin/llama-server -m models/$model -c 4096 -np 1 -lm none --host 0.0.0.0 --port $port\n'
       sleep 86400
     } | nc $host 2323
 " > "$logdir/server.log" 2>&1 &

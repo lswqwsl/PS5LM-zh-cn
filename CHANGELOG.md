@@ -91,34 +91,41 @@ v0.1.x are the upstream payload releases by cobanov.
 
 ### Changed
 
-- **`--path` no longer stops the model from loading.** The chat page is served
-  from the data folder (`/data/PS5LM/www`), and llama-server refuses a `--path`
-  it cannot mount: httplib's `set_mount_point()` stats the directory and then
-  resolves it with `realpath(3)`, and on the console `realpath()` fails for that
-  directory while `stat()` accepts it. llama-server printed
-  `static assets path not found` and exited **before loading the model**: port
-  8081 never opened, the dashboard said the server had stopped, and the browser
-  could only report a dead connection. Two rounds of that came from trusting
-  `stat()`; `patches/0013-webui-without-realpath.patch` now serves `index.html`
-  and `app.json` with plain stdio when the mount fails, and a page it cannot
-  read costs the notice, never the server. The app also asks `GET /` itself once
-  the server listens and logs what came back
-  (`chat page: GET / -> 200 OK, 14300 bytes`), so app.log answers "is the page
-  there?" without a browser. `PS5LM_WEBUI=off` still turns the page off
-  entirely. The page itself waits for `/health` before it sends, repeats the
-  server's own words when a request fails, and falls back to a non-streamed
-  answer when a browser delivers no streamed body. `docs/WEBUI.md` has the trap.
-- **The browser page on port 8081 is the app's own translated one.** Without a
-  `--path`, llama-server serves llama.cpp's own UI, which is English and, being
-  a modern bundle, renders as a blank page in the console's browser (which is
-  why `scripts/ps5-chat.sh` passes `--path www` for the payload). `Models::start`
-  now installs `ps5/webui/index.html` as that page, `scripts/build-app.sh` packs
-  it, and it uses `/v1/models` and `/v1/chat/completions` only, in plain ES5.
-  A `--path` in `app-args.txt` still wins; `PS5LM_WEBUI=llama` in `env.txt`
-  keeps llama.cpp's UI for a PC browser. The page hides its "模型" link when
-  `app.json` (which only the app ships) says there is no library page, and the
-  release workflow fails if the package has no `assets/www/index.html` or the
-  page is not the Chinese one.
+- **The page at `http://<console>:8081` is llama.cpp's own web UI, in Chinese.**
+  Upstream's package carries it inside `eboot.bin` (the UI's `index.html`,
+  `manifest.webmanifest`, `sw.js` and `build.json` are all in there), so replacing
+  it with a hand-written page was not a translation but a different program: no
+  conversation list, settings, model library, MCP or attachment preview.
+  `patches/0014-webui-chinese.patch` translates what the UI shows — 395 strings
+  in `tools/ui/src` (template text, `placeholder`/`title`/`aria-label`/`alt`, and
+  the `label`/`title`/`description` fields), plus `lang="zh-CN"` — and
+  `scripts/build-app.sh` now configures `LLAMA_BUILD_UI=ON`
+  (`LLAMA_USE_PREBUILT_UI=OFF`), so CMake runs the UI's `npm` build and embeds the
+  result, exactly as upstream does. The package has no `assets/www` any more, and
+  the release workflow fails unless `eboot.bin` contains `manifest.webmanifest`,
+  `index.html`, `说点什么` and `新聊天` — CMake produces a server with no page,
+  silently, when it cannot provision assets.
+- **`--path` no longer stops the model from loading.** llama-server refuses a
+  `--path` it cannot mount: httplib's `set_mount_point()` stats the directory and
+  then resolves it with `realpath(3)`, and on the console `realpath()` fails for
+  that directory while `stat()` accepts it. A `--path` used to make llama-server
+  print `static assets path not found` and exit **before loading the model**:
+  port 8081 never opened, the dashboard said the server had stopped, and the
+  browser could only report a dead connection. `patches/0013-webui-without-realpath.patch`
+  serves the directory's files with plain stdio when the mount fails, and a page
+  it cannot read costs the notice, never the server. The default build needs no
+  `--path` at all (the UI is embedded); the app also asks `GET /` itself once the
+  server listens and logs the answer (`chat page: GET / -> 200 OK, 12345 bytes`),
+  so app.log answers "is the page there?" without a browser. `docs/WEBUI.md` has
+  the trap.
+- **The controller answers from the first frame.** `main()` opened the pad and
+  started polling it only after the boot thread finished, and that thread reads
+  every model's header to plan it — twelve seconds on a console with three
+  models, during which the dashboard drew with an empty input frame. Reported as
+  "the controller does nothing for a few seconds after the app opens", and
+  upstream behaves the same way. The pad now opens before the boot thread and the
+  startup screen feeds it real input, so focus and hover answer immediately;
+  actions start once the model rows are planned.
 - **简体中文界面（这个 fork）。** 电视端的五个页面、提示行、对话框，浏览器里的聊天页与模型库页
   都是中文；正文图集换成 Noto Sans SC 的 GB2312 全集（7552 字形），所以模型生成的中文不再是
   ????。改了什么、怎么自己重新烘字体见 `docs/LOCALIZATION.md`，网页端见 `docs/WEBUI.md`。

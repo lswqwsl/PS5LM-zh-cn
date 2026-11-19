@@ -46,14 +46,16 @@ First run, Qwen3.5 0.8B Q4_K_M, `-t 2 --poll 0 -lm none`, 512 context:
 
 `llama-server` loads Granite 4.2 3B (2.1 GiB) with mmap, so mapping a model file works in a payload.
 
-Chat through `llama-server` and `ps5/webui` in the PS5's browser (browser open, `-c 4096 -np 1 -lm none`, 3 threads from the safe defaults):
+Chat through `llama-server`'s own page in the PS5's browser (browser open, `-c 4096 -np 1 -lm none`, 3 threads from the safe defaults):
 
 | Model | Prompt | Generation |
 |---|---|---|
 | Qwen3.5 0.8B Q4_K_M, thinking off | 67 tok/s | 13.1 tok/s |
 | Granite 4.2 3B Q4_K_M | 0.6 tok/s | 0.2 tok/s |
 
-llama.cpp's own web UI renders blank in the PS5 browser; `ps5/webui` (plain ES5) works.
+llama.cpp's own web UI renders blank in the PS5's browser (a 2026-era SvelteKit bundle against an
+old engine). The page on port 8081 is for a PC or phone browser; generation itself is unaffected,
+which is what the numbers above measure.
 
 ## Payload memory gets paged out
 

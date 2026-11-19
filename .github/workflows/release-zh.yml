@@ -60,6 +60,17 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git submodule update --init --depth 1
 
+      - name: node/npm（构建网页 UI 用）
+        run: |
+          # :8081 那一页是 llama.cpp 的 tools/ui，CMake 在 LLAMA_BUILD_UI=ON 时
+          # 用 npm 构建它。trixie 自带 node 20，够 SvelteKit 用。
+          node --version || {
+            apt-get update
+            apt-get install -y --no-install-recommends nodejs npm
+          }
+          node --version
+          npm --version
+
       - name: 确认字体是汉化版（不是上游的 Manrope）
         run: |
           # 界面文案在 eboot.bin 里，但字形在 assets/fonts；少了 GB2312 的图集就是一片 ????。
@@ -137,11 +148,14 @@ jobs:
             b=$(sha256sum "build/release/unzipped/PPSA99575/assets/fonts/$f.huifont" | cut -d' ' -f1)
             [ "$a" = "$b" ] || { echo "包里的 $f.huifont 和仓库里的不一致" >&2; exit 1; }
           done
-          # 浏览器打开 :8081 的那一页：包里必须有，而且是中文的那一页。
-          www=build/release/unzipped/PPSA99575/assets/www
-          [ -f "$www/index.html" ] || { echo "包里没有 assets/www/index.html（网页端会是空的）" >&2; exit 1; }
-          grep -q '问点什么' "$www/index.html" || { echo "assets/www/index.html 不是汉化的那一页" >&2; exit 1; }
-          grep -q '"library": ""' "$www/app.json" || { echo "assets/www/app.json 缺了" >&2; exit 1; }
+          # 浏览器打开 :8081 的那一页是 llama.cpp 自己的 UI，已汉化、编进 eboot：
+          # 检查它真的进去了（没有 UI 时 CMake 只会安静地产出没有页面的 server）
+          # 而且是中文的那一版。
+          eboot=build/release/unzipped/PPSA99575/eboot.bin
+          grep -aq 'manifest.webmanifest' "$eboot" || { echo "eboot 里没有 llama.cpp 的网页 UI（LLAMA_BUILD_UI 没生效？）" >&2; exit 1; }
+          grep -aq 'index.html' "$eboot" || { echo "eboot 里没有网页 UI 的 index.html" >&2; exit 1; }
+          grep -aq '说点什么' "$eboot" || { echo "eboot 里的网页 UI 不是汉化版（patches/0014 没打上？）" >&2; exit 1; }
+          grep -aq '新聊天' "$eboot" || { echo "eboot 里的网页 UI 少了中文界面" >&2; exit 1; }
           ls -l build/release/
 
       # 上传步骤的 action 用 v4 tag；想更严可以把 tag 换成按 commit SHA 固定。

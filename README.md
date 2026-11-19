@@ -124,9 +124,10 @@ curl http://<主机>:8081/v1/systemone -H 'Content-Type: application/json' -d '{
 4. 加载它。主页显示「就绪」后，用浏览器打开 `http://<主机>:8081`，或把 OpenAI / Anthropic 客户端
    指过来。
 
-`http://<主机>:8081` 上那一页是 app 自带的汉化聊天页（llama.cpp 自带的那套只有英文，而且在主机
-浏览器上是空白页）。想换成 llama.cpp 原来那页，在 `/data/PS5LM/env.txt` 里写 `PS5LM_WEBUI=llama`；
-细节见 [docs/WEBUI.md](docs/WEBUI.md)。OpenAI / Anthropic 客户端不受影响，它们走 `/v1/...`。
+`http://<主机>:8081` 上那一页就是 llama.cpp 自带的那套 web UI（会话列表、设置、模型库、MCP），
+只是界面文字汉化了。它由 `patches/0014-webui-chinese.patch` 换字，构建时用 npm 编进
+`llama-server`，细节见 [docs/WEBUI.md](docs/WEBUI.md)。OpenAI / Anthropic 客户端不受影响，
+它们走 `/v1/...`。
 
 升级时把新文件夹覆盖旧的即可。设置、模型和下载都留在 `/data/PS5LM`。
 
