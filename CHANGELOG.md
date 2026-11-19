@@ -91,18 +91,30 @@ v0.1.x are the upstream payload releases by cobanov.
 
 ### Changed
 
-- **The browser page on port 8081 is the app's own translated one.** The app
-  never served `ps5/webui/index.html`; llama-server fell back to llama.cpp's
-  own web UI, which is English and, being a modern bundle, renders as a blank
-  page in the console's browser (which is why `scripts/ps5-chat.sh` passes
-  `--path www` for the payload). `Models::start` now passes `--path
-  <app0>/assets/www`, `scripts/build-app.sh` packs that folder, and the page
-  uses `/v1/models` and `/v1/chat/completions` only, in plain ES5. A `--path`
-  in `app-args.txt` still wins; `PS5LM_WEBUI=llama` in `env.txt` keeps
-  llama.cpp's UI for a PC browser. The page hides its "模型" link when
+- **`--path` no longer stops the model from loading.** The chat page was served
+  from `<app0>/assets/www`; llama.cpp opens `--path` with `stat()`, and a
+  title's `/app0` is a virtual root that answers that for its own files but not
+  for a directory, so llama-server printed `static assets path not found` and
+  exited **before loading the model** — port 8081 never opened, the dashboard
+  said the server had stopped, and the browser could only report a dead
+  connection. The page is now copied into the data folder (`/data/PS5LM/www`,
+  the filesystem the models are read from) and checked with `stat()` and
+  `opendir()` before `--path` is passed; when it cannot be installed the server
+  starts without it, and `PS5LM_WEBUI=off` turns the page off entirely. The
+  page itself waits for `/health` before it sends, repeats the server's own
+  words when a request fails, and falls back to a non-streamed answer when a
+  browser delivers no streamed body. `docs/WEBUI.md` has the trap.
+- **The browser page on port 8081 is the app's own translated one.** Without a
+  `--path`, llama-server serves llama.cpp's own UI, which is English and, being
+  a modern bundle, renders as a blank page in the console's browser (which is
+  why `scripts/ps5-chat.sh` passes `--path www` for the payload). `Models::start`
+  now installs `ps5/webui/index.html` as that page, `scripts/build-app.sh` packs
+  it, and it uses `/v1/models` and `/v1/chat/completions` only, in plain ES5.
+  A `--path` in `app-args.txt` still wins; `PS5LM_WEBUI=llama` in `env.txt`
+  keeps llama.cpp's UI for a PC browser. The page hides its "模型" link when
   `app.json` (which only the app ships) says there is no library page, and the
-  release workflow now fails if the package has no `assets/www/index.html` or
-  the page is not the Chinese one.
+  release workflow fails if the package has no `assets/www/index.html` or the
+  page is not the Chinese one.
 - **A still screen is no longer drawn sixty times a second** (the fan with no
   model loaded). The loop recorded and presented every frame whether or not
   anything had changed: a full-screen gradient, a few thousand quads and a

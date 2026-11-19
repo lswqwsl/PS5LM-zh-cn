@@ -651,8 +651,58 @@ void write_report(ReportJob job) {
 std::atomic<int> g_server_rc{ -1 };   // llama-server's exit code once it returns; -1 while it runs
 std::vector<std::string> g_server_args;
 // PS5LM_WEBUI=llama: serve llama.cpp's own page at the server's root instead
-// of the app's translated one (assets/www), for a PC browser.
+// of the app's translated one, PS5LM_WEBUI=off: serve no page at all.
 bool g_builtin_webui = false;
+bool g_webui_off = false;
+
+// The chat page llama-server serves. It is copied out of the app's assets into
+// the data folder first, because llama.cpp opens --path with stat() and a
+// title's own /app0 tree answers that for its files but not for a directory:
+// pointing --path at /app0/assets/www made llama-server print "static assets
+// path not found", exit before loading the model, and leave the app with no
+// server at all (0.11.0, a console's debug report). The data folder is a real
+// filesystem — the models are read from it — and the copy is checked with the
+// same calls llama.cpp makes, so a page that is not there cannot stop a server.
+bool install_chat_page(std::string * out) {
+    const std::string from = sandbox_path(kAssets) + "/www";
+    const std::string to   = data_path("www");
+    std::error_code ec;
+    std::filesystem::create_directories(to, ec);
+    for (const char * name : { "index.html", "app.json" }) {
+        std::ifstream in(from + "/" + name, std::ios::binary);
+        if (!in) {
+            ps5lm::log_line("chat page: %s/%s is not readable\n", from.c_str(), name);
+            return false;
+        }
+        std::ofstream file(to + "/" + name, std::ios::binary | std::ios::trunc);
+        if (!file) {
+            ps5lm::log_line("chat page: cannot write %s/%s\n", to.c_str(), name);
+            return false;
+        }
+        file << in.rdbuf();
+        if (!file.flush()) {
+            ps5lm::log_line("chat page: writing %s/%s failed\n", to.c_str(), name);
+            return false;
+        }
+    }
+    struct stat st = {};
+    if (stat(to.c_str(), &st) != 0 || !S_ISDIR(st.st_mode)) {
+        ps5lm::log_line("chat page: %s is not a directory (errno %d)\n", to.c_str(), errno);
+        return false;
+    }
+    if (stat((to + "/index.html").c_str(), &st) != 0 || !S_ISREG(st.st_mode) || st.st_size <= 0) {
+        ps5lm::log_line("chat page: %s/index.html is not a file (errno %d)\n", to.c_str(), errno);
+        return false;
+    }
+    DIR * d = opendir(to.c_str());
+    if (!d) {
+        ps5lm::log_line("chat page: %s cannot be opened (errno %d)\n", to.c_str(), errno);
+        return false;
+    }
+    closedir(d);
+    *out = to;
+    return true;
+}
 
 void * run_server(void *) {
     std::vector<char *> argv;
@@ -817,17 +867,18 @@ struct Models {
             chdir(g_files.scratch.c_str());
             args.insert(args.end(), { "--tools", kTools });
         }
-        // What a browser gets at the server's root. llama.cpp's own UI is a
-        // modern bundle the console's browser renders as a blank page, and it
-        // is in English; assets/www is the app's chat page, translated and
-        // plain ES5. --path replaces the built-in UI (it also drops the
-        // service worker a browser may still have from it). PS5LM_WEBUI=llama
-        // keeps llama.cpp's, and a --path in app-args.txt wins over both.
-        const std::string www = sandbox_path(kAssets) + "/www";
-        if (!g_builtin_webui && access(www.c_str(), R_OK) == 0 &&
-            std::find(args.begin(), args.end(), "--path") == args.end()) {
-            args.insert(args.end(), { "--path", www });
-            ps5lm::log_line("the chat page is the app's own (%s)\n", www.c_str());
+        // What a browser gets at the server's root: the app's own translated
+        // chat page, copied into the data folder (see install_chat_page). A
+        // --path in app-args.txt wins; PS5LM_WEBUI=llama keeps llama.cpp's own
+        // UI, PS5LM_WEBUI=off serves no page.
+        if (!g_builtin_webui && !g_webui_off && std::find(args.begin(), args.end(), "--path") == args.end()) {
+            std::string dir;
+            if (install_chat_page(&dir)) {
+                args.insert(args.end(), { "--path", dir });
+                ps5lm::log_line("the chat page is the app's own (%s)\n", dir.c_str());
+            } else {
+                ps5lm::log_line("no chat page; llama-server starts without --path\n");
+            }
         }
         for (const auto & a : args) {
             ps5lm::log_line("arg %s\n", a.c_str());
@@ -960,6 +1011,7 @@ int main(int, char **) {
                 skip_still = value[0] != '0';
             } else if (name == "PS5LM_WEBUI") {
                 g_builtin_webui = value == "llama";
+                g_webui_off = value == "off" || value == "none" || value == "0";
             }
         }
         ps5lm::log_line("env %s%s\n", line.c_str(), known ? "" : " (ignored)");
