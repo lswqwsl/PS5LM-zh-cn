@@ -20,26 +20,42 @@ app 里的 llama-server 自己会往外提供一个页面，浏览器打开 `htt
    `/data/PS5LM/www/`（`/data` 没开时是 `/download0/PS5LM/www/`），然后用 `stat` + `opendir`
    核对它确实是个目录、`index.html` 确实是个非空文件，才给 llama-server 补
    `--path <那个目录>`。
-3. llama-server 会把 `index.html` 挂在 `/` 上，并且因为 `public_path` 非空，**不再**serve 自带的
-   UI（顺带清掉浏览器里那套旧的 service worker）。
+3. llama-server 把那个目录挂到 `/` 上（`public_path` 非空，自带的英文 UI 也就不再 serve）。
+   挂不上也不再致命：`patches/0013-webui-without-realpath.patch` 在 `set_mount_point()` 返回
+   false 之后，改用 stdio 把同一个目录里的 `index.html` / `app.json` 直接回给浏览器，
+   **而且挂不上只是少一个页面，绝不会再把整个 server 带走**。
 4. 页面只用两个接口：`GET /v1/models`（顶栏显示模型名）和 `POST /v1/chat/completions`
    （`stream: true`，按 SSE 增量显示，带 token 数和 token/秒）。纯 ES5 + XMLHttpRequest，
    没有外部文件和打包步骤，因为主机浏览器认不了现代 bundle。
 
-### 必须记住的坑：`--path` 指向 `/app0` 会让 llama-server 直接不启动
+### 必须记住的坑：`--path` 挂不挂得上，卡的是 `realpath()`，不是 `stat()`
 
-第一版是直接传 `--path /app0/assets/www`。app 里的 `access()` 说这个目录在（字体也是从
-`/app0/assets/fonts` 读的），但 llama.cpp 用 `stat()` 打开 `--path`，而 title 自己的 `/app0`
-虚拟根对它**不是**一个能 stat 出来的目录。结果：
+第一版直接传 `--path /app0/assets/www`，llama-server 打印：
 
 ```
 E srv init_listene: static assets path not found: /app0/assets/www
 E srv llama_server: failed to initialize HTTP server
 ```
 
-llama-server 在加载模型之前就退出了 —— 日志里 `llama_server returned 1`，端口 8081 从没打开，
-电视上显示「服务已停止」，浏览器自然连不上。所以页面文件**永远不要**放在 `--path` 上赌；
-现在是先复制到 `/data`（模型就是从那里读的，肯定能 stat），再核对一遍。
+第二版把页面复制到 `/data/PS5LM/www`、并且先用 `stat` + `opendir` 核对过，报的还是同一句
+（`/data/PS5LM/www`）。真正的原因在 httplib 的 `set_mount_point()`：
+
+```cpp
+detail::FileStat stat(dir);
+if (stat.is_dir()) {
+    std::string resolved_base;
+    if (!detail::canonicalize_path(dir.c_str(), resolved_base)) {   // realpath(3)
+        return false;
+    }
+```
+
+它先 `stat` 再 `realpath`：**`stat` 这一关过了，`realpath` 过不去照样返回 false**，而主机上
+`realpath()` 对这种数据目录就是失败（app 自己的 `stat` / `opendir` 都正常）。所以「目录在不在」
+不能只用 `stat` 判断——这条路上真正被卡住的是 `realpath`。
+
+后果比页面本身严重得多：`return false` 让 `init_listener` 失败 → `llama_server returned 1`，
+模型**根本没开始加载**，端口 8081 从没打开，电视上显示「服务已停止」。所以 `patches/0013` 把
+「挂不上」降级成一条警告加 stdio 路由，页面和模型各活各的。
 
 ## 换回 llama.cpp 的页面
 
@@ -65,8 +81,13 @@ payload 那条路（`ps5lm.elf`）在 8082 端口有一页模型库，所以链�
 
 - 主机上加载一个模型，主页显示「就绪」后，PC 浏览器打开 `http://<主机>:8081`：应该是黑底、
   顶栏 `ps5lm` + 模型名、中间「问点什么」和一排示例问题、底部输入框（占位符「说点什么」、按钮「发送」）。
-- app.log 里会有一行 `the chat page is the app's own (/data/PS5LM/www)`；用 `PS5LM_WEBUI=llama`
-  时这行不出现。
+- app.log 里先有 `the chat page is the app's own (/data/PS5LM/www)`（用 `PS5LM_WEBUI=llama`
+  时这行不出现），接着有一行 app 自己发出去的 GET：
+  `chat page: GET / -> 200 OK, 14300 bytes`。这一行是**真的去问了一次**：`200` 说明页面在，
+  `404` 说明 server 起来了但没页面，`no answer` 说明它压根没监听上。
+- llama.log 里正常应该只有 `PS5LM: serving the chat page from /data/PS5LM/www`，
+  前面带一条 `PS5LM: no mount point for …: stat() = 0 (errno 0, a directory)`——
+  后面这句正是「`stat` 说它在、`realpath` 说不行」，有了它就不再靠猜。
 - 回复是逐字出来的（SSE）；停下按钮会 abort 当前请求。
 - CI 会检查包里有没有 `assets/www/index.html`、它是不是中文那一页。
 

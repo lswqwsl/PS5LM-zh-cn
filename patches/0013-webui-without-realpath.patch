@@ -1,0 +1,87 @@
+diff --git a/tools/server/server-http.cpp b/tools/server/server-http.cpp
+index 8017afe..ade1c4e 100644
+--- a/tools/server/server-http.cpp
++++ b/tools/server/server-http.cpp
+@@ -13,6 +13,9 @@
+ #include <atomic>
+ #include <thread>
+ #include <mutex>
++#include <cerrno>
++#include <cstdio>
++#include <sys/stat.h>
+ 
+ //
+ // HTTP implementation using cpp-httplib
+@@ -168,6 +171,57 @@ bool server_http_context::init(const common_params & params) {
+     return true;
+ }
+ 
++// PS5LM: the chat page, served without httplib's mount point.
++//
++// set_mount_point() stats the directory and then resolves it with realpath(3),
++// refusing the directory when that second step fails. On the console realpath()
++// fails for the data folder even though stat() reports a directory there, so
++// pointing --path at the page made llama-server print "static assets path not
++// found" and exit before it had loaded a model. Reading the files with stdio
++// from plain routes keeps the page and the server both.
++static bool ps5lm_serve_plain_files(httplib::Server & srv, const std::string & prefix, const std::string & dir) {
++    struct stat st = {};
++    const int st_rc = stat(dir.c_str(), &st);
++    const int st_errno = errno;
++    SRV_WRN("PS5LM: no mount point for %s: stat() = %d (errno %d, %s)\n",
++            dir.c_str(), st_rc, st_errno, st_rc == 0 && S_ISDIR(st.st_mode) ? "a directory" : "not a directory");
++
++    auto read_file = [&dir](const char * name, std::string & body) {
++        FILE * file = std::fopen((dir + "/" + name).c_str(), "rb");
++        if (file == nullptr) {
++            return false;
++        }
++        char buffer[16384];
++        size_t got = 0;
++        while ((got = std::fread(buffer, 1, sizeof(buffer), file)) > 0) {
++            body.append(buffer, got);
++        }
++        std::fclose(file);
++        return !body.empty();
++    };
++
++    std::string page;
++    if (!read_file("index.html", page)) {
++        SRV_ERR("PS5LM: cannot read %s/index.html either; the server runs without a page\n", dir.c_str());
++        return false;
++    }
++    std::string library;
++    read_file("app.json", library);
++
++    for (const std::string & route : { std::string("/"), std::string("/index.html") }) {
++        srv.Get(prefix + route, [page](const httplib::Request &, httplib::Response & res) {
++            res.set_content(page, "text/html; charset=utf-8");
++        });
++    }
++    if (!library.empty()) {
++        srv.Get(prefix + "/app.json", [library](const httplib::Request &, httplib::Response & res) {
++            res.set_content(library, "application/json; charset=utf-8");
++        });
++    }
++    SRV_INF("PS5LM: serving the chat page from %s (%zu bytes)\n", dir.c_str(), page.size());
++    return true;
++}
++
+ bool server_http_context::init_listener(const common_params & params) {
+     auto & srv = pimpl->servers.back();
+ 
+@@ -390,8 +444,12 @@ bool server_http_context::init_listener(const common_params & params) {
+         if (!params.public_path.empty()) {
+             // Set the base directory for serving static files
+             if (const auto is_found = srv->set_mount_point(params.api_prefix + "/", params.public_path); !is_found) {
+-                SRV_ERR("static assets path not found: %s\n", params.public_path.c_str());
+-                return false;
++                // PS5LM: a page that cannot be mounted must not take the model
++                // down with it (see ps5lm_serve_plain_files above).
++                if (!ps5lm_serve_plain_files(*srv, params.api_prefix, params.public_path)) {
++                    SRV_WRN("static assets path not found: %s; the server starts without a page\n",
++                            params.public_path.c_str());
++                }
+             }
+         } else {
+ #if defined(LLAMA_UI_HAS_ASSETS)

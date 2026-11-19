@@ -406,6 +406,56 @@ bool port_open(int port) {
     return open;
 }
 
+// What the server answers at "/". Asked once, on the loop's own clock: the page
+// is copied into the data folder and served by llama-server, and a server that
+// cannot serve it looks exactly like one that can until a browser asks.
+std::string page_answer(int port) {
+    const int fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (fd < 0) {
+        return "no socket";
+    }
+    timeval tv = { 3, 0 };
+    setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+    setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
+    sockaddr_in to = {};
+#ifdef __FreeBSD__
+    to.sin_len = sizeof(to);
+#endif
+    to.sin_family = AF_INET;
+    to.sin_port = htons((uint16_t) port);
+    to.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    std::string text;
+    if (connect(fd, (sockaddr *) &to, sizeof(to)) == 0) {
+        const char request[] = "GET / HTTP/1.0\r\nHost: 127.0.0.1\r\n\r\n";
+        if (send(fd, request, sizeof(request) - 1, 0) > 0) {
+            char buf[16384];
+            while (text.size() < (1u << 20)) {
+                const ssize_t got = recv(fd, buf, sizeof(buf), 0);
+                if (got <= 0) {
+                    break;  // HTTP/1.0 without keep-alive: the server closes it
+                }
+                text.append(buf, (size_t) got);
+            }
+        }
+    }
+    close(fd);
+    if (text.empty()) {
+        return "no answer";
+    }
+    const size_t eol = text.find("\r\n");
+    std::string status = text.substr(0, eol == std::string::npos ? text.size() : eol);
+    if (const size_t sp = status.find(' '); sp != std::string::npos) {
+        status = status.substr(sp + 1);  // "HTTP/1.1 200 OK" -> "200 OK"
+    }
+    const size_t body_at = text.find("\r\n\r\n");
+    if (body_at == std::string::npos) {
+        return status;
+    }
+    char size[48];
+    std::snprintf(size, sizeof(size), ", %zu bytes", text.size() - body_at - 4);
+    return status + size;
+}
+
 // The kernel log, from klogsrv (3232) or etaHEN's (9081): what it sends in a
 // few seconds, the last `max_bytes` of it.
 std::string kernel_log(size_t max_bytes) {
@@ -589,6 +639,7 @@ void write_report(ReportJob job) {
 // ---- the server thread ------------------------------------------------------------
 
 std::atomic<int> g_server_rc{ -1 };   // llama-server's exit code once it returns; -1 while it runs
+std::atomic<bool> g_page_checked{ false };  // the one look at "/" (see page_answer)
 std::vector<std::string> g_server_args;
 // PS5LM_WEBUI=llama: serve llama.cpp's own page at the server's root instead
 // of the app's translated one, PS5LM_WEBUI=off: serve no page at all.
@@ -596,13 +647,13 @@ bool g_builtin_webui = false;
 bool g_webui_off = false;
 
 // The chat page llama-server serves. It is copied out of the app's assets into
-// the data folder first, because llama.cpp opens --path with stat() and a
-// title's own /app0 tree answers that for its files but not for a directory:
-// pointing --path at /app0/assets/www made llama-server print "static assets
-// path not found", exit before loading the model, and leave the app with no
-// server at all (0.11.0, a console's debug report). The data folder is a real
-// filesystem — the models are read from it — and the copy is checked with the
-// same calls llama.cpp makes, so a page that is not there cannot stop a server.
+// the data folder first: llama.cpp mounts --path with httplib's
+// set_mount_point(), which stats the directory and then resolves it with
+// realpath(3), and on the console that second step fails even for a directory
+// stat() accepts. patches/0013 turns that failure into plain stdio routes
+// instead of an exit; the data folder is where a real path is certain anyway
+// (the models are read from it), and the copy is checked here too, so a page
+// that is missing cannot cost the server its model.
 bool install_chat_page(std::string * out) {
     const std::string from = sandbox_path(kAssets) + "/www";
     const std::string to   = data_path("www");
@@ -1515,6 +1566,19 @@ int main(int, char **) {
                 dash.set_busy("正在卸载 " + base_name(models.running), "app 将不加载模型重启，约 30 秒");
             }
             restart_at = n + 3;  // three frames with the busy screen on the TV first
+        }
+
+        // One look at the page the browser is served, as soon as the server
+        // listens: 200 with the page's size means the page is there, 404 means
+        // the server runs without one, "no answer" means it never listened.
+        // Nothing listening yet is not an answer — llama-server binds the port a
+        // few milliseconds after the thread starts — so ask again until it is.
+        if (models.server_started && !g_page_checked && n % 30 == 7) {
+            const std::string answer = page_answer(8081);
+            if (answer != "no answer" || g_server_rc != -1) {
+                g_page_checked = true;
+                ps5lm::log_line("chat page: GET / -> %s\n", answer.c_str());
+            }
         }
 
         if (ui_ok) {

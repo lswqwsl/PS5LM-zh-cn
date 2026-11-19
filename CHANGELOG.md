@@ -91,19 +91,23 @@ v0.1.x are the upstream payload releases by cobanov.
 
 ### Changed
 
-- **`--path` no longer stops the model from loading.** The chat page was served
-  from `<app0>/assets/www`; llama.cpp opens `--path` with `stat()`, and a
-  title's `/app0` is a virtual root that answers that for its own files but not
-  for a directory, so llama-server printed `static assets path not found` and
-  exited **before loading the model** — port 8081 never opened, the dashboard
-  said the server had stopped, and the browser could only report a dead
-  connection. The page is now copied into the data folder (`/data/PS5LM/www`,
-  the filesystem the models are read from) and checked with `stat()` and
-  `opendir()` before `--path` is passed; when it cannot be installed the server
-  starts without it, and `PS5LM_WEBUI=off` turns the page off entirely. The
-  page itself waits for `/health` before it sends, repeats the server's own
-  words when a request fails, and falls back to a non-streamed answer when a
-  browser delivers no streamed body. `docs/WEBUI.md` has the trap.
+- **`--path` no longer stops the model from loading.** The chat page is served
+  from the data folder (`/data/PS5LM/www`), and llama-server refuses a `--path`
+  it cannot mount: httplib's `set_mount_point()` stats the directory and then
+  resolves it with `realpath(3)`, and on the console `realpath()` fails for that
+  directory while `stat()` accepts it. llama-server printed
+  `static assets path not found` and exited **before loading the model**: port
+  8081 never opened, the dashboard said the server had stopped, and the browser
+  could only report a dead connection. Two rounds of that came from trusting
+  `stat()`; `patches/0013-webui-without-realpath.patch` now serves `index.html`
+  and `app.json` with plain stdio when the mount fails, and a page it cannot
+  read costs the notice, never the server. The app also asks `GET /` itself once
+  the server listens and logs what came back
+  (`chat page: GET / -> 200 OK, 14300 bytes`), so app.log answers "is the page
+  there?" without a browser. `PS5LM_WEBUI=off` still turns the page off
+  entirely. The page itself waits for `/health` before it sends, repeats the
+  server's own words when a request fails, and falls back to a non-streamed
+  answer when a browser delivers no streamed body. `docs/WEBUI.md` has the trap.
 - **The browser page on port 8081 is the app's own translated one.** Without a
   `--path`, llama-server serves llama.cpp's own UI, which is English and, being
   a modern bundle, renders as a blank page in the console's browser (which is
