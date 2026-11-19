@@ -18,7 +18,7 @@
 | 「推荐」列表里的模型介绍 | ✅ 全中文 | `ps5/app/suggested.hpp` |
 | 请求面板里的「3 个问题」「是 0.87」「错误：…」 | ✅ 全中文 | `ps5/app/activity.cpp` |
 | 硬盘名（内置存储 / 应用存储 / M.2 硬盘 / USB 硬盘） | ✅ 全中文 | `stats.cpp`、`storage.cpp`，dashboard 里的比较也一起改了 |
-| 浏览器聊天页（llama.cpp 自己的 UI） | ✅ 全中文 | `patches/0014-webui-chinese.patch` 改 `tools/ui/src` 的 425 条文字，构建时编进 `llama-server`（[WEBUI.md](WEBUI.md)） |
+| 浏览器聊天页（llama.cpp 自己的 UI） | ✅ 全中文 | `patches/0014-webui-chinese.patch` 改 `tools/ui/src` 的 491 条文字，构建时编进 `llama-server`（[WEBUI.md](WEBUI.md)） |
 | 模型库页（payload 那条路） | ✅ 全中文 | `ps5/ps5lm/library.html` |
 | 集群控制页（`python3 -m fleet control`） | ✅ 全中文 | `fleet/control.html`；页面里那些运行时状态文字来自 Python 控制服务器，仍是英文 |
 | README、`docs/LOCALIZATION.md`、`docs/WEBUI.md` | ✅ 全中文 | 其余 `docs/*.md`、`site/` 保留英文（面向构建与上游对照） |
@@ -161,7 +161,7 @@ scripts/build-app.sh               用 npm 构建并内嵌已汉化的网页 UI�
 README.md                          中文
 ps5/app/*.cpp, *.hpp               见上表
 ps5/app/assets/fonts/*.huifont     重新烘焙（Noto Sans SC）
-patches/0014-webui-chinese.patch   网页 UI 的中文文案（425 条）
+patches/0014-webui-chinese.patch   网页 UI 的中文文案（491 条）
 ps5/ps5lm/library.html             模型库页
 fleet/control.html                 集群控制页（中文）
 .github/workflows/release-zh.yml   打中文包；并检查包里字体、字体图集、eboot 里的中文网页 UI
